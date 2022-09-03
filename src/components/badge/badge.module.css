@@ -1,0 +1,19 @@
+.gradient_text {
+  background: linear-gradient(90deg, #c93df2 7.14%, #4daae9 92.86%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.badge {
+  background: linear-gradient(155.78deg, #ff881b 1.57%, #3a1aff 108.05%);
+  box-shadow: 1.96313px 1.96313px 9.81567px rgba(0, 0, 0, 0.1);
+  border-radius: 14.7235px;
+  box-shadow: 1.96313px 1.96313px 9.81567px rgba(0, 0, 0, 0.1);
+}
+
+.border {
+  background: linear-gradient(to bottom, #d059f3, #a3ffa6);
+  padding: "1px";
+  border-radius: 14.7235px;
+}
