@@ -19,14 +19,14 @@ const Dashboard: NextPage = () => {
 
   const getBadgesByType = async (badgeType: BadgeType) => {
     const response = await badgeService.getBadges(badgeType);
-    // setBadges([...badges], response.data?.data.badges_issued);
-    if (response && activeTab === BadgeType.ISSUED) {
-      // @ts-ignore
-      setBadges([...response.badges_issued]);
-    } else {
-      // @ts-ignore
-      const badges = response.badges_earned.map((e) => e.badge_id);
-      setBadges([...badges]);
+    if (response) {
+      const newBadges =
+        activeTab === BadgeType.ISSUED
+          ? // @ts-ignore
+            [...response.badges_issued]
+          : // @ts-ignore
+            [...response.badges_earned.map((e) => e.badge_id)];
+      setBadges(newBadges);
     }
   };
 
@@ -45,11 +45,7 @@ const Dashboard: NextPage = () => {
           activeTab={activeTab}
         >
           <div className="h-full pt-7">
-            {activeTab === BadgeType.ISSUED ? (
-              <BadgeList badgeList={badges} />
-            ) : (
-              <BadgeList badgeList={badges} />
-            )}
+            <BadgeList badgeList={badges} />
           </div>
         </Tab>
       ) : (
