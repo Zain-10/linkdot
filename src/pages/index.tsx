@@ -23,7 +23,10 @@ const Dashboard: NextPage = () => {
     if (response && activeTab === BadgeType.ISSUED) {
       // @ts-ignore
       setBadges([...response.badges_issued]);
-      console.log("badges:", badges);
+    } else {
+      // @ts-ignore
+      const badges = response.badges_earned.map((e) => e.badge_id);
+      setBadges([...badges]);
     }
   };
 

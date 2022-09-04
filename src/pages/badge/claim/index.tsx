@@ -1,16 +1,38 @@
-import type { NextPage } from "next";
-import { useEffect, useState } from "react";
-
 import { Connect } from "@/components/connect";
+import { apiRoutes } from "@/config/apiRoutes";
 import { Badges } from "@/fixtures/badges";
+import { axiosClient } from "@/helpers/axios-client";
 import { getIPFSGatewayURL } from "@/helpers/utils/ipfs";
 import { Base } from "@/layouts/Base";
-
+import { useAddress } from "@thirdweb-dev/react";
+import type { GetServerSideProps, NextPage } from "next";
+import { useEffect, useState } from "react";
 import { BadgeCard } from "../../../components/badge/Card";
 import { Badge } from "../../../components/badge/NTTBadge";
 
-const Claim: NextPage = () => {
+type PageProps = {
+  email_data: string;
+  badge_data: string;
+};
+
+const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
   const [badge, setBadge] = useState<NTTBadge>();
+  const address = useAddress();
+
+  const claimBadge = async () => {
+    const payload = {
+      email_data: email_data.split(" ").join("+"),
+      badge_data: badge_data.split(" ").join("+"),
+    };
+    const response = await axiosClient.post(apiRoutes.claimBadge, payload);
+    console.log(response);
+  };
+
+  useEffect(() => {
+    if (address) {
+      claimBadge();
+    }
+  }, [address]);
 
   useEffect(() => {
     setBadge(Badges[0]);
@@ -49,6 +71,16 @@ const Claim: NextPage = () => {
       </div>
     </Base>
   );
+};
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const {
+    query: { badge_data, email_data },
+  } = context;
+
+  return {
+    props: { email_data, badge_data },
+  };
+  // ...
 };
 
 export default Claim;
