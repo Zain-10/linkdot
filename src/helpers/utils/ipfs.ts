@@ -13,8 +13,6 @@ import { NFTStorage } from "nft.storage";
  *
  */
 
-export { getIPFSGatewayURL, uploadMetadataToIPFS };
-
 const getIPFSGatewayURL = (ipfsURL: string) => {
   const urlArray = ipfsURL.split("/");
   const ipfsGateWayURL = `https://${urlArray[2]}.ipfs.dweb.link/${urlArray[3]}`;
@@ -42,3 +40,5 @@ const uploadMetadataToIPFS = async (
     image,
   });
 };
+
+export { getIPFSGatewayURL, uploadMetadataToIPFS };
