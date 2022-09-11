@@ -26,6 +26,7 @@
     "axios-retry": "^3.3.1",
     "daisyui": "^2.14.1",
     "ethers": "^5.6.9",
+    "html-to-image": "^1.10.8",
     "moment": "^2.29.4",
     "next": "^12.2.2",
     "next-seo": "^5.4.0",

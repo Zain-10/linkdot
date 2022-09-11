@@ -12,7 +12,6 @@ import { Badge } from "../NTTBadge";
 
 const PreviewBadge = ({ _id }: Pick<NTTBadge, "_id">) => {
   const [badge, setBadge] = useState<NTTBadge>();
-  console.log(_id);
 
   const getBadge = async (_id: string) => {
     const badge = await badgeService.getBadgeDetail(_id);
