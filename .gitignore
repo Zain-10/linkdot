@@ -33,6 +33,7 @@ yarn-error.log*
 
 # dotenv local files
 .env*.local
+.env.production
 
 # local folder
 local
