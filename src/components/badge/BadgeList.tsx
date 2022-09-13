@@ -22,7 +22,7 @@ const BadgeList = ({ badgeList }: BadgeListProps) => {
           created_at,
           ipfs_data,
         }: NTTBadge) => (
-          <BadgeCard key={_id}>
+          <BadgeCard key={`${Math.random()}-${_id}`}>
             <div className="flex flex-col p-6 ">
               <div className="mb-4">
                 <Badge
