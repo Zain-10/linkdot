@@ -5,6 +5,9 @@
     "mikestead.dotenv",
     "csstools.postcss",
     "bradlc.vscode-tailwindcss",
-    "Orta.vscode-jest"
+    "Orta.vscode-jest",
+    "formulahendry.auto-rename-tag",
+    "jgclark.vscode-todo-highlight",
+    "wmaurer.change-case"
   ]
 }

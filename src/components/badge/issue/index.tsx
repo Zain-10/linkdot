@@ -1,10 +1,13 @@
+import { toBlob } from "html-to-image";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/button";
+import { apiRoutes } from "@/config/apiRoutes";
+import { axiosClient } from "@/helpers/axios-client";
 import type { IssueBadgePayload } from "@/helpers/service/badge";
 import { badgeService, UploadMode } from "@/helpers/service/badge";
-import { getIPFSGatewayURL } from "@/helpers/utils/ipfs";
+import { getIPFSGatewayURL, uploadMetadataToIPFS } from "@/helpers/utils/ipfs";
 import CheckIcon from "@/public/assets/svg/check.svg";
 import FileIcon from "@/public/assets/svg/file-text.svg";
 
@@ -16,6 +19,7 @@ const IssueBadge = ({ _id }: Pick<NTTBadge, "_id">) => {
   const [emails, setEmails] = useState<string[]>([]);
   const formRef = useRef<HTMLFormElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const badgeRef = useRef<HTMLDivElement | null>(null);
 
   const getBadge = async (_id: string) => {
     const badge = await badgeService.getBadgeDetail(_id);
@@ -23,31 +27,57 @@ const IssueBadge = ({ _id }: Pick<NTTBadge, "_id">) => {
     setBadge(badge?.data);
   };
 
+  /**
+   * @description Takes a snap shot of the html node from the node, and converts it to a png image.
+   * NOTE: The image generated has the same dimensions as it has in the DOM.
+   */
+  const createSnapShot = async () => {
+    if (badgeRef.current === null) return null;
+    return toBlob(badgeRef.current, { cacheBust: true });
+  };
+
+  const saveMintableBadgeToIpfs = async () => {
+    const imageBlob = await createSnapShot();
+
+    const ipfsHash = await uploadMetadataToIPFS(
+      // @ts-ignore
+      badge?.name,
+      badge?.description,
+      badge?.badge_type,
+      imageBlob
+    );
+    return ipfsHash;
+  };
+
+  const updateBadge = async () => {
+    const metadata = await saveMintableBadgeToIpfs();
+    const mint_image = getIPFSGatewayURL(metadata.data.image.pathname);
+    console.log(mint_image);
+
+    const response = await axiosClient.patch(
+      `${apiRoutes.badgeDetail}/${_id}`,
+      { mint_image }
+    );
+    console.log(response);
+  };
+
   useEffect(() => {
     getBadge(_id);
   }, []);
+
+  useEffect(() => {
+    // @ts-ignore
+    if (badge && !badge.mint_image) {
+      updateBadge();
+    }
+  }, [badge]);
+
   const handleOnChange = (e: React.FormEvent<HTMLTextAreaElement>) => {
     const emails = e.currentTarget.value.split(",");
     setEmails(emails);
   };
 
   const openFileExplorer = () => inputRef.current?.click();
-
-  // const csvFileToArray = (string: string) => {
-  //   const csvHeader = string.slice(0, string.indexOf("\n")).split(",");
-  //   const csvRows = string.slice(string.indexOf("\n") + 1).split("\n");
-
-  //   const array = csvRows.map((i) => {
-  //     const values = i.split(",");
-  //     const obj = csvHeader.reduce((object, header, index) => {
-  //       object[header] = values[index];
-  //       return object;
-  //     }, {});
-  //     return obj;
-  //   });
-
-  //   setArray(array);
-  // };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -67,14 +97,16 @@ const IssueBadge = ({ _id }: Pick<NTTBadge, "_id">) => {
         <div className="grid w-full grid-cols-2 gap-16">
           <BadgeCard>
             <div className="p-4 pb-6 md:px-16">
-              <Badge
-                _id={badge?._id}
-                name={badge?.name}
-                type={badge?.badge_type}
-                createdDate={badge?.created_at}
-                description={badge?.description}
-                image={getIPFSGatewayURL(badge?.ipfs_data.ipfs_nft)}
-              />
+              <div ref={badgeRef} className="rounded-2xl">
+                <Badge
+                  _id={badge?._id}
+                  name={badge?.name}
+                  type={badge?.badge_type}
+                  createdDate={badge?.created_at}
+                  description={badge?.description}
+                  image={getIPFSGatewayURL(badge?.ipfs_data.ipfs_nft)}
+                />
+              </div>
             </div>
           </BadgeCard>
           {/* Upload */}

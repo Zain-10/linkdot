@@ -15,7 +15,7 @@ const Main = ({ children }: React.PropsWithChildren<{}>) => {
             <div className="md:w-1/6 lg:w-1/6 ">
               <SideMenu />
             </div>
-            <div className="h-screen w-full  flex-1 pl-8">{children}</div>
+            <div className="h-screen w-full flex-1 pl-8">{children}</div>
           </div>
         </div>
       </WithUserBase>
