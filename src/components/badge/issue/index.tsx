@@ -1,5 +1,4 @@
 import { toBlob } from "html-to-image";
-import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/button";
@@ -8,8 +7,6 @@ import { axiosClient } from "@/helpers/axios-client";
 import type { IssueBadgePayload } from "@/helpers/service/badge";
 import { badgeService, UploadMode } from "@/helpers/service/badge";
 import { getIPFSGatewayURL, uploadMetadataToIPFS } from "@/helpers/utils/ipfs";
-import CheckIcon from "@/public/assets/svg/check.svg";
-import FileIcon from "@/public/assets/svg/file-text.svg";
 
 import { BadgeCard } from "../Card";
 import { Badge } from "../NTTBadge";
@@ -52,7 +49,6 @@ const IssueBadge = ({ _id }: Pick<NTTBadge, "_id">) => {
   const updateBadge = async () => {
     const metadata = await saveMintableBadgeToIpfs();
     const mint_image = getIPFSGatewayURL(metadata.data.image.pathname);
-    console.log(mint_image);
 
     const response = await axiosClient.patch(
       `${apiRoutes.badgeDetail}/${_id}`,
@@ -77,7 +73,7 @@ const IssueBadge = ({ _id }: Pick<NTTBadge, "_id">) => {
     setEmails(emails);
   };
 
-  const openFileExplorer = () => inputRef.current?.click();
+  // const openFileExplorer = () => inputRef.current?.click();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -88,7 +84,10 @@ const IssueBadge = ({ _id }: Pick<NTTBadge, "_id">) => {
         badge_id: badge?._id,
       };
       const response = await badgeService.issueBadge(payload);
-      console.log(response);
+      // @ts-ignore
+      if (response.status === 200) {
+        alert("Badge Issued Successfully");
+      }
     }
   };
   return (
@@ -111,7 +110,7 @@ const IssueBadge = ({ _id }: Pick<NTTBadge, "_id">) => {
           </BadgeCard>
           {/* Upload */}
           <div className="flex w-full flex-col justify-between">
-            <div className="mb-4 flex w-1/2 items-center justify-between">
+            {/* <div className="mb-4 flex w-1/2 items-center justify-between">
               <button
                 onClick={openFileExplorer}
                 className="flex justify-between border py-2 px-4"
@@ -120,7 +119,7 @@ const IssueBadge = ({ _id }: Pick<NTTBadge, "_id">) => {
                 <Image src={FileIcon} />
               </button>
               <span>or</span>
-            </div>
+            </div> */}
             {/* Form */}
             <form
               onSubmit={handleSubmit}
@@ -141,11 +140,11 @@ const IssueBadge = ({ _id }: Pick<NTTBadge, "_id">) => {
               </p>
               {/* Help Text */}
               {/* Import Message */}
-              <div className="h-16 w-full bg-[#424345] py-3 text-center">
-                <p className="text-sm text-green-500">
+              <div className="h-16 w-full py-3 text-center">
+                {/* <p className="text-sm text-green-500">
                   Done <Image src={CheckIcon} />
                 </p>
-                <p className="text-sm">Imported 6 Mail Ids.</p>
+                <p className="text-sm">Imported 6 Mail Ids.</p> */}
               </div>
               {/* Import Message */}
 
