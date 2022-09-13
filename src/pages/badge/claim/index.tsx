@@ -1,18 +1,17 @@
 import { useAddress } from "@thirdweb-dev/react";
 import type { GetServerSideProps, NextPage } from "next";
+import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { Connect } from "@/components/connect";
 import { apiRoutes } from "@/config/apiRoutes";
 import { LocalRoutes } from "@/config/localRoutes";
-import { Badges } from "@/fixtures/badges";
 import { axiosClient } from "@/helpers/axios-client";
-import { getIPFSGatewayURL } from "@/helpers/utils/ipfs";
 import { Base } from "@/layouts/Base";
+import BagdeImage from "@/public/assets/images/badge.png";
 
 import { BadgeCard } from "../../../components/badge/Card";
-import { Badge } from "../../../components/badge/NTTBadge";
 
 type PageProps = {
   email_data: string;
@@ -20,7 +19,6 @@ type PageProps = {
 };
 
 const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
-  const [badge, setBadge] = useState<NTTBadge>();
   const address = useAddress();
   const router = useRouter();
 
@@ -42,9 +40,6 @@ const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
     }
   }, [address]);
 
-  useEffect(() => {
-    setBadge(Badges[0]);
-  }, []);
   return (
     <Base>
       <div className="m-auto flex h-full w-full">
@@ -54,16 +49,8 @@ const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
             Congratulations!
           </p>
           <BadgeCard>
-            <div className="p-6">
-              {badge && (
-                <Badge
-                  type={badge.badge_type}
-                  name={badge.name}
-                  createdDate={badge.created_at}
-                  description={badge.description}
-                  image={getIPFSGatewayURL(badge.ipfs_data.ipfs_nft)}
-                />
-              )}
+            <div className="p-8">
+              <Image className="blur-sm" src={BagdeImage} />
             </div>
           </BadgeCard>
         </div>
