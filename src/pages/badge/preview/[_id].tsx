@@ -8,8 +8,6 @@ import { WithUserBase } from "@/layouts/WithUserBase";
 
 type PageProps = Pick<NTTBadge, "_id">;
 const Preview: NextPage<PageProps> = ({ _id }) => {
-  console.log("id:", _id);
-
   return (
     <Base>
       <WithUserBase>
@@ -34,8 +32,6 @@ const Preview: NextPage<PageProps> = ({ _id }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  console.log(context.query);
-
   const {
     query: { _id },
   } = context;
