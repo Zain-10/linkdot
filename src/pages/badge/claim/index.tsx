@@ -1,10 +1,12 @@
 import { useAddress } from "@thirdweb-dev/react";
 import type { GetServerSideProps, NextPage } from "next";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 import { Connect } from "@/components/connect";
 import { apiRoutes } from "@/config/apiRoutes";
+import { LocalRoutes } from "@/config/localRoutes";
 import { axiosClient } from "@/helpers/axios-client";
 import { Base } from "@/layouts/Base";
 import BagdeImage from "@/public/assets/images/badge.png";
@@ -18,6 +20,7 @@ type PageProps = {
 
 const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
   const address = useAddress();
+  const router = useRouter();
 
   const claimBadge = async () => {
     const payload = {
@@ -26,7 +29,8 @@ const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
     };
     const response = await axiosClient.post(apiRoutes.claimBadge, payload);
     if (response.status === 200) {
-      alert("Badge Claimed Successfully");
+      alert("Badge claimed successfully");
+      router.push(LocalRoutes.dashboard);
     }
   };
 
@@ -51,13 +55,16 @@ const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
           </BadgeCard>
         </div>
         <div className="w-full md:w-2/6"></div>
-        <div className="flex w-full flex-col justify-between md:w-2/6">
-          <p className="mb-10 text-center text-sm">
-            {`Please connect the wallet
-            to claim.`}
-          </p>
-          <Connect />
-        </div>
+        {!address && (
+          <div className="flex w-full flex-col justify-between md:w-2/6">
+            <p className="mb-10 text-center text-sm">
+              This Badge is issued to sample@email.com. Please connect the
+              wallet to claim.
+            </p>
+            <Connect />
+          </div>
+        )}
+
         <div className="md:w-1/6"></div>
       </div>
     </Base>
