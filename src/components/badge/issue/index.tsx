@@ -83,9 +83,11 @@ const IssueBadge = ({ _id }: Pick<NTTBadge, "_id">) => {
         uploadMode: UploadMode.EMAIL,
         badge_id: badge?._id,
       };
-      const response = await badgeService.issueBadge(payload);
+      const response = await axiosClient.post(apiRoutes.issueBadge, payload);
+
       // @ts-ignore
       if (response.status === 200) {
+        setEmails([]);
         alert("Badge Issued Successfully");
       }
     }
