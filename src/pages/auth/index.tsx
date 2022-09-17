@@ -9,7 +9,9 @@ import { apiRoutes } from "@/config/apiRoutes";
 import { LocalRoutes } from "@/config/localRoutes";
 import { Action } from "@/constants";
 import { useGlobalDispatch, useUserState } from "@/context/global.context";
-import { authRedirectPage } from "@/helpers/utils/getAuthRedirectPage";
+import { userService } from "@/helpers/service/users";
+import { fallbackToAuthPath } from "@/helpers/utils/getAuthRedirectPage";
+import { setToken, Token } from "@/helpers/utils/setTokens";
 import { Base } from "@/layouts/Base";
 import type { Address } from "@/types";
 
@@ -19,68 +21,85 @@ const AuthConnect: NextPage = () => {
   const dispatch = useGlobalDispatch();
   const router = useRouter();
 
-  async function getOrCreateUser(wallet_id: string) {
-    const response = await axios.post(apiRoutes.connectWallet, {
-      wallet_id,
-      wallet_name: "Metamask",
-      // TODO: Make the wallet_name provider value generic.
-      // Thirdweb saves the wallet provider in the local storage in key `tw:provider:connectors`
-    });
+  const redirect = (user: User) => {
+    const redirectPath = fallbackToAuthPath(user, LocalRoutes.dashboard);
 
-    /**
-     * Check if user exists.
-     * FIXME: Fix the backend API to send user data and JWt tokens on user creation.
-     * Backend API sends wrong response format.
-     * On the First attempt, if the user get created in the database,
-     * Server don't returns user data.
-     *
-     * On the second attempt(If the user exists) server returns user data `if_user`,
-     * and JWT tokens `access_token` and `refresh_token`.
-     */
-    const response_user: User = response.data.data.if_user; // FIXME: Extra nested data object
-    if (response_user) dispatch({ type: Action.SetUser, payload: user });
-
-    // if the user doesn't exist in the database, probably there is no tokens available in the localStorage.
-    if (!response_user) {
-      // FIXME: get tokens should be post request.
-      await axios
-        .get(`${apiRoutes.getToken}?wallet_id=${address}`)
-        .then(async (res) => {
-          // FIXME: ⛏️ response.data have a extra nested data object
-          const { access_token, refresh_token, if_user } = res.data.data; // 🥲
-
-          await localStorage.setItem("refresh_token", refresh_token);
-          await localStorage.setItem("access_token", access_token);
-          // Updating Global context with user obect.
-          dispatch({ type: Action.SetUser, payload: if_user });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    if (redirectPath) {
+      console.log("Redirecting to:", redirectPath);
+      router.push(redirectPath);
     }
-  }
+  };
 
+  const fetchTokens = async (address: Address) => {
+    await axios
+      .get(`${apiRoutes.getToken}?wallet_id=${address}`)
+      .then((response) => {
+        const { access_token, refresh_token } = response.data.data;
+        if (access_token && refresh_token) {
+          setToken(Token.ACCESS_TOKEN, access_token);
+          setToken(Token.REFRESH_TOKEN, refresh_token);
+          router.push(LocalRoutes.auth.selectCategory);
+        }
+      });
+  };
+  const createNewUser = async (wallet_id: string) => {
+    console.log("Creating user");
+    await axios
+      .post(apiRoutes.connectWallet, {
+        wallet_id,
+        wallet_name: "Metamask",
+      })
+      .then((response) => {
+        if (response.status) {
+          const { wallet_id, message } = response.data.data;
+          if (wallet_id && message === "user registered with wallet") {
+            console.log(
+              `User created succesfully with wallet_id: ${wallet_id}`
+            );
+            fetchTokens(wallet_id);
+          } else {
+            console.log(`User already exists with wallet_id: ${wallet_id}`);
+            const { access_token, refresh_token } = response.data.data; // 🥲
+            if (access_token && refresh_token) {
+              console.log("Setting tokens");
+              setToken(Token.ACCESS_TOKEN, access_token);
+              setToken(Token.REFRESH_TOKEN, refresh_token);
+            }
+            router.push(LocalRoutes.auth.selectCategory);
+          }
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const fetchUser = async () => {
+    console.log("Fetching user");
+
+    const user = await userService.getUserData();
+    if (user) {
+      dispatch({ type: Action.SetUser, payload: user });
+      // @ts-ignore
+      redirect(user);
+    } else {
+      console.log("user not found");
+      if (address) createNewUser(address);
+    }
+  };
   useEffect(() => {
-    console.log("Hook No:2");
-    // TODO: Need refactoring
-    if (address) {
-      const redirectPath = authRedirectPage(user);
+    if (address && user) {
+      const redirectPath = fallbackToAuthPath(user, LocalRoutes.dashboard);
+
       if (redirectPath) {
         router.push(redirectPath);
-      } else {
-        router.push(LocalRoutes.dashboard);
       }
     }
-  }, [user]);
-
-  useEffect(() => {
-    console.log("Hook No:1");
-    // TODO: Need refactoring
-
-    if (address && user === null) getOrCreateUser(address);
-    else if (address && user) {
-      const redirectPath = authRedirectPage(user);
-      if (redirectPath) router.push(redirectPath);
+    /**
+     * Fecth user data from the backend.
+     */
+    if (address && !user) {
+      fetchUser();
     }
   }, [address]);
 
@@ -91,6 +110,31 @@ const AuthConnect: NextPage = () => {
       </div>
     </Base>
   );
+
+  /**
+   * Possible Cases:
+   * 1. Wallet is not connected and address is not available.
+   * 2. Wallet is connected and address is available, but user is not available.
+   * 3. Wallet is connected and address is available, and user is available.
+   *
+   * CASE 1:
+   * - Connect wallet button is visible.
+   * - On click of connect wallet button, address is available.
+   * - On address available, checks if user is available.
+   * - If user is not available, get user from the backend.
+   * - If user is available, redirect to the dashboard.
+   *
+   * CASE 2:
+   * - Connect wallet button is not visible.
+   * - On address available, checks if user is available.
+   * - If user is not available, get user from the backend.
+   * - If user is available, redirect to the dashboard.
+   *
+   * CASE 3:
+   * - Connect wallet button is not visible.
+   * - On address available, checks if user is available.
+   * - If user is available, redirect to the dashboard.
+   */
 };
 
 export default AuthConnect;
