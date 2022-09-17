@@ -91,7 +91,7 @@ const CreateBadgeForm = () => {
   };
   const removeAndRestartFileUpload = (): void => {
     // Clearing the curently selected file from the state.
-    setFormInput({ ...formInput, name: "", image: undefined });
+    setFormInput({ ...formInput, fileName: "", image: undefined });
     // Triggering a click on the hidden file input to open the file explorer.
     ref.current?.click();
   };
@@ -131,10 +131,6 @@ const CreateBadgeForm = () => {
         setLoading(false);
       }
     }
-
-    // TODO: Api call for creating new badge.
-    // TODO: Replace `1` with real badge id.
-    // router.push(`${LocalRoutes.badge.preview}/1`);
   };
 
   return (
@@ -146,7 +142,7 @@ const CreateBadgeForm = () => {
         </Link>
       </div>
       <form
-        className="flex h-full w-full flex-1 flex-col justify-between"
+        className="flex h-full w-full flex-1 flex-col justify-between "
         onSubmit={handleSubmit}
       >
         {/* Select Badge Type */}

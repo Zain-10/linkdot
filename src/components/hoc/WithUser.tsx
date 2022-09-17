@@ -5,7 +5,7 @@ import React, { memo, useEffect } from "react";
 import { Action } from "@/constants";
 import { useGlobalDispatch, useUserState } from "@/context/global.context";
 import { userService } from "@/helpers/service/users";
-import { authRedirectPage } from "@/helpers/utils/getAuthRedirectPage";
+import { fallbackToAuthPath } from "@/helpers/utils/getAuthRedirectPage";
 
 import { ConnectWallet } from "../connect/connectWallet";
 
@@ -40,6 +40,7 @@ export function withUser<T extends WithAddressProps>(
           dispatch({ type: Action.SetUser, payload: user });
       } catch (error) {
         // dispatch(NotLoading);
+        console.log(error);
       } finally {
         // dispatch(NotLoading);
       }
@@ -51,8 +52,11 @@ export function withUser<T extends WithAddressProps>(
 
     useEffect(() => {
       if (user) {
-        const path = authRedirectPage(user);
-        if (path) router.push(path);
+        const path = fallbackToAuthPath(user, router.pathname);
+        if (path && path !== router.pathname) {
+          console.log("Redirecting to:", path);
+          router.push(path);
+        }
       }
     }, [user]);
 

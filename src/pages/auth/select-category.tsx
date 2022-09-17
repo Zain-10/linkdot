@@ -4,8 +4,9 @@ import { useEffect } from "react";
 
 import { Category } from "@/components/auth/Category";
 import { VerticalDivider } from "@/components/auth/VeriticalDivider";
+import { LocalRoutes } from "@/config/localRoutes";
 import { useUserState } from "@/context/global.context";
-import { authRedirectPage } from "@/helpers/utils/getAuthRedirectPage";
+import { fallbackToAuthPath } from "@/helpers/utils/getAuthRedirectPage";
 import { AuthBase } from "@/layouts/AuthBase";
 import { Base } from "@/layouts/Base";
 
@@ -15,8 +16,10 @@ const SelectCategory: NextPage = () => {
 
   useEffect(() => {
     if (user?.category) {
-      const redirectPath = authRedirectPage(user);
-      if (redirectPath) router.push(redirectPath);
+      const redirectPath = fallbackToAuthPath(user, LocalRoutes.dashboard);
+      if (redirectPath) {
+        router.push(redirectPath);
+      }
     }
   }, [user]);
 

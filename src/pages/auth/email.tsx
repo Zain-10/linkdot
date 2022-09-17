@@ -5,8 +5,9 @@ import { useEffect } from "react";
 
 import { EmailForm } from "@/components/auth/form/Email";
 import { VerticalDivider } from "@/components/auth/VeriticalDivider";
+import { LocalRoutes } from "@/config/localRoutes";
 import { useUserState } from "@/context/global.context";
-import { authRedirectPage } from "@/helpers/utils/getAuthRedirectPage";
+import { fallbackToAuthPath } from "@/helpers/utils/getAuthRedirectPage";
 import { AuthBase } from "@/layouts/AuthBase";
 import { Base } from "@/layouts/Base";
 
@@ -18,7 +19,7 @@ const Email: NextPage = () => {
   useEffect(() => {
     // TODO: Need refactoring
     if (user?.email) {
-      const redirectPath = authRedirectPage(user);
+      const redirectPath = fallbackToAuthPath(user, LocalRoutes.dashboard);
       if (redirectPath) router.push(redirectPath);
     }
   }, [user]);
