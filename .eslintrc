@@ -17,7 +17,8 @@
         "singleQuote": false,
         "endOfLine": "auto"
       }
-    ]
+    ],
+    "jest/no-conditional-expect": ["warn"]
   },
   "overrides": [
     // Configuration for TypeScript files
