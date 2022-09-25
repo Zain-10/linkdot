@@ -1,15 +1,15 @@
 import "react-datepicker/dist/react-datepicker.css";
 
 import { ContractFactory, providers, utils } from "ethers";
+import {
+  abi as linkDotABI,
+  bytecode as linkDotByteCode,
+} from "linkdot_smartcontract/artifacts/contracts/LinkDotContract.sol/LinkDotContract.json";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useRef, useState } from "react";
 import DatePicker from "react-datepicker";
-import {
-  abi as linkDotABI,
-  bytecode as linkDotByteCode,
-} from "../../../../smartcontract/artifacts/contracts/LinkDotContract.sol/LinkDotContract.json";
 
 import { Button } from "@/components/button";
 import { apiRoutes } from "@/config/apiRoutes";
@@ -101,8 +101,36 @@ const CreateBadgeForm = () => {
     ref.current?.click();
   };
 
+  const deployeContract = async () => {
+    /*
+    interface Window {
+      ethereum?: providers.ExternalProvider;
+    }
+    */
+
+    const wallet = global.window.ethereum;
+
+    // @ts-ignore
+    const provider = new providers.Web3Provider(wallet);
+    await provider.send("eth_requestAccounts", []);
+    const signer = provider.getSigner();
+    // console.log("signer: ", signer);
+
+    const factory = new ContractFactory(linkDotABI, linkDotByteCode, signer);
+    const contract = await factory.deploy(1, {
+      value: utils.parseUnits("1", 1),
+    });
+    // console.log("contract: ", contract);
+    await contract.deployTransaction.wait();
+
+    console.log("contract deployment tx: ", contract.deployTransaction);
+    console.log("contract address: ", contract.address);
+    return contract.deployTransaction;
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    console.log("minting badge");
     const { name, badge_type, description, image } = formInput;
     if (image) {
       try {
@@ -114,6 +142,8 @@ const CreateBadgeForm = () => {
           description,
           image
         );
+
+        const txData = await deployeContract();
         if (metadata) {
           await axiosClient
             .post(apiRoutes.createBadge, {
@@ -122,6 +152,7 @@ const CreateBadgeForm = () => {
               description,
               ipfs: metadata,
               ipfs_img: metadata.data.image.pathname,
+              txData,
             })
             .then((res) => {
               const badgeId = res.data.data.badge_id;
@@ -136,26 +167,6 @@ const CreateBadgeForm = () => {
         setLoading(false);
       }
     }
-  };
-  const deployeContract = async () => {
-    console.log("deployeContract");
-
-    const provider = new providers.Web3Provider(window.ethereum);
-    await provider.send("eth_requestAccounts", []);
-    const signer = provider.getSigner();
-    console.log("signer: ", signer);
-    const accountAddress = await signer.getAddress();
-    console.log(accountAddress);
-
-    const factory = new ContractFactory(linkDotABI, linkDotByteCode, signer);
-    const contract = await factory.deploy(1, {
-      value: utils.parseUnits("1", 1),
-    });
-    // console.log("contract: ", contract);
-    await contract.deployTransaction.wait();
-
-    console.log("contract address: ", contract.address);
-    console.log("contract deploye transaction: ", contract.deployTransaction);
   };
 
   return (
@@ -275,7 +286,6 @@ const CreateBadgeForm = () => {
         </div>
         {/* Image Upload */}
         <div className="h-14" onClick={formRef.current?.submit}>
-          <button onClick={deployeContract}>depolye contract</button>
           <Button
             outerBoxShadowColor="#FFFFFF"
             innerBoxShadowColor="#FFFFFF"
