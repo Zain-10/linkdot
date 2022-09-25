@@ -1,10 +1,15 @@
 import "react-datepicker/dist/react-datepicker.css";
 
+import { ContractFactory, providers, utils } from "ethers";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useRef, useState } from "react";
 import DatePicker from "react-datepicker";
+import {
+  abi as linkDotABI,
+  bytecode as linkDotByteCode,
+} from "../../../../smartcontract/artifacts/contracts/LinkDotContract.sol/LinkDotContract.json";
 
 import { Button } from "@/components/button";
 import { apiRoutes } from "@/config/apiRoutes";
@@ -132,6 +137,26 @@ const CreateBadgeForm = () => {
       }
     }
   };
+  const deployeContract = async () => {
+    console.log("deployeContract");
+
+    const provider = new providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+    const signer = provider.getSigner();
+    console.log("signer: ", signer);
+    const accountAddress = await signer.getAddress();
+    console.log(accountAddress);
+
+    const factory = new ContractFactory(linkDotABI, linkDotByteCode, signer);
+    const contract = await factory.deploy(1, {
+      value: utils.parseUnits("1", 1),
+    });
+    // console.log("contract: ", contract);
+    await contract.deployTransaction.wait();
+
+    console.log("contract address: ", contract.address);
+    console.log("contract deploye transaction: ", contract.deployTransaction);
+  };
 
   return (
     <>
@@ -250,6 +275,7 @@ const CreateBadgeForm = () => {
         </div>
         {/* Image Upload */}
         <div className="h-14" onClick={formRef.current?.submit}>
+          <button onClick={deployeContract}>depolye contract</button>
           <Button
             outerBoxShadowColor="#FFFFFF"
             innerBoxShadowColor="#FFFFFF"
