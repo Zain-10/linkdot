@@ -31,4 +31,9 @@ contract LinkDotContract {
 
         owner.transfer(address(this).balance);
     }
+
+    function claim(uint256 someData) external returns (address) {
+        unlockTime = someData;
+        return msg.sender;
+    }
 }
