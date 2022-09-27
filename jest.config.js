@@ -12,6 +12,8 @@ const customJestConfig = {
 
     "^@/public/(.*)$": "<rootDir>/public/$1",
   },
+  resetMocks: false,
+  setupFiles: ["jest-localstorage-mock"],
   setupFilesAfterEnv: ["./jest.setup.js"],
   clearMocks: true,
   collectCoverage: true,
