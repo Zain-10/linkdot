@@ -8,7 +8,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
 
 import { Button } from "@/components/button";
@@ -63,6 +63,9 @@ const CreateBadgeForm = () => {
   const ref = useRef<HTMLInputElement | null>(null);
   const formRef = useRef<HTMLFormElement | null>(null);
   const router = useRouter();
+  useEffect(() => {
+    // console.log("useEffect: ", deployeContract());
+  }, []);
 
   const handleInputChange = async (
     event: React.FormEvent<HTMLInputElement | HTMLSelectElement>
@@ -102,12 +105,6 @@ const CreateBadgeForm = () => {
   };
 
   const deployeContract = async () => {
-    /*
-    interface Window {
-      ethereum?: providers.ExternalProvider;
-    }
-    */
-
     const wallet = global.window.ethereum;
 
     // @ts-ignore
@@ -117,6 +114,8 @@ const CreateBadgeForm = () => {
     // console.log("signer: ", signer);
 
     const factory = new ContractFactory(linkDotABI, linkDotByteCode, signer);
+    console.log("deploying contract...");
+
     const contract = await factory.deploy(1, {
       value: utils.parseUnits("1", 1),
     });

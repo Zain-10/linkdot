@@ -5,7 +5,7 @@ pragma solidity ^0.8.9;
 // import "hardhat/console.sol";
 
 contract LinkDotContract {
-    uint256 public unlockTime;
+    uint256 public unlockTime = 0;
     address payable public owner;
 
     event Withdrawal(uint256 amount, uint256 when);
@@ -17,6 +17,7 @@ contract LinkDotContract {
         // );
 
         unlockTime = _unlockTime;
+        unlockTime = 1;
         owner = payable(msg.sender);
     }
 
