@@ -107,6 +107,10 @@ const CreateBadgeForm = () => {
   const deployeContract = async () => {
     const wallet = global.window.ethereum;
 
+    interface TX extends Omit<providers.TransactionResponse, "data"> {
+      abi?: object;
+    }
+
     // @ts-ignore
     const provider = new providers.Web3Provider(wallet);
     await provider.send("eth_requestAccounts", []);
@@ -121,8 +125,14 @@ const CreateBadgeForm = () => {
     });
     // console.log("contract: ", contract);
     await contract.deployTransaction.wait();
+    const contractData: TX = contract.deployTransaction;
+    // @ts-ignore
+    delete contractData?.data;
+    contractData.abi = linkDotABI;
 
-    console.log("contract deployment tx: ", contract.deployTransaction);
+    console.log("contractData: ", contractData);
+
+    // console.log("contract deployment tx: ", contract.deployTransaction);
     console.log("contract address: ", contract.address);
     return contract.deployTransaction;
   };
