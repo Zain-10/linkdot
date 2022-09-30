@@ -1,5 +1,5 @@
 {
-  "name": "linkdot_smartcontract",
+  "name": "poac",
   "version": "1.0.0",
   "description": "",
   "main": "hardhat.config.ts",

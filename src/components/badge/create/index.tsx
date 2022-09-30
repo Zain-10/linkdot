@@ -1,13 +1,18 @@
 import "react-datepicker/dist/react-datepicker.css";
 
 import { ContractFactory, providers, utils } from "ethers";
-import {
-  abi as linkDotABI,
-  bytecode as linkDotByteCode,
-} from "linkdot_smartcontract/artifacts/contracts/LinkDotContract.sol/LinkDotContract.json";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+// import {
+//   abi,
+//   bytecode,
+// } from "poac/artifacts/contracts/LinkDotContract.sol/LinkDotContract.json";
+
+import {
+  abi,
+  bytecode,
+} from "@/../artifacts/contracts/LinkDotContract.sol/LinkDotContract.json";
 import React, { useEffect, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
 
@@ -64,7 +69,7 @@ const CreateBadgeForm = () => {
   const formRef = useRef<HTMLFormElement | null>(null);
   const router = useRouter();
   useEffect(() => {
-    // console.log("useEffect: ", deployeContract());
+    // console.log("useEffect: ", deployContract());
   }, []);
 
   const handleInputChange = async (
@@ -104,7 +109,7 @@ const CreateBadgeForm = () => {
     ref.current?.click();
   };
 
-  const deployeContract = async () => {
+  const deployContract = async () => {
     const wallet = global.window.ethereum;
 
     interface TX extends Omit<providers.TransactionResponse, "data"> {
@@ -117,7 +122,7 @@ const CreateBadgeForm = () => {
     const signer = provider.getSigner();
     // console.log("signer: ", signer);
 
-    const factory = new ContractFactory(linkDotABI, linkDotByteCode, signer);
+    const factory = new ContractFactory(abi, bytecode, signer);
     console.log("deploying contract...");
 
     const contract = await factory.deploy(1, {
@@ -128,9 +133,7 @@ const CreateBadgeForm = () => {
     const contractData: TX = contract.deployTransaction;
     // @ts-ignore
     delete contractData?.data;
-    contractData.abi = linkDotABI;
-
-    console.log("contractData: ", contractData);
+    contractData.abi = abi;
 
     // console.log("contract deployment tx: ", contract.deployTransaction);
     console.log("contract address: ", contract.address);
@@ -139,7 +142,7 @@ const CreateBadgeForm = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("minting badge");
+    // console.log("minting badge");
     const { name, badge_type, description, image } = formInput;
     if (image) {
       try {
@@ -152,7 +155,7 @@ const CreateBadgeForm = () => {
           image
         );
 
-        const txData = await deployeContract();
+        const txData = await deployContract();
         if (metadata) {
           await axiosClient
             .post(apiRoutes.createBadge, {

@@ -1,6 +1,6 @@
+import { abi } from "@/../artifacts/contracts/LinkDotContract.sol/LinkDotContract.json";
 import { useAddress } from "@thirdweb-dev/react";
 import { Contract, providers } from "ethers";
-import { abi as linkDotABI } from "linkdot_smartcontract/artifacts/contracts/LinkDotContract.sol/LinkDotContract.json";
 import type { GetServerSideProps, NextPage } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -45,7 +45,7 @@ const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
       payload
     );
     const contractAddress = contract_data_from_db.data.data.contract;
-    const badgeContract = new Contract(contractAddress, linkDotABI, signer);
+    const badgeContract = new Contract(contractAddress, abi, signer);
     // @ts-ignore
     // const dataFromChain = await badgeContract.callStatic.claim("1");
     // console.log("dataFromChain: ", dataFromChain);
