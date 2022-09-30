@@ -7,6 +7,10 @@ module.exports = withBundleAnalyzer({
   eslint: {
     dirs: ["."],
   },
+  // images: {
+  //   loader: "imgix",
+  //   path: ".",
+  // },
   poweredByHeader: false,
   trailingSlash: true,
   basePath: "",
