@@ -1,4 +1,3 @@
-import { abi } from "@/../artifacts/contracts/LinkDotContract.sol/LinkDotContract.json";
 import { useAddress } from "@thirdweb-dev/react";
 import { Contract, providers } from "ethers";
 import type { GetServerSideProps, NextPage } from "next";
@@ -6,6 +5,8 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
+import { abi } from "@/../artifacts/contracts/LinkDotContract.sol/LinkDotContract.json";
+import ModalClaim from "@/components/badge/claim/ModalClaim";
 import { Connect } from "@/components/connect";
 import { apiRoutes } from "@/config/apiRoutes";
 import { LocalRoutes } from "@/config/localRoutes";
@@ -14,7 +15,6 @@ import { Base } from "@/layouts/Base";
 import BagdeImage from "@/public/assets/images/badge.png";
 
 import { BadgeCard } from "../../../components/badge/Card";
-import ModalClaim from "./ModalClaim";
 
 type PageProps = {
   email_data: string;
@@ -22,7 +22,6 @@ type PageProps = {
 };
 
 const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
-  // const Claim: NextPage = () => {
   const address = useAddress();
   const router = useRouter();
 

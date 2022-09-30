@@ -41,11 +41,6 @@
       "@/public/*": ["./public/*"]
     }
   },
-  "exclude": [
-    "./out/**/*",
-    "./node_modules/**/*",
-    "**/*.cy.ts",
-    "smartcontract"
-  ],
+  "exclude": ["./out/**/*", "./node_modules/**/*", "**/*.cy.ts", "PoAC"],
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }
