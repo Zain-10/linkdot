@@ -61,5 +61,8 @@
       },
       "isWholeLine": false
     }
-  ]
+  ],
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

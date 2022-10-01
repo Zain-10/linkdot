@@ -1,0 +1,16 @@
+{
+  "name": "poac",
+  "version": "1.0.0",
+  "description": "",
+  "main": "hardhat.config.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.0",
+    "hardhat": "^2.11.2"
+  },
+  "keywords": [],
+  "author": "Noor Mohammed B",
+  "license": "ISC"
+}
