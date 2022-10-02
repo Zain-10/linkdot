@@ -19,6 +19,7 @@ const apiRoutes = {
   badgeDetail: `${v1}badge`, // TODO: use dynamic variables
   // claim routes
   claimBadge: `${v1}claim/badge`,
+  claimBadgeContractData: `${v1}claim/badge_details`,
 };
 
 export { apiRoutes };
