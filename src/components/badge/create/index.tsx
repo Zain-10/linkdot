@@ -1,21 +1,20 @@
 import "react-datepicker/dist/react-datepicker.css";
 
-import { ContractFactory, providers, utils } from "ethers";
+import { ContractFactory, providers } from "ethers";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import React, { useEffect, useRef, useState } from "react";
+import DatePicker from "react-datepicker";
+
 // import {
 //   abi,
 //   bytecode,
 // } from "poac/artifacts/contracts/LinkDotContract.sol/LinkDotContract.json";
-
 import {
   abi,
   bytecode,
 } from "@/../artifacts/contracts/LinkDotContract.sol/LinkDotContract.json";
-import React, { useEffect, useRef, useState } from "react";
-import DatePicker from "react-datepicker";
-
 import { Button } from "@/components/button";
 import { apiRoutes } from "@/config/apiRoutes";
 import { LocalRoutes } from "@/config/localRoutes";
@@ -109,7 +108,7 @@ const CreateBadgeForm = () => {
     ref.current?.click();
   };
 
-  const deployContract = async () => {
+  const deployContract = async (badgeMetaDataIPFS: string) => {
     const wallet = global.window.ethereum;
 
     interface TX extends Omit<providers.TransactionResponse, "data"> {
@@ -125,9 +124,11 @@ const CreateBadgeForm = () => {
     const factory = new ContractFactory(abi, bytecode, signer);
     console.log("deploying contract...");
 
-    const contract = await factory.deploy(1, {
-      value: utils.parseUnits("1", 1),
-    });
+    const contract = await factory.deploy(
+      badgeMetaDataIPFS,
+      "LinkDotBadge",
+      "LDB"
+    );
     // console.log("contract: ", contract);
     await contract.deployTransaction.wait();
     const contractData: TX = contract.deployTransaction;
@@ -155,8 +156,9 @@ const CreateBadgeForm = () => {
           image
         );
 
-        const txData = await deployContract();
+        console.log("metadata: ", metadata);
         if (metadata) {
+          const txData = await deployContract(metadata.url);
           await axiosClient
             .post(apiRoutes.createBadge, {
               name,

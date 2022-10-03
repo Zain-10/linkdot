@@ -49,7 +49,7 @@ const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
     // const dataFromChain = await badgeContract.callStatic.claim("1");
     // console.log("dataFromChain: ", dataFromChain);
     // console.log("------------");
-    const transaction_state_change = await badgeContract.claim("1");
+    const transaction_state_change = await badgeContract.claim();
     // console.log("transaction_state_change: ", transaction_state_change);
     // console.log("------------");
     const tx = await transaction_state_change.wait();

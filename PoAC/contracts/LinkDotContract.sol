@@ -1,40 +1,104 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.17;
+
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 // Uncomment this line to use console.log
-// import "hardhat/console.sol";
+import "hardhat/console.sol";
 
-contract LinkDotContract {
-    uint256 public unlockTime = 0;
-    address payable public owner;
+contract LinkDotContract is ERC721, Ownable {
+    using SafeMath for uint256;
+    using Counters for Counters.Counter;
 
-    event Withdrawal(uint256 amount, uint256 when);
+    Counters.Counter private _tokenIds;
 
-    constructor(uint256 _unlockTime) payable {
-        // require(
-        //     block.timestamp < _unlockTime,
-        //     "Unlock time should be in the future"
-        // );
+    mapping(uint256 => address) badgeIdToOwner;
+    mapping(address => uint256) ownerToBadgeId;
 
-        unlockTime = _unlockTime;
-        unlockTime = 1;
-        owner = payable(msg.sender);
+    string public baseTokenURI;
+
+    event Attest(address indexed to, uint256 indexed tokenId);
+    event Revoke(address indexed to, uint256 indexed tokenId);
+
+    constructor(
+        string memory baseURI,
+        string memory badgeName,
+        string memory badgeSymbol
+    ) ERC721(badgeName, badgeSymbol) {
+        setBaseURI(baseURI);
     }
 
-    function withdraw() public {
-        // Uncomment this line, and the import of "hardhat/console.sol", to print a log in your terminal
-        // console.log("Unlock time is %o and block timestamp is %o", unlockTime, block.timestamp);
+    function claim() external returns (uint256) {
+        // save the owner of the badge
+        badgeIdToOwner[_tokenIds.current()] = msg.sender;
+        _safeMint(msg.sender, _tokenIds.current());
+        _tokenIds.increment();
 
-        require(block.timestamp >= unlockTime, "You can't withdraw yet");
-        require(msg.sender == owner, "You aren't the owner");
-
-        emit Withdrawal(address(this).balance, block.timestamp);
-
-        owner.transfer(address(this).balance);
+        return ownerToBadgeId[msg.sender];
     }
 
-    function claim(uint256 someData) external returns (address) {
-        unlockTime = someData;
-        return msg.sender;
+    function burn(uint256 tokenId) external {
+        require(
+            ownerOf(tokenId) == msg.sender,
+            "Only owner of the token can burn it"
+        );
+        _burn(tokenId);
+    }
+
+    // function revoke(uint256 tokenId) external onlyOwner {
+    //     _burn(tokenId);
+    // }
+
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256
+    ) internal pure override {
+        require(
+            from == address(0) || to == address(0),
+            "Not allowed to transfer token"
+        );
+    }
+
+    function _afterTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal override {
+        if (from == address(0)) {
+            emit Attest(to, tokenId);
+        } else if (to == address(0)) {
+            emit Revoke(to, tokenId);
+        }
+    }
+
+    function _burn(uint256 tokenId) internal override {
+        super._burn(tokenId);
+    }
+
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override
+        returns (string memory)
+    {
+        return _tokenURI(tokenId);
+    }
+
+    function _tokenURI(uint256 tokenId) internal view returns (string memory) {
+        console.log("tokenId", tokenId);
+        return baseTokenURI;
+    }
+
+    function _baseURI() internal view virtual override returns (string memory) {
+        return baseTokenURI;
+    }
+
+    function setBaseURI(string memory _baseTokenURI) public onlyOwner {
+        baseTokenURI = _baseTokenURI;
     }
 }
