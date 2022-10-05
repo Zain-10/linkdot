@@ -33,6 +33,7 @@
     "nft.storage": "^7.0.0",
     "poac": "file:./PoAC",
     "react": "^18.2.0",
+    "react-custom-scrollbars-2": "^4.5.0",
     "react-datepicker": "^4.8.0",
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.4.0"

@@ -1,5 +1,6 @@
 import type { NextPage } from "next";
 import { useEffect, useState } from "react";
+import { Scrollbars } from "react-custom-scrollbars-2";
 
 import { BadgeList } from "@/components/badge/BadgeList";
 import { NoBadge } from "@/components/badge/NoBadge";
@@ -44,8 +45,10 @@ const Dashboard: NextPage = () => {
           onChangeCallBack={onChange}
           activeTab={activeTab}
         >
-          <div className="h-full pt-7">
-            <BadgeList badgeList={badges} />
+          <div className="h-[calc(100vh-150px)] overflow-auto  pt-7">
+            <Scrollbars>
+              <BadgeList badgeList={badges} />
+            </Scrollbars>
           </div>
         </Tab>
       ) : (
