@@ -23,6 +23,7 @@ contract LinkDotContract is ERC721, Ownable {
 
     event Attest(address indexed to, uint256 indexed tokenId);
     event Revoke(address indexed to, uint256 indexed tokenId);
+    event claimEvent(address indexed to, uint256 indexed tokenId);
 
     constructor(
         string memory baseURI,
@@ -33,12 +34,16 @@ contract LinkDotContract is ERC721, Ownable {
     }
 
     function claim() external returns (uint256) {
-        // save the owner of the badge
-        badgeIdToOwner[_tokenIds.current()] = msg.sender;
-        _safeMint(msg.sender, _tokenIds.current());
         _tokenIds.increment();
 
-        return ownerToBadgeId[msg.sender];
+        require(ownerToBadgeId[msg.sender] == 0, "You already have a badge");
+        badgeIdToOwner[_tokenIds.current()] = msg.sender;
+        _safeMint(msg.sender, _tokenIds.current());
+        ownerToBadgeId[msg.sender] = _tokenIds.current();
+
+        emit claimEvent(msg.sender, _tokenIds.current());
+
+        return _tokenIds.current();
     }
 
     function burn(uint256 tokenId) external {

@@ -19,6 +19,7 @@ const Dashboard: NextPage = () => {
 
   const getBadgesByType = async (badgeType: BadgeType) => {
     const response = await badgeService.getBadges(badgeType);
+    // console.log("getBadges response: ", response);
     if (response) {
       const newBadges =
         activeTab === BadgeType.ISSUED
