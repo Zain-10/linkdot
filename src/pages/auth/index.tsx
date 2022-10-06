@@ -90,7 +90,6 @@ const AuthConnect: NextPage = () => {
   };
   useEffect(() => {
     if (address && user) {
-      setToken(Token.WALLET_ID, address);
       const redirectPath = fallbackToAuthPath(user, LocalRoutes.dashboard);
 
       if (redirectPath) {
@@ -101,6 +100,7 @@ const AuthConnect: NextPage = () => {
      * Fecth user data from the backend.
      */
     if (address && !user) {
+      setToken(Token.WALLET_ID, address);
       fetchUser();
     }
   }, [address]);
