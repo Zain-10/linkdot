@@ -1,5 +1,6 @@
 import { toBlob } from "html-to-image";
 import React, { useEffect, useRef, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 
 import { Button } from "@/components/button";
 import { apiRoutes } from "@/config/apiRoutes";
@@ -88,7 +89,11 @@ const IssueBadge = ({ _id }: Pick<NTTBadge, "_id">) => {
       // @ts-ignore
       if (response.status === 200) {
         setEmails([]);
-        alert("Badge Issued Successfully");
+        toast.success("Badge Issued Successfully");
+        // alert("Badge Issued Successfully");
+        // eslint-disable-next-line no-lone-blocks
+      } else {
+        toast.error("Badge Issue Failed!");
       }
     }
   };
@@ -155,6 +160,7 @@ const IssueBadge = ({ _id }: Pick<NTTBadge, "_id">) => {
                 <Button backgroundColor="#3DAF50" outerBoxShadowColor="#FFFFFF">
                   <span>Share Badge</span>
                 </Button>
+                <Toaster />
               </div>
               {/* Submit Button */}
             </form>

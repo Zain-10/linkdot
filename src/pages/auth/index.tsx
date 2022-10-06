@@ -13,6 +13,7 @@ import { userService } from "@/helpers/service/users";
 import { fallbackToAuthPath } from "@/helpers/utils/getAuthRedirectPage";
 import { setToken, Token } from "@/helpers/utils/setTokens";
 import { Base } from "@/layouts/Base";
+import { Footer } from "@/layouts/Footer";
 import type { Address } from "@/types";
 
 const AuthConnect: NextPage = () => {
@@ -107,6 +108,9 @@ const AuthConnect: NextPage = () => {
     <Base>
       <div className="flex h-full flex-1 items-center justify-center">
         <ConnectWallet />
+      </div>
+      <div className="text-center">
+        <Footer textAlign="center" />
       </div>
     </Base>
   );
