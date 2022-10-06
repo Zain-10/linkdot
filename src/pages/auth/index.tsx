@@ -90,6 +90,7 @@ const AuthConnect: NextPage = () => {
   };
   useEffect(() => {
     if (address && user) {
+      setToken(Token.WALLET_ID, address);
       const redirectPath = fallbackToAuthPath(user, LocalRoutes.dashboard);
 
       if (redirectPath) {
