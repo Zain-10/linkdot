@@ -3,5 +3,5 @@
 
 # Disable concurent to run `check-types` after ESLint in lint-staged
 npx lint-staged --concurrent false
-npm run test
+npm run test && echo SUCCESS
 npm run build
