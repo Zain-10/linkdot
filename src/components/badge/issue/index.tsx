@@ -93,7 +93,7 @@ const IssueBadge = ({ _id }: Pick<NTTBadge, "_id">) => {
         // alert("Badge Issued Successfully");
         // eslint-disable-next-line no-lone-blocks
       } else {
-        toast.error("This is an error!");
+        toast.error("Badge Issued Failed!");
       }
     }
   };
