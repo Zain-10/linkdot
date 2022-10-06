@@ -1,7 +1,7 @@
 enum Token {
   ACCESS_TOKEN = "access_token",
   REFRESH_TOKEN = "refresh_token",
-  WALLET_ID = "wallet_id",
+  WALLET_ID = "walletId",
 }
 
 const setToken = async (token: Token, value: string) =>
