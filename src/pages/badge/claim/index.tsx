@@ -61,6 +61,7 @@ const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
 
   useEffect(() => {
     if (address) {
+      console.log("wallet connected");
     }
     console.log("address: ", address);
   }, [address]);
