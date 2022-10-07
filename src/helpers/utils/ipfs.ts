@@ -16,7 +16,6 @@ import { NFTStorage } from "nft.storage";
 
 const getIPFSGatewayURL = (ipfsURL: string) => {
   const urlArray = ipfsURL.split("/");
-  // console.log("ipfsURL.split  urlArray: ", urlArray);
   const ipfsGateWayURL = `https://${urlArray[2]}.ipfs.dweb.link/${urlArray[3]}`;
   return ipfsGateWayURL;
 };

@@ -7,10 +7,6 @@ import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
 
-// import {
-//   abi,
-//   bytecode,
-// } from "poac/artifacts/contracts/LinkDotContract.sol/LinkDotContract.json";
 import {
   abi,
   bytecode,
@@ -67,9 +63,7 @@ const CreateBadgeForm = () => {
   const ref = useRef<HTMLInputElement | null>(null);
   const formRef = useRef<HTMLFormElement | null>(null);
   const router = useRouter();
-  useEffect(() => {
-    // console.log("useEffect: ", deployContract());
-  }, []);
+  useEffect(() => {}, []);
 
   const handleInputChange = async (
     event: React.FormEvent<HTMLInputElement | HTMLSelectElement>
@@ -119,7 +113,6 @@ const CreateBadgeForm = () => {
     const provider = new providers.Web3Provider(wallet);
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner();
-    // console.log("signer: ", signer);
 
     const factory = new ContractFactory(abi, bytecode, signer);
     console.log("deploying contract...");
@@ -129,21 +122,18 @@ const CreateBadgeForm = () => {
       "LinkDotBadge",
       "LDB"
     );
-    // console.log("contract: ", contract);
     await contract.deployTransaction.wait();
     const contractData: TX = contract.deployTransaction;
     // @ts-ignore
     delete contractData?.data;
     contractData.abi = abi;
 
-    // console.log("contract deployment tx: ", contract.deployTransaction);
     console.log("contract address: ", contract.address);
     return contract.deployTransaction;
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // console.log("minting badge");
     const { name, badge_type, description, image } = formInput;
     if (image) {
       try {
