@@ -3,7 +3,6 @@ import { Contract, providers } from "ethers";
 import type { GetServerSideProps, NextPage } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
 
 import { abi } from "@/../artifacts/contracts/LinkDotContract.sol/LinkDotContract.json";
 import ModalClaim from "@/components/badge/claim/ModalClaim";
@@ -45,8 +44,8 @@ const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
     );
     const contractAddress = contractDataFromDb.data.data.contract;
     const badgeContract = new Contract(contractAddress, abi, signer);
-    const transaction_state_change = await badgeContract.claim();
-    const tx = await transaction_state_change.wait();
+    const transactionStateShange = await badgeContract.claim();
+    const tx = await transactionStateShange.wait();
 
     console.log("tx: ", tx);
 
@@ -58,13 +57,6 @@ const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
       router.push(LocalRoutes.dashboard);
     }
   };
-
-  useEffect(() => {
-    if (address) {
-      console.log("wallet connected");
-    }
-    console.log("address: ", address);
-  }, [address]);
 
   return (
     <>
