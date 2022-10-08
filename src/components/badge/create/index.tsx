@@ -11,6 +11,7 @@ import {
   abi,
   bytecode,
 } from "@/../artifacts/contracts/LinkDotContract.sol/LinkDotContract.json";
+import SnapShortPreview from "@/components/badge/preview/SnapShortPreview";
 import { Button } from "@/components/button";
 import { apiRoutes } from "@/config/apiRoutes";
 import { LocalRoutes } from "@/config/localRoutes";
@@ -30,13 +31,14 @@ import XIcon from "@/public/assets/svg/x.svg";
  * 5. Implement form validation error.
  */
 
-interface FormInput
+export interface FormInput
   extends Pick<
     NTTBadge,
     "badge_type" | "description" | "name" | "issued_date"
   > {
   image: File | undefined;
   fileName: string | undefined; // Saves the image file name
+  imageURL: string;
 }
 
 const initialInputState = {
@@ -46,6 +48,7 @@ const initialInputState = {
   description: "",
   issued_date: "",
   fileName: undefined,
+  imageURL: "",
 };
 
 const CreateBadgeForm = () => {
@@ -76,10 +79,15 @@ const CreateBadgeForm = () => {
     event: React.FormEvent<HTMLInputElement>
   ) => {
     // Checking File object is not empty
-    if (event.currentTarget.files?.length) {
+    if (event.currentTarget.files?.length && event.currentTarget.files[0]) {
       const file = event.currentTarget.files[0];
-
-      setFormInput({ ...formInput, image: file, fileName: file?.name });
+      const imageURL = URL.createObjectURL(file);
+      setFormInput({
+        ...formInput,
+        image: file,
+        fileName: file?.name,
+        imageURL,
+      });
 
       // @ts-ignore
       // const base64Url = await getBase64URL(file);
@@ -175,130 +183,140 @@ const CreateBadgeForm = () => {
 
   return (
     <>
-      <div className="mb-6 flex justify-between text-base">
-        <h2>Create Badge</h2>
-        <Link href={LocalRoutes.dashboard} className="cursor-pointer">
-          <Image src={XIcon} />
-        </Link>
-      </div>
-      <form
-        className="flex h-full w-full flex-1 flex-col justify-between "
-        onSubmit={handleSubmit}
-      >
-        {/* Select Badge Type */}
-        <div className="relative flex w-full flex-wrap items-stretch">
-          <select
-            className="border-grey-300 py-auto h-14 w-full flex-1 appearance-none border bg-transparent px-5 focus:outline-none lg:max-h-14"
-            name="badge_type"
-            value={formInput.badge_type}
-            onChange={handleInputChange}
-            required
-          >
-            <option selected disabled>
-              Select Badge Type*
-            </option>
-            {Object.values(BadgeOption).map((value) => (
-              <option
-                className="text-black transition ease-in-out"
-                value={value}
-                key={value}
-              >
-                {value}
-              </option>
-            ))}
-          </select>
-          <span className="absolute right-0 z-10 flex h-full w-8 items-center justify-center rounded bg-transparent py-3 pr-3 text-center text-base font-normal leading-snug text-white">
-            <Image src={ChevronDownIcon} />
-          </span>
+      <div className="container-wraper flex justify-between">
+        <div className="preview basis-1/2 ">
+          {/* @ts-ignore */}
+          <SnapShortPreview formInput={formInput} />
         </div>
-        {/* Select Badge Type */}
-        {/* Badge Name */}
-        <div>
-          <input
-            className="border-grey-300 py-auto h-14 w-full flex-1 appearance-none border bg-transparent p-5 focus:outline-none lg:max-h-14"
-            type="text"
-            name="name"
-            placeholder="Enter Badge Name*"
-            onChange={handleInputChange}
-            value={formInput.name}
-            required
-          />
-        </div>
-        {/* Badge Name */}
-
-        {/* Badge Description */}
-        <div>
-          <input
-            className="border-grey-300 py-auto h-14 w-full flex-1 appearance-none border bg-transparent p-5 focus:outline-none lg:max-h-14"
-            type="text"
-            name="description"
-            placeholder="Enter Badge Description*"
-            value={formInput.description}
-            onChange={handleInputChange}
-            required
-          />
-          <p className="pt-2 text-right text-sm text-gray-400">20 Words</p>
-        </div>
-        {/* Badge Description */}
-
-        {/* Issued Date */}
-        <div className="relative flex w-full flex-wrap items-stretch">
-          <DatePicker
-            className="border-grey-300 py-auto h-14 w-full flex-1 appearance-none border bg-transparent p-5 focus:outline-none lg:max-h-14"
-            placeholderText="Month and Year of Badge issuing*"
-            required
-            selected={
-              formInput.issued_date
-                ? new Date(formInput.issued_date)
-                : undefined
-            }
-            onChange={(date: Date) => handleDateChange(date)}
-          />
-          <span className="absolute right-0 z-10 flex h-full w-8 items-center justify-center  rounded bg-transparent py-3 pr-3 text-center text-base font-normal leading-snug text-white">
-            <Image src={CalendarIcon} />
-          </span>
-        </div>
-        {/* Issued Date */}
-        {/* Image Upload */}
-        <div className="relative flex w-full flex-wrap items-stretch">
-          <button
-            className="border-grey-300 py-auto h-14 w-full flex-1  appearance-none border bg-transparent px-5 text-left text-gray-400  lg:max-h-14"
-            type="button"
-            onClick={removeAndRestartFileUpload}
-          >
-            {formInput.fileName ? formInput.fileName : "Upload Badge Image*"}
-          </button>
-          <input
-            hidden
-            type={"file"}
-            ref={ref}
-            onChange={handleImageUpload}
-            required
-            name="file"
-            accept="image/png"
-          />
-          <span
-            className="absolute right-0 z-10 flex h-full w-8 items-center justify-center  rounded bg-transparent py-3 pr-3 text-center text-base font-normal leading-snug"
-            onClick={removeAndRestartFileUpload}
-          >
-            {formInput.image ? (
+        <div className="badge-draft basis-1/2">
+          <div className="mb-6 flex justify-between text-base">
+            <h2>Create Badge</h2>
+            <Link href={LocalRoutes.dashboard} className="cursor-pointer">
               <Image src={XIcon} />
-            ) : (
-              <Image src={CameraIcon} />
-            )}
-          </span>
-        </div>
-        {/* Image Upload */}
-        <div className="h-14" onClick={formRef.current?.submit}>
-          <Button
-            outerBoxShadowColor="#FFFFFF"
-            innerBoxShadowColor="#FFFFFF"
-            isLoading={isLoading}
+            </Link>
+          </div>
+          <form
+            className="flex h-full w-full flex-1 flex-col justify-between "
+            onSubmit={handleSubmit}
           >
-            Create and Preview
-          </Button>
+            {/* Select Badge Type */}
+            <div className="relative flex w-full flex-wrap items-stretch">
+              <select
+                className="border-grey-300 py-auto h-14 w-full flex-1 appearance-none border bg-transparent px-5 focus:outline-none lg:max-h-14"
+                name="badge_type"
+                value={formInput.badge_type}
+                onChange={handleInputChange}
+                required
+              >
+                <option selected disabled>
+                  Select Badge Type*
+                </option>
+                {Object.values(BadgeOption).map((value) => (
+                  <option
+                    className="text-black transition ease-in-out"
+                    value={value}
+                    key={value}
+                  >
+                    {value}
+                  </option>
+                ))}
+              </select>
+              <span className="absolute right-0 z-10 flex h-full w-8 items-center justify-center rounded bg-transparent py-3 pr-3 text-center text-base font-normal leading-snug text-white">
+                <Image src={ChevronDownIcon} />
+              </span>
+            </div>
+            {/* Select Badge Type */}
+            {/* Badge Name */}
+            <div>
+              <input
+                className="border-grey-300 py-auto h-14 w-full flex-1 appearance-none border bg-transparent p-5 focus:outline-none lg:max-h-14"
+                type="text"
+                name="name"
+                placeholder="Enter Badge Name*"
+                onChange={handleInputChange}
+                value={formInput.name}
+                required
+              />
+            </div>
+            {/* Badge Name */}
+
+            {/* Badge Description */}
+            <div>
+              <input
+                className="border-grey-300 py-auto h-14 w-full flex-1 appearance-none border bg-transparent p-5 focus:outline-none lg:max-h-14"
+                type="text"
+                name="description"
+                placeholder="Enter Badge Description*"
+                value={formInput.description}
+                onChange={handleInputChange}
+                required
+              />
+              <p className="pt-2 text-right text-sm text-gray-400">20 Words</p>
+            </div>
+            {/* Badge Description */}
+
+            {/* Issued Date */}
+            <div className="relative flex w-full flex-wrap items-stretch">
+              <DatePicker
+                className="border-grey-300 py-auto h-14 w-full flex-1 appearance-none border bg-transparent p-5 focus:outline-none lg:max-h-14"
+                placeholderText="Month and Year of Badge issuing*"
+                required
+                selected={
+                  formInput.issued_date
+                    ? new Date(formInput.issued_date)
+                    : undefined
+                }
+                onChange={(date: Date) => handleDateChange(date)}
+              />
+              <span className="absolute right-0 z-10 flex h-full w-8 items-center justify-center  rounded bg-transparent py-3 pr-3 text-center text-base font-normal leading-snug text-white">
+                <Image src={CalendarIcon} />
+              </span>
+            </div>
+            {/* Issued Date */}
+            {/* Image Upload */}
+            <div className="relative flex w-full flex-wrap items-stretch">
+              <button
+                className="border-grey-300 py-auto h-14 w-full flex-1  appearance-none border bg-transparent px-5 text-left text-gray-400  lg:max-h-14"
+                type="button"
+                onClick={removeAndRestartFileUpload}
+              >
+                {formInput.fileName
+                  ? formInput.fileName
+                  : "Upload Badge Image*"}
+              </button>
+              <input
+                hidden
+                type={"file"}
+                ref={ref}
+                onChange={handleImageUpload}
+                required
+                name="file"
+                accept="image/png"
+              />
+              <span
+                className="absolute right-0 z-10 flex h-full w-8 items-center justify-center  rounded bg-transparent py-3 pr-3 text-center text-base font-normal leading-snug"
+                onClick={removeAndRestartFileUpload}
+              >
+                {formInput.image ? (
+                  <Image src={XIcon} />
+                ) : (
+                  <Image src={CameraIcon} />
+                )}
+              </span>
+            </div>
+            {/* Image Upload */}
+            <div className="h-14" onClick={formRef.current?.submit}>
+              <Button
+                outerBoxShadowColor="#FFFFFF"
+                innerBoxShadowColor="#FFFFFF"
+                isLoading={isLoading}
+              >
+                Create and Preview
+              </Button>
+            </div>
+          </form>
         </div>
-      </form>
+      </div>
     </>
   );
 };
