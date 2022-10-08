@@ -1,21 +1,16 @@
 import "react-datepicker/dist/react-datepicker.css";
 
-import { ContractFactory, providers, utils } from "ethers";
+import { ContractFactory, providers } from "ethers";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-// import {
-//   abi,
-//   bytecode,
-// } from "poac/artifacts/contracts/LinkDotContract.sol/LinkDotContract.json";
+import React, { useEffect, useRef, useState } from "react";
+import DatePicker from "react-datepicker";
 
 import {
   abi,
   bytecode,
 } from "@/../artifacts/contracts/LinkDotContract.sol/LinkDotContract.json";
-import React, { useEffect, useRef, useState } from "react";
-import DatePicker from "react-datepicker";
-
 import { Button } from "@/components/button";
 import { apiRoutes } from "@/config/apiRoutes";
 import { LocalRoutes } from "@/config/localRoutes";
@@ -68,9 +63,7 @@ const CreateBadgeForm = () => {
   const ref = useRef<HTMLInputElement | null>(null);
   const formRef = useRef<HTMLFormElement | null>(null);
   const router = useRouter();
-  useEffect(() => {
-    // console.log("useEffect: ", deployContract());
-  }, []);
+  useEffect(() => {}, []);
 
   const handleInputChange = async (
     event: React.FormEvent<HTMLInputElement | HTMLSelectElement>
@@ -109,7 +102,7 @@ const CreateBadgeForm = () => {
     ref.current?.click();
   };
 
-  const deployContract = async () => {
+  const deployContract = async (badgeMetaDataIPFS: string) => {
     const wallet = global.window.ethereum;
 
     interface TX extends Omit<providers.TransactionResponse, "data"> {
@@ -120,29 +113,27 @@ const CreateBadgeForm = () => {
     const provider = new providers.Web3Provider(wallet);
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner();
-    // console.log("signer: ", signer);
 
     const factory = new ContractFactory(abi, bytecode, signer);
     console.log("deploying contract...");
 
-    const contract = await factory.deploy(1, {
-      value: utils.parseUnits("1", 1),
-    });
-    // console.log("contract: ", contract);
+    const contract = await factory.deploy(
+      badgeMetaDataIPFS,
+      "LinkDotBadge",
+      "LDB"
+    );
     await contract.deployTransaction.wait();
     const contractData: TX = contract.deployTransaction;
     // @ts-ignore
     delete contractData?.data;
     contractData.abi = abi;
 
-    // console.log("contract deployment tx: ", contract.deployTransaction);
     console.log("contract address: ", contract.address);
     return contract.deployTransaction;
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // console.log("minting badge");
     const { name, badge_type, description, image } = formInput;
     if (image) {
       try {
@@ -155,8 +146,9 @@ const CreateBadgeForm = () => {
           image
         );
 
-        const txData = await deployContract();
+        console.log("metadata: ", metadata);
         if (metadata) {
+          const txData = await deployContract(metadata.url);
           await axiosClient
             .post(apiRoutes.createBadge, {
               name,

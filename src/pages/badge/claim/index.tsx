@@ -3,7 +3,6 @@ import { Contract, providers } from "ethers";
 import type { GetServerSideProps, NextPage } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
 import { abi } from "@/../artifacts/contracts/LinkDotContract.sol/LinkDotContract.json";
@@ -40,24 +39,17 @@ const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner();
 
-    const contract_data_from_db = await axiosClient.post(
+    const contractDataFromDb = await axiosClient.post(
       apiRoutes.claimBadgeContractData,
       payload
     );
-    const contractAddress = contract_data_from_db.data.data.contract;
+    const contractAddress = contractDataFromDb.data.data.contract;
     const badgeContract = new Contract(contractAddress, abi, signer);
-    // @ts-ignore
-    // const dataFromChain = await badgeContract.callStatic.claim("1");
-    // console.log("dataFromChain: ", dataFromChain);
-    // console.log("------------");
-    const transaction_state_change = await badgeContract.claim("1");
-    // console.log("transaction_state_change: ", transaction_state_change);
-    // console.log("------------");
-    const tx = await transaction_state_change.wait();
+    const transactionStateShange = await badgeContract.claim();
+    const tx = await transactionStateShange.wait();
 
     console.log("tx: ", tx);
 
-    // payload.contract = contractAddress;
     const response = await axiosClient.post(apiRoutes.claimBadge, payload);
     if (response.status === 200) {
       // alert("Badge claimed successfully");
@@ -67,13 +59,6 @@ const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
       router.push(LocalRoutes.dashboard);
     }
   };
-
-  useEffect(() => {
-    if (address) {
-      // claimBadge();
-    }
-    console.log("address: ", address);
-  }, [address]);
 
   return (
     <>
