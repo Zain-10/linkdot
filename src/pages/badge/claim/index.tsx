@@ -3,6 +3,7 @@ import { Contract, providers } from "ethers";
 import type { GetServerSideProps, NextPage } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import toast, { Toaster } from "react-hot-toast";
 
 import { abi } from "@/../artifacts/contracts/LinkDotContract.sol/LinkDotContract.json";
 import ModalClaim from "@/components/badge/claim/ModalClaim";
@@ -51,7 +52,8 @@ const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
 
     const response = await axiosClient.post(apiRoutes.claimBadge, payload);
     if (response.status === 200) {
-      alert("Badge claimed successfully");
+      // alert("Badge claimed successfully");
+      toast("Badge claimed successfully");
       console.log(`alert("Badge claimed successfully")`);
 
       router.push(LocalRoutes.dashboard);
@@ -82,6 +84,7 @@ const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
                 wallet to claim.
               </p>
               <Connect />
+              <Toaster />
             </div>
           )}
 
