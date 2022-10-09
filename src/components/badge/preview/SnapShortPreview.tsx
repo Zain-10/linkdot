@@ -1,14 +1,12 @@
-import { FormInput } from "@/components/badge/create/index";
-import { FC, useEffect, useRef, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useRef, useState } from "react";
+
 import { BadgeCard } from "../Card";
 import { Badge } from "../NTTBadge";
-
-type badgeData = Omit<NTTBadge, "_id">;
 
 const SnapShortPreview: FC<FormInput> = (prop) => {
   // @ts-ignore
   const { formInput } = prop;
-  console.log("formInput: ", formInput);
 
   const [badge, setBadge] = useState<FormInput>();
 
@@ -20,9 +18,9 @@ const SnapShortPreview: FC<FormInput> = (prop) => {
   }, [formInput]);
 
   return (
-    <div className="">
+    <div className="mb-4 ">
       <BadgeCard>
-        <div className="p-4 pb-6 md:px-16">
+        <div className="flex flex-col items-center p-6 md:px-16">
           <div ref={badgeRef} className="rounded-2xl">
             {badge && (
               <Badge
@@ -36,6 +34,7 @@ const SnapShortPreview: FC<FormInput> = (prop) => {
               />
             )}
           </div>
+          <span className="text-sm font-thin">Preview</span>
         </div>
       </BadgeCard>
     </div>

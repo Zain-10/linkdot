@@ -31,16 +31,6 @@ import XIcon from "@/public/assets/svg/x.svg";
  * 5. Implement form validation error.
  */
 
-export interface FormInput
-  extends Pick<
-    NTTBadge,
-    "badge_type" | "description" | "name" | "issued_date"
-  > {
-  image: File | undefined;
-  fileName: string | undefined; // Saves the image file name
-  imageURL: string;
-}
-
 const initialInputState = {
   image: undefined,
   name: "",
@@ -183,8 +173,8 @@ const CreateBadgeForm = () => {
 
   return (
     <>
-      <div className="container-wraper flex justify-between">
-        <div className="preview basis-1/2 ">
+      <div className="container-wraper flex items-center justify-between">
+        <div className="preview basis-1/2">
           {/* @ts-ignore */}
           <SnapShortPreview formInput={formInput} />
         </div>
