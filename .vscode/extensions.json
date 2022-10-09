@@ -8,6 +8,7 @@
     "Orta.vscode-jest",
     "formulahendry.auto-rename-tag",
     "jgclark.vscode-todo-highlight",
-    "wmaurer.change-case"
+    "wmaurer.change-case",
+    "moalamri.inline-fold"
   ]
 }
