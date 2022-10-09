@@ -1,5 +1,4 @@
-import type { FC } from "react";
-import { useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 
 import { BadgeCard } from "../Card";
 import { Badge } from "../NTTBadge";
@@ -8,9 +7,9 @@ const SnapShortPreview: FC<FormInput> = (prop) => {
   // @ts-ignore
   const { formInput } = prop;
 
-  const [badge, setBadge] = useState<FormInput>();
-
   const badgeRef = useRef<HTMLDivElement | null>(null);
+
+  const [badge, setBadge] = useState<FormInput>();
 
   useEffect(() => {
     setBadge(formInput);

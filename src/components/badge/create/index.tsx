@@ -22,6 +22,7 @@ import CalendarIcon from "@/public/assets/svg/calendar.svg";
 import CameraIcon from "@/public/assets/svg/camera.svg";
 import ChevronDownIcon from "@/public/assets/svg/chevron-down.svg";
 import XIcon from "@/public/assets/svg/x.svg";
+import { toBlob } from "html-to-image";
 /**
  * TODO:
  * 1. Add Datepicker for selecting date.
@@ -54,8 +55,10 @@ const CreateBadgeForm = () => {
   // });
 
   const ref = useRef<HTMLInputElement | null>(null);
+  const badgeRef = useRef<HTMLDivElement | null>(null);
   const formRef = useRef<HTMLFormElement | null>(null);
   const router = useRouter();
+
   useEffect(() => {}, []);
 
   const handleInputChange = async (
@@ -78,15 +81,6 @@ const CreateBadgeForm = () => {
         fileName: file?.name,
         imageURL,
       });
-
-      // @ts-ignore
-      // const base64Url = await getBase64URL(file);
-      // if (base64Url && typeof base64Url === "string") {
-      // setFormInput({
-      //   ...formInput,
-      //   image: base64Url,
-      // });
-      // }
     }
   };
 
@@ -136,6 +130,19 @@ const CreateBadgeForm = () => {
     if (image) {
       try {
         setLoading(true);
+        console.log("badgeRef.current: ", badgeRef.current);
+        if (badgeRef.current === null) return null;
+        try {
+          const imgRefBlob = await toBlob(badgeRef.current, {
+            cacheBust: true,
+          });
+
+          console.log("imgRefBlob: ", imgRefBlob);
+        } catch (error) {
+          console.log("error in toBlob: ", error);
+          return;
+        }
+        debugger;
 
         const metadata = await uploadMetadataToIPFS(
           name,
@@ -174,11 +181,11 @@ const CreateBadgeForm = () => {
   return (
     <>
       <div className="container-wraper flex items-center justify-between">
-        <div className="preview basis-1/2">
+        <div ref={badgeRef} className="preview mx-2 basis-1/2">
           {/* @ts-ignore */}
           <SnapShortPreview formInput={formInput} />
         </div>
-        <div className="badge-draft basis-1/2">
+        <div className="badge-draft mx-2 basis-1/2">
           <div className="mb-6 flex justify-between text-base">
             <h2>Create Badge</h2>
             <Link href={LocalRoutes.dashboard} className="cursor-pointer">
