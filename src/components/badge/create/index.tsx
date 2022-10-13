@@ -23,14 +23,14 @@ import CalendarIcon from "@/public/assets/svg/calendar.svg";
 import CameraIcon from "@/public/assets/svg/camera.svg";
 import ChevronDownIcon from "@/public/assets/svg/chevron-down.svg";
 import XIcon from "@/public/assets/svg/x.svg";
-/**
- * TODO:
- * 1. Add Datepicker for selecting date.
- * 2. Check if `handleInputChange` function supports select input change.
- * 3. Implement handle Submit Logic.
- * 4. Implement IPFS storage.
- * 5. Implement form validation error.
- */
+
+/// /////////////////////////////////
+// NOTES:
+// Currently, the badge `logo` and the `NFT` metadata is saved in a different IPFS directory.
+// Entire badge creation process is slow because of this.
+// TODO: Refactor the flow that can reduce the number of IPFS calls.
+// TODO: Implement a client side validation for the form.
+/// /////////////////////////////////
 
 const initialInputState = {
   image: undefined,
@@ -45,22 +45,12 @@ const initialInputState = {
 const CreateBadgeForm = () => {
   const [isLoading, setLoading] = useState<boolean>(false);
   const [formInput, setFormInput] = useState<FormInput>(initialInputState);
-  const [ipfsHash, setIPFSHash] = useState<string>();
-
-  // const [errors, setErrors] = useState<FormInput>({
-  //   image: "",
-  //   name: "",
-  //   badge_type: "",
-  //   description: "",
-  //   issued_date: "",
-  // });
+  const [logoIPFSHash, setLogoIPFSHash] = useState<object>();
 
   const ref = useRef<HTMLInputElement | null>(null);
   const badgeRef = useRef<HTMLDivElement | null>(null);
   const formRef = useRef<HTMLFormElement | null>(null);
   const router = useRouter();
-
-  useEffect(() => {}, []);
 
   const handleInputChange = async (
     event: React.FormEvent<HTMLInputElement | HTMLSelectElement>
@@ -154,7 +144,7 @@ const CreateBadgeForm = () => {
         const imageurl = metadata.data.image.pathname;
         setFormInput({ ...formInput, imageURL: imageurl });
         // @ts-ignore
-        setIPFSHash(metadata);
+        setLogoIPFSHash(metadata);
       } catch (error) {
         console.log("error: ", error);
       }
@@ -199,14 +189,11 @@ const CreateBadgeForm = () => {
   };
 
   useEffect(() => {
-    console.log("ipfsHash updated ", ipfsHash);
-
-    if (ipfsHash) {
+    if (logoIPFSHash) {
       (async () => {
         setLoading(true);
         const { name, badge_type, description } = formInput;
         const nftCid = await UploadNFTMetadata(name, badge_type, description);
-        console.log("nftCid: ", nftCid);
         if (nftCid) {
           const { contractAddress, contractData } = await deployContract(
             nftCid.url
@@ -215,8 +202,9 @@ const CreateBadgeForm = () => {
             name,
             badge_type,
             description,
-            ipfs: nftCid,
-            ipfs_img: nftCid.data.image.pathname,
+            ipfs: logoIPFSHash,
+            // @ts-ignore
+            ipfs_img: logoIPFSHash.data.image.pathname,
             txData: contractData,
             mint_image: nftCid.data.image.pathname,
             contract_address: contractAddress,
@@ -225,7 +213,7 @@ const CreateBadgeForm = () => {
       })();
       setLoading(false);
     }
-  }, [ipfsHash]);
+  }, [logoIPFSHash]);
 
   return (
     <>
