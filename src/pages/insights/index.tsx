@@ -8,58 +8,60 @@ import { BadgeType } from "@/constants/badge";
 import { badgeService } from "@/helpers/service/badge";
 import { Main } from "@/layouts/Main/Main";
 
+const NoDataAVailable = () => <div>No Data Available</div>;
+
 const Insights: NextPage = () => {
   const [issuedBadges, setIssuedBadges] = useState<NTTBadge[]>();
   const [claimedBadges, setIssuedClaimedBadges] = useState<NTTBadge[]>();
   const TabList: BadgeType[] = Object.values(BadgeType);
   const [activeTab, setActiveTab] = useState<BadgeType>(BadgeType.ISSUED);
-  console.log(claimedBadges);
+
   const onChange = (tabItem: BadgeType) => {
     setActiveTab(tabItem);
   };
   const fetchBadgesByType = async (badgeType: BadgeType) => {
     const response = await badgeService.getBadges(badgeType);
     if (response) {
-      const badges =
-        activeTab === BadgeType.ISSUED
-          ? // @ts-ignore
-            [...response.badges_issued]
-          : // @ts-ignore
-            [...response.badges_earned.map((e) => e.badge_id)];
-      return badges;
+      if (badgeType === BadgeType.ISSUED) {
+        // @ts-ignore
+        setIssuedBadges(response.badges_issued);
+      } else {
+        // @ts-ignore
+        setIssuedClaimedBadges(response.badges_earned);
+      }
     }
-    return [];
   };
-  const fetchIssuedBadges = async () => {
-    const badges = await fetchBadgesByType(BadgeType.ISSUED);
-    setIssuedBadges(badges);
-  };
-  const fetchClaimedBadges = async () => {
-    const badges = await fetchBadgesByType(BadgeType.CLAIMED);
-    setIssuedClaimedBadges(badges);
-  };
+
   useEffect(() => {
     fetchBadgesByType(activeTab);
   }, [activeTab]);
 
-  useEffect(() => {
-    fetchIssuedBadges();
-    fetchClaimedBadges();
-  }, []);
   return (
     <Main>
       <Tab tabList={TabList} onChangeCallBack={onChange} activeTab={activeTab}>
-        {activeTab === BadgeType.ISSUED ? (
-          <>
-            {issuedBadges ? (
-              <IssuedTable badges={issuedBadges} />
-            ) : (
-              <div>No Data Available</div>
-            )}
-          </>
-        ) : (
-          <ClaimTable />
-        )}
+        {/* ************************************** */}
+        <>
+          {activeTab === BadgeType.ISSUED && (
+            <>
+              {issuedBadges ? (
+                <IssuedTable badges={issuedBadges} />
+              ) : (
+                <NoDataAVailable />
+              )}
+            </>
+          )}
+          {/* *************************************** */}
+          {activeTab === BadgeType.CLAIMED && (
+            <>
+              {claimedBadges ? (
+                <ClaimTable badges={claimedBadges} />
+              ) : (
+                <NoDataAVailable />
+              )}
+            </>
+          )}
+          {/* *************************************** */}
+        </>
       </Tab>
     </Main>
   );
