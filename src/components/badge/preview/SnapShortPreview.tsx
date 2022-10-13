@@ -1,4 +1,7 @@
-import { FC, useEffect, useRef, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useRef, useState } from "react";
+
+import { getIPFSGatewayURL } from "@/helpers/utils/ipfs";
 
 import { BadgeCard } from "../Card";
 import { Badge } from "../NTTBadge";
@@ -10,6 +13,8 @@ const SnapShortPreview: FC<FormInput> = (prop) => {
   const badgeRef = useRef<HTMLDivElement | null>(null);
 
   const [badge, setBadge] = useState<FormInput>();
+
+  console.log("formInput", formInput);
 
   useEffect(() => {
     setBadge(formInput);
@@ -29,7 +34,7 @@ const SnapShortPreview: FC<FormInput> = (prop) => {
                 createdDate={badge?.created_at}
                 description={badge?.description}
                 // @ts-ignore
-                image={badge.imageURL}
+                image={getIPFSGatewayURL(badge.imageURL)}
               />
             )}
           </div>

@@ -1,6 +1,7 @@
 import "react-datepicker/dist/react-datepicker.css";
 
 import { ContractFactory, providers } from "ethers";
+import { toBlob } from "html-to-image";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -22,7 +23,6 @@ import CalendarIcon from "@/public/assets/svg/calendar.svg";
 import CameraIcon from "@/public/assets/svg/camera.svg";
 import ChevronDownIcon from "@/public/assets/svg/chevron-down.svg";
 import XIcon from "@/public/assets/svg/x.svg";
-import { toBlob } from "html-to-image";
 /**
  * TODO:
  * 1. Add Datepicker for selecting date.
@@ -45,6 +45,7 @@ const initialInputState = {
 const CreateBadgeForm = () => {
   const [isLoading, setLoading] = useState<boolean>(false);
   const [formInput, setFormInput] = useState<FormInput>(initialInputState);
+  const [ipfsHash, setIPFSHash] = useState<string>();
 
   // const [errors, setErrors] = useState<FormInput>({
   //   image: "",
@@ -74,14 +75,21 @@ const CreateBadgeForm = () => {
     // Checking File object is not empty
     if (event.currentTarget.files?.length && event.currentTarget.files[0]) {
       const file = event.currentTarget.files[0];
-      const imageURL = URL.createObjectURL(file);
       setFormInput({
         ...formInput,
         image: file,
         fileName: file?.name,
-        imageURL,
       });
     }
+  };
+
+  const createSnapshot = async () => {
+    if (badgeRef.current) {
+      return toBlob(badgeRef.current, {
+        cacheBust: true,
+      });
+    }
+    return null;
   };
 
   const handleDateChange = (date: Date) => {
@@ -121,62 +129,103 @@ const CreateBadgeForm = () => {
     contractData.abi = abi;
 
     console.log("contract address: ", contract.address);
-    return contract.deployTransaction;
+    return {
+      contractAddress: contract.address,
+      contractData,
+    };
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const { name, badge_type, description, image } = formInput;
     if (image) {
+      /// //////////////////////////////////
+      // 1. Upload Logo to IPFS
+      /// //////////////////////////////////
       try {
         setLoading(true);
-        console.log("badgeRef.current: ", badgeRef.current);
-        if (badgeRef.current === null) return null;
-        try {
-          const imgRefBlob = await toBlob(badgeRef.current, {
-            cacheBust: true,
-          });
-
-          console.log("imgRefBlob: ", imgRefBlob);
-        } catch (error) {
-          console.log("error in toBlob: ", error);
-          return;
-        }
-        debugger;
-
         const metadata = await uploadMetadataToIPFS(
           name,
           badge_type,
           description,
           image
         );
-
-        console.log("metadata: ", metadata);
-        if (metadata) {
-          const txData = await deployContract(metadata.url);
-          await axiosClient
-            .post(apiRoutes.createBadge, {
-              name,
-              badge_type,
-              description,
-              ipfs: metadata,
-              ipfs_img: metadata.data.image.pathname,
-              txData,
-            })
-            .then((res) => {
-              const badgeId = res.data.data.badge_id;
-              setFormInput(initialInputState);
-              router.push(`${LocalRoutes.badge.preview}/${badgeId}`);
-            })
-            .catch((err) => console.log(err));
-        }
+        console.log("Logo uploaded to IPFS: ", metadata);
+        const imageurl = metadata.data.image.pathname;
+        setFormInput({ ...formInput, imageURL: imageurl });
+        // @ts-ignore
+        setIPFSHash(metadata);
       } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
+        console.log("error: ", error);
       }
     }
   };
+
+  const createBadge = async (payload: {
+    name: string;
+    description: string;
+    badge_type: string;
+    ipfs: object;
+    ipfs_img: string;
+    txData: object;
+    mint_image: string;
+    contract_address: string;
+  }) => {
+    await axiosClient
+      .post(apiRoutes.createBadge, payload)
+      .then((res) => {
+        console.log("res: ", res);
+        const badgeId = res.data.data.badge_id;
+        setFormInput(initialInputState);
+        router.push(`${LocalRoutes.badge.preview}/${badgeId}`);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const UploadNFTMetadata = async (
+    name: string,
+    type: string,
+    description: string
+  ) => {
+    /// //////////////////////////////////
+    // Upload NFT Metadata to IPFS
+    /// //////////////////////////////////
+    const blob = await createSnapshot();
+    console.log("UploadNFTMetadata");
+    // @ts-ignore
+    const nftHash = await uploadMetadataToIPFS(name, type, description, blob);
+    if (nftHash) console.log("NFT uploaded to IPFS: ", nftHash);
+    return nftHash;
+  };
+
+  useEffect(() => {
+    console.log("ipfsHash updated ", ipfsHash);
+
+    if (ipfsHash) {
+      (async () => {
+        setLoading(true);
+        const { name, badge_type, description } = formInput;
+        const nftCid = await UploadNFTMetadata(name, badge_type, description);
+        console.log("nftCid: ", nftCid);
+        if (nftCid) {
+          const { contractAddress, contractData } = await deployContract(
+            nftCid.url
+          );
+          await createBadge({
+            name,
+            badge_type,
+            description,
+            ipfs: nftCid,
+            ipfs_img: nftCid.data.image.pathname,
+            txData: contractData,
+            mint_image: nftCid.data.image.pathname,
+            contract_address: contractAddress,
+          });
+        }
+      })();
+      setLoading(false);
+    }
+  }, [ipfsHash]);
 
   return (
     <>
