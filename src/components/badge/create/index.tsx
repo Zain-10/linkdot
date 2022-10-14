@@ -12,17 +12,19 @@ import {
   abi,
   bytecode,
 } from "@/../artifacts/contracts/LinkDotContract.sol/LinkDotContract.json";
-import SnapShortPreview from "@/components/badge/preview/SnapShortPreview";
 import { Button } from "@/components/button";
 import { apiRoutes } from "@/config/apiRoutes";
 import { LocalRoutes } from "@/config/localRoutes";
 import { BadgeOption } from "@/constants/badge";
 import { axiosClient } from "@/helpers/axios-client";
-import { uploadMetadataToIPFS } from "@/helpers/utils/ipfs";
+import { getBase64URL } from "@/helpers/utils/getBase64Url";
+import { getIPFSGatewayURL, uploadMetadataToIPFS } from "@/helpers/utils/ipfs";
 import CalendarIcon from "@/public/assets/svg/calendar.svg";
 import CameraIcon from "@/public/assets/svg/camera.svg";
 import ChevronDownIcon from "@/public/assets/svg/chevron-down.svg";
 import XIcon from "@/public/assets/svg/x.svg";
+
+import { Badge } from "../NTTBadge";
 
 /// /////////////////////////////////
 // NOTES:
@@ -65,9 +67,16 @@ const CreateBadgeForm = () => {
     // Checking File object is not empty
     if (event.currentTarget.files?.length && event.currentTarget.files[0]) {
       const file = event.currentTarget.files[0];
+      const imageUrl = await getBase64URL(file);
+
+      const newFormInput = {
+        image: file,
+        imageURL: `${imageUrl}`,
+      };
+
       setFormInput({
         ...formInput,
-        image: file,
+        ...newFormInput,
         fileName: file?.name,
       });
     }
@@ -141,7 +150,7 @@ const CreateBadgeForm = () => {
           image
         );
         console.log("Logo uploaded to IPFS: ", metadata);
-        const imageurl = metadata.data.image.pathname;
+        const imageurl = getIPFSGatewayURL(metadata.data.image.pathname);
         setFormInput({ ...formInput, imageURL: imageurl });
         // @ts-ignore
         setLogoIPFSHash(metadata);
@@ -216,19 +225,28 @@ const CreateBadgeForm = () => {
   }, [logoIPFSHash]);
 
   return (
-    <>
-      <div className="container-wraper flex items-center justify-between">
-        <div ref={badgeRef} className="preview mx-2 basis-1/2">
-          {/* @ts-ignore */}
-          <SnapShortPreview formInput={formInput} />
-        </div>
-        <div className="badge-draft mx-2 basis-1/2">
-          <div className="mb-6 flex justify-between text-base">
-            <h2>Create Badge</h2>
-            <Link href={LocalRoutes.dashboard} className="cursor-pointer">
-              <Image src={XIcon} />
-            </Link>
+    <div className="flex-1 px-60">
+      <div className="flex justify-between px-8 pb-4">
+        <h2>Create Badge</h2>
+        <Link href={LocalRoutes.dashboard} className="cursor-pointer">
+          <Image src={XIcon} />
+        </Link>
+      </div>
+      <div className="flex">
+        <div className="h-full w-1/2 pr-10">
+          <div className="border p-10">
+            <div ref={badgeRef}>
+              <Badge
+                type={formInput.badge_type}
+                name={formInput.name}
+                description={formInput.description}
+                image={formInput.imageURL}
+                createdDate={formInput.issued_date}
+              />
+            </div>
           </div>
+        </div>
+        <div className="w-1/2">
           <form
             className="flex h-full w-full flex-1 flex-col justify-between "
             onSubmit={handleSubmit}
@@ -351,7 +369,7 @@ const CreateBadgeForm = () => {
           </form>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
