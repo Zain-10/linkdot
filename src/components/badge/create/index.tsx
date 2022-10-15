@@ -360,10 +360,10 @@ const CreateBadgeForm = () => {
             <div className="h-14" onClick={formRef.current?.submit}>
               <Button
                 outerBoxShadowColor="#FFFFFF"
-                innerBoxShadowColor="#FFFFFF"
+                backgroundColor="#FFFFFF"
                 isLoading={isLoading}
               >
-                Create and Preview
+                <p className="font-semibold">Create and Preview</p>
               </Button>
             </div>
           </form>
