@@ -19,6 +19,7 @@ import { BadgeOption } from "@/constants/badge";
 import { axiosClient } from "@/helpers/axios-client";
 import { getBase64URL } from "@/helpers/utils/getBase64Url";
 import { getIPFSGatewayURL, uploadMetadataToIPFS } from "@/helpers/utils/ipfs";
+import Loader from "@/public/assets/images/loader.gif";
 import CalendarIcon from "@/public/assets/svg/calendar.svg";
 import CameraIcon from "@/public/assets/svg/camera.svg";
 import ChevronDownIcon from "@/public/assets/svg/chevron-down.svg";
@@ -156,6 +157,7 @@ const CreateBadgeForm = () => {
         setLogoIPFSHash(metadata);
       } catch (error) {
         console.log("error: ", error);
+        setLoading(false);
       }
     }
   };
@@ -360,10 +362,15 @@ const CreateBadgeForm = () => {
             <div className="h-14" onClick={formRef.current?.submit}>
               <Button
                 outerBoxShadowColor="#FFFFFF"
-                backgroundColor="#FFFFFF"
+                // backgroundColor="#FFFFFF"
                 isLoading={isLoading}
+                textColor="#FFFFFF"
               >
-                <p className="font-semibold">Create and Preview</p>
+                {isLoading ? (
+                  <Image src={Loader} height={40} width={40} alt="loader" />
+                ) : (
+                  <p className="font-semibold">Create and Preview</p>
+                )}
               </Button>
             </div>
           </form>
