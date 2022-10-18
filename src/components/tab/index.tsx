@@ -18,7 +18,7 @@ export const Tab = ({
 }: TabProps) => {
   return (
     <div className="flex-1 border-gray-200 text-center text-sm  font-medium dark:border-gray-700 dark:text-gray-400">
-      <ul className="-mb-px flex flex-wrap border-b border-slate-600">
+      <ul className="-mb-px flex flex-wrap">
         {tabList.map((e) => (
           <TabHeaderItem
             key={e}
