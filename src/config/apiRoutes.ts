@@ -20,6 +20,7 @@ const apiRoutes = {
   // claim routes
   claimBadge: `${v1}claim/badge`,
   claimBadgeContractData: `${v1}claim/badge_details`,
+  badgeDetailByEncryptedId: `${v1}badge/badge-detail-encrypted`,
 };
 
 export { apiRoutes };
