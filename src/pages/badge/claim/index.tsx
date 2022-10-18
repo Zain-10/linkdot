@@ -115,7 +115,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const {
     query: { badge_data, email_data },
   } = context;
-  console.log({ badge_data, email_data });
 
   return {
     props: { email_data, badge_data },
