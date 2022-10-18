@@ -15,6 +15,7 @@ import { apiRoutes } from "@/config/apiRoutes";
 import { Action } from "@/constants";
 import { useGlobalDispatch } from "@/context/global.context";
 import { axiosClient } from "@/helpers/axios-client";
+import { userService } from "@/helpers/service/users";
 import { getIPFSGatewayURL } from "@/helpers/utils/ipfs";
 import { setToken, Token } from "@/helpers/utils/setTokens";
 import { Base } from "@/layouts/Base";
@@ -27,6 +28,8 @@ type PageProps = {
 
 const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
   const [badge, setBadge] = useState<NTTBadge>();
+  const [user, setUser] = useState<User>();
+
   const address = useAddress();
   const router = useRouter();
   const dispatch = useGlobalDispatch();
@@ -64,31 +67,6 @@ const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
       }
     }
   };
-  const fetchTokens = async (address: string) => {
-    await axios
-      .get(`${apiRoutes.getToken}?wallet_id=${address}`)
-      .then((response) => {
-        const { access_token, refresh_token } = response.data.data;
-        if (access_token && refresh_token) {
-          setToken(Token.ACCESS_TOKEN, access_token);
-          setToken(Token.REFRESH_TOKEN, refresh_token);
-        }
-      });
-  };
-
-  const fetchUser = async (address: string) => {
-    const email = email_data.split(" ").join("+");
-    const response = await axiosClient.get(
-      `${apiRoutes.getUser}?email=${email}`
-    );
-    const user = response.data.data;
-    if (user) {
-      dispatch({ type: Action.SetUser, payload: user });
-      fetchTokens(address);
-    } else {
-      toast.error("the email is not valid!");
-    }
-  };
 
   const fetchBadgeDetails = async () => {
     const payload = { badge: badge_data.split(" ").join("+") };
@@ -98,13 +76,64 @@ const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
     setBadge(response?.data?.data);
   };
 
+  const fetchUserByEmail = async (address: string) => {
+    const email = email_data.split(" ").join("+");
+    const response = await axios.post(`${apiRoutes.register}`, { email });
+    const { access_token, refresh_token, user } = response.data.data;
+    if (access_token && refresh_token) {
+      setToken(Token.ACCESS_TOKEN, access_token);
+      setToken(Token.REFRESH_TOKEN, refresh_token);
+    }
+
+    if (user) {
+      if (user.wallet_id === undefined) {
+        console.log("user.wallet_id: ", user.wallet_id);
+
+        // Update user with connected wallet_id
+        await userService.updateUser({
+          wallet_id: address,
+        });
+      }
+      dispatch({ type: Action.SetUser, payload: user });
+    } else {
+      toast.error("could not fetch badge related to this email");
+    }
+  };
+
+  const fetchUser = async (address: string) => {
+    const access_token = localStorage.getItem("access_token");
+    if (access_token) {
+      const user = await userService.getUserData();
+      if (user) {
+        dispatch({ type: Action.SetUser, payload: user });
+        // @ts-ignore
+        setUser(user);
+      }
+    } else if (email_data) {
+      fetchUserByEmail(address);
+    }
+  };
+
   useEffect(() => {
     if (address) {
       setToken(Token.WALLET_ID, address);
+
+      // Steps:
+      // 1. Fetch user wallet_id
+      // 1.1 If user exists, update the wallet_id
+      // 2. Fetch badge details
+      // 3. Fetch contract details
+      // 4. Claim badge
+
       fetchUser(address);
-      fetchBadgeDetails();
     }
   }, [address]);
+
+  useEffect(() => {
+    if (user && address) {
+      fetchBadgeDetails();
+    }
+  }, [user]);
 
   return (
     <>

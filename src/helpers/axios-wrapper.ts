@@ -38,4 +38,13 @@ async function post({ url, payload }: PostRequest) {
   }
 }
 
-export const axiosWrapper = { get, post };
+async function patch({ url, payload }: PostRequest) {
+  try {
+    const response = await axiosClient.patch(url, payload);
+    return handleResponse(response);
+  } catch (error) {
+    return handleError(error);
+  }
+}
+
+export const axiosWrapper = { get, post, patch };
