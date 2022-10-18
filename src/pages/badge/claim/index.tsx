@@ -54,8 +54,7 @@ const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
     const response = await axiosClient.post(apiRoutes.claimBadge, payload);
     if (response.status === 200) {
       toast("Badge claimed successfully");
-      console.log(`alert("Badge claimed successfully")`);
-
+      console.log("Badge claimed successfully");
       router.push(LocalRoutes.dashboard);
     }
   };
