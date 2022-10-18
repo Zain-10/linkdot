@@ -90,20 +90,19 @@ const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
     }
   };
 
-  useEffect(() => {
-    // Fetch Badge data
-    if (address) {
-      fetchUser(address);
-      setToken(Token.WALLET_ID, address);
-      (async () => {
-        const payload = { badge: badge_data.split(" ").join("+") };
-        const url = `${apiRoutes.badgeDetailByEncryptedId}`;
-        const response = await axiosClient.post(url, payload);
-        console.log("encrypt badge: ", badge);
+  const fetchBadgeDetails = async () => {
+    const payload = { badge: badge_data.split(" ").join("+") };
+    const url = `${apiRoutes.badgeDetailByEncryptedId}`;
+    const response = await axiosClient.post(url, payload);
+    // @ts-ignore
+    setBadge(response?.data?.data);
+  };
 
-        // @ts-ignore
-        setBadge(response?.data?.data);
-      })();
+  useEffect(() => {
+    if (address) {
+      setToken(Token.WALLET_ID, address);
+      fetchUser(address);
+      fetchBadgeDetails();
     }
   }, [address]);
 
