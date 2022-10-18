@@ -1,19 +1,22 @@
 import { useAddress } from "@thirdweb-dev/react";
+import axios from "axios";
 import { Contract, providers } from "ethers";
 import type { GetServerSideProps, NextPage } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 import { abi } from "@/../artifacts/contracts/LinkDotContract.sol/LinkDotContract.json";
 import { ClaimComponent } from "@/components/badge/claim";
 import { Badge } from "@/components/badge/NTTBadge";
 import { Connect } from "@/components/connect";
 import { apiRoutes } from "@/config/apiRoutes";
-import { LocalRoutes } from "@/config/localRoutes";
+import { Action } from "@/constants";
+import { useGlobalDispatch } from "@/context/global.context";
 import { axiosClient } from "@/helpers/axios-client";
 import { getIPFSGatewayURL } from "@/helpers/utils/ipfs";
+import { setToken, Token } from "@/helpers/utils/setTokens";
 import { Base } from "@/layouts/Base";
 import BagdeImage from "@/public/assets/images/badge.png";
 
@@ -26,6 +29,7 @@ const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
   const [badge, setBadge] = useState<NTTBadge>();
   const address = useAddress();
   const router = useRouter();
+  const dispatch = useGlobalDispatch();
 
   const claimBadge = async () => {
     const wallet = global.window.ethereum;
@@ -51,18 +55,46 @@ const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
 
     console.log("tx: ", tx);
 
-    const response = await axiosClient.post(apiRoutes.claimBadge, payload);
-    if (response.status === 200) {
-      toast("Badge claimed successfully");
-      console.log(`alert("Badge claimed successfully")`);
+    if (tx) {
+      const response = await axiosClient.post(apiRoutes.claimBadge, payload);
+      if (response.status === 200) {
+        toast.success("Badge Issued Successfully");
+        console.log(`alert("Badge claimed successfully")`);
+        router.push("/badge/claim/success");
+      }
+    }
+  };
+  const fetchTokens = async (address: string) => {
+    await axios
+      .get(`${apiRoutes.getToken}?wallet_id=${address}`)
+      .then((response) => {
+        const { access_token, refresh_token } = response.data.data;
+        if (access_token && refresh_token) {
+          setToken(Token.ACCESS_TOKEN, access_token);
+          setToken(Token.REFRESH_TOKEN, refresh_token);
+        }
+      });
+  };
 
-      router.push(LocalRoutes.dashboard);
+  const fetchUser = async (address: string) => {
+    const email = email_data.split(" ").join("+");
+    const response = await axiosClient.get(
+      `${apiRoutes.getUser}?email=${email}`
+    );
+    const user = response.data.data;
+    if (user) {
+      dispatch({ type: Action.SetUser, payload: user });
+      fetchTokens(address);
+    } else {
+      toast.error("the email is not valid!");
     }
   };
 
   useEffect(() => {
     // Fetch Badge data
     if (address) {
+      fetchUser(address);
+      setToken(Token.WALLET_ID, address);
       (async () => {
         const payload = { badge: badge_data.split(" ").join("+") };
         const url = `${apiRoutes.badgeDetailByEncryptedId}`;
@@ -78,6 +110,8 @@ const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
   return (
     <>
       <Base>
+        <Toaster />
+
         <div className="flex h-full w-full flex-1 content-center justify-center border-gray-400">
           <div className="m-auto">
             <div
