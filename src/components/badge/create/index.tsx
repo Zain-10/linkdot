@@ -1,6 +1,7 @@
 import "react-datepicker/dist/react-datepicker.css";
 
 import { ContractFactory, providers } from "ethers";
+import { toBlob } from "html-to-image";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -16,28 +17,23 @@ import { apiRoutes } from "@/config/apiRoutes";
 import { LocalRoutes } from "@/config/localRoutes";
 import { BadgeOption } from "@/constants/badge";
 import { axiosClient } from "@/helpers/axios-client";
-import { uploadMetadataToIPFS } from "@/helpers/utils/ipfs";
+import { getBase64URL } from "@/helpers/utils/getBase64Url";
+import { getIPFSGatewayURL, uploadMetadataToIPFS } from "@/helpers/utils/ipfs";
+import Loader from "@/public/assets/images/loader.gif";
 import CalendarIcon from "@/public/assets/svg/calendar.svg";
 import CameraIcon from "@/public/assets/svg/camera.svg";
 import ChevronDownIcon from "@/public/assets/svg/chevron-down.svg";
 import XIcon from "@/public/assets/svg/x.svg";
-/**
- * TODO:
- * 1. Add Datepicker for selecting date.
- * 2. Check if `handleInputChange` function supports select input change.
- * 3. Implement handle Submit Logic.
- * 4. Implement IPFS storage.
- * 5. Implement form validation error.
- */
 
-interface FormInput
-  extends Pick<
-    NTTBadge,
-    "badge_type" | "description" | "name" | "issued_date"
-  > {
-  image: File | undefined;
-  fileName: string | undefined; // Saves the image file name
-}
+import { Badge } from "../NTTBadge";
+
+/// /////////////////////////////////
+// NOTES:
+// Currently, the badge `logo` and the `NFT` metadata is saved in a different IPFS directory.
+// Entire badge creation process is slow because of this.
+// TODO: Refactor the flow that can reduce the number of IPFS calls.
+// TODO: Implement a client side validation for the form.
+/// /////////////////////////////////
 
 const initialInputState = {
   image: undefined,
@@ -46,24 +42,18 @@ const initialInputState = {
   description: "",
   issued_date: "",
   fileName: undefined,
+  imageURL: "",
 };
 
 const CreateBadgeForm = () => {
   const [isLoading, setLoading] = useState<boolean>(false);
   const [formInput, setFormInput] = useState<FormInput>(initialInputState);
-
-  // const [errors, setErrors] = useState<FormInput>({
-  //   image: "",
-  //   name: "",
-  //   badge_type: "",
-  //   description: "",
-  //   issued_date: "",
-  // });
+  const [logoIPFSHash, setLogoIPFSHash] = useState<object>();
 
   const ref = useRef<HTMLInputElement | null>(null);
+  const badgeRef = useRef<HTMLDivElement | null>(null);
   const formRef = useRef<HTMLFormElement | null>(null);
   const router = useRouter();
-  useEffect(() => {}, []);
 
   const handleInputChange = async (
     event: React.FormEvent<HTMLInputElement | HTMLSelectElement>
@@ -76,20 +66,30 @@ const CreateBadgeForm = () => {
     event: React.FormEvent<HTMLInputElement>
   ) => {
     // Checking File object is not empty
-    if (event.currentTarget.files?.length) {
+    if (event.currentTarget.files?.length && event.currentTarget.files[0]) {
       const file = event.currentTarget.files[0];
+      const imageUrl = await getBase64URL(file);
 
-      setFormInput({ ...formInput, image: file, fileName: file?.name });
+      const newFormInput = {
+        image: file,
+        imageURL: `${imageUrl}`,
+      };
 
-      // @ts-ignore
-      // const base64Url = await getBase64URL(file);
-      // if (base64Url && typeof base64Url === "string") {
-      // setFormInput({
-      //   ...formInput,
-      //   image: base64Url,
-      // });
-      // }
+      setFormInput({
+        ...formInput,
+        ...newFormInput,
+        fileName: file?.name,
+      });
     }
+  };
+
+  const createSnapshot = async () => {
+    if (badgeRef.current) {
+      return toBlob(badgeRef.current, {
+        cacheBust: true,
+      });
+    }
+    return null;
   };
 
   const handleDateChange = (date: Date) => {
@@ -129,177 +129,254 @@ const CreateBadgeForm = () => {
     contractData.abi = abi;
 
     console.log("contract address: ", contract.address);
-    return contract.deployTransaction;
+    return {
+      contractAddress: contract.address,
+      contractData,
+    };
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const { name, badge_type, description, image } = formInput;
     if (image) {
+      /// //////////////////////////////////
+      // 1. Upload Logo to IPFS
+      /// //////////////////////////////////
       try {
         setLoading(true);
-
         const metadata = await uploadMetadataToIPFS(
           name,
           badge_type,
           description,
           image
         );
-
-        console.log("metadata: ", metadata);
-        if (metadata) {
-          const txData = await deployContract(metadata.url);
-          await axiosClient
-            .post(apiRoutes.createBadge, {
-              name,
-              badge_type,
-              description,
-              ipfs: metadata,
-              ipfs_img: metadata.data.image.pathname,
-              txData,
-            })
-            .then((res) => {
-              const badgeId = res.data.data.badge_id;
-              setFormInput(initialInputState);
-              router.push(`${LocalRoutes.badge.preview}/${badgeId}`);
-            })
-            .catch((err) => console.log(err));
-        }
+        console.log("Logo uploaded to IPFS: ", metadata);
+        const imageurl = getIPFSGatewayURL(metadata.data.image.pathname);
+        setFormInput({ ...formInput, imageURL: imageurl });
+        // @ts-ignore
+        setLogoIPFSHash(metadata);
       } catch (error) {
-        console.log(error);
-      } finally {
+        console.log("error: ", error);
         setLoading(false);
       }
     }
   };
 
+  const createBadge = async (payload: {
+    name: string;
+    description: string;
+    badge_type: string;
+    ipfs: object;
+    ipfs_img: string;
+    txData: object;
+    mint_image: string;
+    contract_address: string;
+  }) => {
+    await axiosClient
+      .post(apiRoutes.createBadge, payload)
+      .then((res) => {
+        console.log("res: ", res);
+        const badgeId = res.data.data.badge_id;
+        setFormInput(initialInputState);
+        router.push(`${LocalRoutes.badge.preview}/${badgeId}`);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const UploadNFTMetadata = async (
+    name: string,
+    type: string,
+    description: string
+  ) => {
+    /// //////////////////////////////////
+    // Upload NFT Metadata to IPFS
+    /// //////////////////////////////////
+    const blob = await createSnapshot();
+    console.log("UploadNFTMetadata");
+    // @ts-ignore
+    const nftHash = await uploadMetadataToIPFS(name, type, description, blob);
+    if (nftHash) console.log("NFT uploaded to IPFS: ", nftHash);
+    return nftHash;
+  };
+
+  useEffect(() => {
+    if (logoIPFSHash) {
+      (async () => {
+        setLoading(true);
+        const { name, badge_type, description } = formInput;
+        const nftCid = await UploadNFTMetadata(name, badge_type, description);
+        if (nftCid) {
+          const { contractAddress, contractData } = await deployContract(
+            nftCid.url
+          );
+          await createBadge({
+            name,
+            badge_type,
+            description,
+            ipfs: logoIPFSHash,
+            // @ts-ignore
+            ipfs_img: logoIPFSHash.data.image.pathname,
+            txData: contractData,
+            mint_image: nftCid.data.image.pathname,
+            contract_address: contractAddress,
+          });
+        }
+      })();
+      setLoading(false);
+    }
+  }, [logoIPFSHash]);
+
   return (
-    <>
-      <div className="mb-6 flex justify-between text-base">
+    <div className="flex-1 px-60">
+      <div className="flex justify-between px-8 pb-4">
         <h2>Create Badge</h2>
         <Link href={LocalRoutes.dashboard} className="cursor-pointer">
           <Image src={XIcon} />
         </Link>
       </div>
-      <form
-        className="flex h-full w-full flex-1 flex-col justify-between "
-        onSubmit={handleSubmit}
-      >
-        {/* Select Badge Type */}
-        <div className="relative flex w-full flex-wrap items-stretch">
-          <select
-            className="border-grey-300 py-auto h-14 w-full flex-1 appearance-none border bg-transparent px-5 focus:outline-none lg:max-h-14"
-            name="badge_type"
-            value={formInput.badge_type}
-            onChange={handleInputChange}
-            required
+      <div className="flex">
+        <div className="h-full w-1/2 pr-10">
+          <div className="border p-10">
+            <div ref={badgeRef}>
+              <Badge
+                type={formInput.badge_type}
+                name={formInput.name}
+                description={formInput.description}
+                image={formInput.imageURL}
+                createdDate={formInput.issued_date}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="w-1/2">
+          <form
+            className="flex h-full w-full flex-1 flex-col justify-between "
+            onSubmit={handleSubmit}
           >
-            <option selected disabled>
-              Select Badge Type*
-            </option>
-            {Object.values(BadgeOption).map((value) => (
-              <option
-                className="text-black transition ease-in-out"
-                value={value}
-                key={value}
+            {/* Select Badge Type */}
+            <div className="relative flex w-full flex-wrap items-stretch">
+              <select
+                className="border-grey-300 py-auto h-14 w-full flex-1 appearance-none border bg-transparent px-5 focus:outline-none lg:max-h-14"
+                name="badge_type"
+                value={formInput.badge_type}
+                onChange={handleInputChange}
+                required
               >
-                {value}
-              </option>
-            ))}
-          </select>
-          <span className="absolute right-0 z-10 flex h-full w-8 items-center justify-center rounded bg-transparent py-3 pr-3 text-center text-base font-normal leading-snug text-white">
-            <Image src={ChevronDownIcon} />
-          </span>
-        </div>
-        {/* Select Badge Type */}
-        {/* Badge Name */}
-        <div>
-          <input
-            className="border-grey-300 py-auto h-14 w-full flex-1 appearance-none border bg-transparent p-5 focus:outline-none lg:max-h-14"
-            type="text"
-            name="name"
-            placeholder="Enter Badge Name*"
-            onChange={handleInputChange}
-            value={formInput.name}
-            required
-          />
-        </div>
-        {/* Badge Name */}
+                <option selected disabled>
+                  Select Badge Type*
+                </option>
+                {Object.values(BadgeOption).map((value) => (
+                  <option
+                    className="text-black transition ease-in-out"
+                    value={value}
+                    key={value}
+                  >
+                    {value}
+                  </option>
+                ))}
+              </select>
+              <span className="absolute right-0 z-10 flex h-full w-8 items-center justify-center rounded bg-transparent py-3 pr-3 text-center text-base font-normal leading-snug text-white">
+                <Image src={ChevronDownIcon} />
+              </span>
+            </div>
+            {/* Select Badge Type */}
+            {/* Badge Name */}
+            <div>
+              <input
+                className="border-grey-300 py-auto h-14 w-full flex-1 appearance-none border bg-transparent p-5 focus:outline-none lg:max-h-14"
+                type="text"
+                name="name"
+                placeholder="Enter Badge Name*"
+                onChange={handleInputChange}
+                value={formInput.name}
+                required
+              />
+            </div>
+            {/* Badge Name */}
 
-        {/* Badge Description */}
-        <div>
-          <input
-            className="border-grey-300 py-auto h-14 w-full flex-1 appearance-none border bg-transparent p-5 focus:outline-none lg:max-h-14"
-            type="text"
-            name="description"
-            placeholder="Enter Badge Description*"
-            value={formInput.description}
-            onChange={handleInputChange}
-            required
-          />
-          <p className="pt-2 text-right text-sm text-gray-400">20 Words</p>
-        </div>
-        {/* Badge Description */}
+            {/* Badge Description */}
+            <div>
+              <input
+                className="border-grey-300 py-auto h-14 w-full flex-1 appearance-none border bg-transparent p-5 focus:outline-none lg:max-h-14"
+                type="text"
+                name="description"
+                placeholder="Enter Badge Description*"
+                value={formInput.description}
+                onChange={handleInputChange}
+                required
+              />
+              <p className="pt-2 text-right text-sm text-gray-400">20 Words</p>
+            </div>
+            {/* Badge Description */}
 
-        {/* Issued Date */}
-        <div className="relative flex w-full flex-wrap items-stretch">
-          <DatePicker
-            className="border-grey-300 py-auto h-14 w-full flex-1 appearance-none border bg-transparent p-5 focus:outline-none lg:max-h-14"
-            placeholderText="Month and Year of Badge issuing*"
-            required
-            selected={
-              formInput.issued_date
-                ? new Date(formInput.issued_date)
-                : undefined
-            }
-            onChange={(date: Date) => handleDateChange(date)}
-          />
-          <span className="absolute right-0 z-10 flex h-full w-8 items-center justify-center  rounded bg-transparent py-3 pr-3 text-center text-base font-normal leading-snug text-white">
-            <Image src={CalendarIcon} />
-          </span>
+            {/* Issued Date */}
+            <div className="relative flex w-full flex-wrap items-stretch">
+              <DatePicker
+                className="border-grey-300 py-auto h-14 w-full flex-1 appearance-none border bg-transparent p-5 focus:outline-none lg:max-h-14"
+                placeholderText="Month and Year of Badge issuing*"
+                required
+                selected={
+                  formInput.issued_date
+                    ? new Date(formInput.issued_date)
+                    : undefined
+                }
+                onChange={(date: Date) => handleDateChange(date)}
+              />
+              <span className="absolute right-0 z-10 flex h-full w-8 items-center justify-center  rounded bg-transparent py-3 pr-3 text-center text-base font-normal leading-snug text-white">
+                <Image src={CalendarIcon} />
+              </span>
+            </div>
+            {/* Issued Date */}
+            {/* Image Upload */}
+            <div className="relative flex w-full flex-wrap items-stretch">
+              <button
+                className="border-grey-300 py-auto h-14 w-full flex-1  appearance-none border bg-transparent px-5 text-left text-gray-400  lg:max-h-14"
+                type="button"
+                onClick={removeAndRestartFileUpload}
+              >
+                {formInput.fileName
+                  ? formInput.fileName
+                  : "Upload Badge Image*"}
+              </button>
+              <input
+                hidden
+                type={"file"}
+                ref={ref}
+                onChange={handleImageUpload}
+                required
+                name="file"
+                accept="image/png"
+              />
+              <span
+                className="absolute right-0 z-10 flex h-full w-8 items-center justify-center  rounded bg-transparent py-3 pr-3 text-center text-base font-normal leading-snug"
+                onClick={removeAndRestartFileUpload}
+              >
+                {formInput.image ? (
+                  <Image src={XIcon} />
+                ) : (
+                  <Image src={CameraIcon} />
+                )}
+              </span>
+            </div>
+            {/* Image Upload */}
+            <div className="h-14" onClick={formRef.current?.submit}>
+              <Button
+                outerBoxShadowColor="#FFFFFF"
+                // backgroundColor="#FFFFFF"
+                isLoading={isLoading}
+                textColor="#FFFFFF"
+              >
+                {isLoading ? (
+                  <Image src={Loader} height={40} width={40} alt="loader" />
+                ) : (
+                  <p className="font-semibold">Create and Preview</p>
+                )}
+              </Button>
+            </div>
+          </form>
         </div>
-        {/* Issued Date */}
-        {/* Image Upload */}
-        <div className="relative flex w-full flex-wrap items-stretch">
-          <button
-            className="border-grey-300 py-auto h-14 w-full flex-1  appearance-none border bg-transparent px-5 text-left text-gray-400  lg:max-h-14"
-            type="button"
-            onClick={removeAndRestartFileUpload}
-          >
-            {formInput.fileName ? formInput.fileName : "Upload Badge Image*"}
-          </button>
-          <input
-            hidden
-            type={"file"}
-            ref={ref}
-            onChange={handleImageUpload}
-            required
-            name="file"
-            accept="image/png"
-          />
-          <span
-            className="absolute right-0 z-10 flex h-full w-8 items-center justify-center  rounded bg-transparent py-3 pr-3 text-center text-base font-normal leading-snug"
-            onClick={removeAndRestartFileUpload}
-          >
-            {formInput.image ? (
-              <Image src={XIcon} />
-            ) : (
-              <Image src={CameraIcon} />
-            )}
-          </span>
-        </div>
-        {/* Image Upload */}
-        <div className="h-14" onClick={formRef.current?.submit}>
-          <Button
-            outerBoxShadowColor="#FFFFFF"
-            innerBoxShadowColor="#FFFFFF"
-            isLoading={isLoading}
-          >
-            Create and Preview
-          </Button>
-        </div>
-      </form>
-    </>
+      </div>
+    </div>
   );
 };
 

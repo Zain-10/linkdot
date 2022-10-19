@@ -5,4 +5,8 @@ async function getUserData() {
   return axiosWrapper.get({ url: apiRoutes.getUser });
 }
 
-export const userService = { getUserData };
+async function updateUser(payload: any) {
+  return axiosWrapper.patch({ url: apiRoutes.updateUser, payload });
+}
+
+export const userService = { getUserData, updateUser };
