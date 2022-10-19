@@ -1,20 +1,25 @@
 import { useAddress } from "@thirdweb-dev/react";
+import axios from "axios";
 import { Contract, providers } from "ethers";
 import type { GetServerSideProps, NextPage } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
 import { abi } from "@/../artifacts/contracts/LinkDotContract.sol/LinkDotContract.json";
-import ModalClaim from "@/components/badge/claim/ModalClaim";
+import { ClaimComponent } from "@/components/badge/claim";
+import { Badge } from "@/components/badge/NTTBadge";
 import { Connect } from "@/components/connect";
 import { apiRoutes } from "@/config/apiRoutes";
-import { LocalRoutes } from "@/config/localRoutes";
+import { Action } from "@/constants";
+import { useGlobalDispatch } from "@/context/global.context";
 import { axiosClient } from "@/helpers/axios-client";
+import { userService } from "@/helpers/service/users";
+import { getIPFSGatewayURL } from "@/helpers/utils/ipfs";
+import { setToken, Token } from "@/helpers/utils/setTokens";
 import { Base } from "@/layouts/Base";
 import BagdeImage from "@/public/assets/images/badge.png";
-
-import { BadgeCard } from "../../../components/badge/Card";
 
 type PageProps = {
   email_data: string;
@@ -22,8 +27,12 @@ type PageProps = {
 };
 
 const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
+  const [badge, setBadge] = useState<NTTBadge>();
+  const [user, setUser] = useState<User>();
+
   const address = useAddress();
   const router = useRouter();
+  const dispatch = useGlobalDispatch();
 
   const claimBadge = async () => {
     const wallet = global.window.ethereum;
@@ -31,7 +40,6 @@ const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
     const payload = {
       email_data: email_data.split(" ").join("+"),
       badge_data: badge_data.split(" ").join("+"),
-      // contract: "",
     };
 
     // @ts-ignore
@@ -50,45 +58,107 @@ const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
 
     console.log("tx: ", tx);
 
-    const response = await axiosClient.post(apiRoutes.claimBadge, payload);
-    if (response.status === 200) {
-      // alert("Badge claimed successfully");
-      toast("Badge claimed successfully");
-      console.log(`alert("Badge claimed successfully")`);
-
-      router.push(LocalRoutes.dashboard);
+    if (tx) {
+      const response = await axiosClient.post(apiRoutes.claimBadge, payload);
+      if (response.status === 200) {
+        toast.success("Badge Issued Successfully");
+        console.log("Badge claimed successfully");
+        router.push("/badge/claim/success");
+      }
     }
   };
+
+  const fetchBadgeDetails = async () => {
+    const payload = { badge: badge_data.split(" ").join("+") };
+    const url = `${apiRoutes.badgeDetailByEncryptedId}`;
+    const response = await axiosClient.post(url, payload);
+    // @ts-ignore
+    setBadge(response?.data?.data);
+  };
+
+  const fetchUserByEmail = async (address: string) => {
+    const email = email_data.split(" ").join("+");
+    const response = await axios.post(`${apiRoutes.register}`, { email });
+    const { access_token, refresh_token, user } = response.data.data;
+    if (access_token && refresh_token) {
+      setToken(Token.ACCESS_TOKEN, access_token);
+      setToken(Token.REFRESH_TOKEN, refresh_token);
+    }
+
+    if (user) {
+      if (user.wallet_id === undefined) {
+        console.log("user.wallet_id: ", user.wallet_id);
+
+        // Update user with connected wallet_id
+        await userService.updateUser({
+          wallet_id: address,
+        });
+      }
+      dispatch({ type: Action.SetUser, payload: user });
+    } else {
+      toast.error("could not fetch badge related to this email");
+    }
+  };
+
+  const fetchUser = async (address: string) => {
+    const access_token = localStorage.getItem("access_token");
+    if (access_token) {
+      const user = await userService.getUserData();
+      if (user) {
+        dispatch({ type: Action.SetUser, payload: user });
+        // @ts-ignore
+        setUser(user);
+      }
+    } else if (email_data) {
+      fetchUserByEmail(address);
+    }
+  };
+
+  useEffect(() => {
+    if (address) {
+      setToken(Token.WALLET_ID, address);
+      fetchUser(address);
+    }
+  }, [address]);
+
+  useEffect(() => {
+    if (user && address) {
+      fetchBadgeDetails();
+    }
+  }, [user]);
 
   return (
     <>
       <Base>
-        {address && <ModalClaim claimBadge={claimBadge} />}
-        <div className="m-auto flex h-full w-full">
-          <div className="md:w-1/6"></div>
-          <div className="w-full md:w-2/6">
-            <p className="mb-3 w-full text-center text-xl font-bold text-green-500">
-              Congratulations!
-            </p>
-            <BadgeCard>
-              <div className="p-8">
-                <Image className="blur-sm" src={BagdeImage} />
+        <Toaster />
+        <div className="flex h-full w-full flex-1 content-center justify-center border-gray-400">
+          <div className="m-auto">
+            <div
+              className="flex border border-gray-400 p-8"
+              style={{ backgroundColor: "rgba(255, 255, 255, 0.06)" }}
+            >
+              <div className="w-1/3">
+                {badge ? (
+                  <Badge
+                    name={badge.name}
+                    type={badge.badge_type}
+                    description={badge.description}
+                    image={getIPFSGatewayURL(badge?.ipfs_data.ipfs_nft)}
+                    createdDate={badge.created_at}
+                  />
+                ) : (
+                  <Image className="blur-sm" src={BagdeImage} />
+                )}
               </div>
-            </BadgeCard>
-          </div>
-          <div className="w-full md:w-2/6"></div>
-          {!address && (
-            <div className="flex w-full flex-col justify-between md:w-2/6">
-              <p className="mb-10 text-center text-sm">
-                This Badge is issued to sample@email.com. Please connect the
-                wallet to claim.
-              </p>
-              <Connect />
-              <Toaster />
+              <div className="flex w-2/3 flex-col justify-between py-10 pl-10 text-center">
+                {address ? (
+                  <ClaimComponent address={address} claimBadge={claimBadge} />
+                ) : (
+                  <Connect />
+                )}
+              </div>
             </div>
-          )}
-
-          <div className="md:w-1/6"></div>
+          </div>
         </div>
       </Base>
     </>

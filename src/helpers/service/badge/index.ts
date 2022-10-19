@@ -31,4 +31,15 @@ async function issueBadge(payload: IssueBadgePayload) {
   const url = `${apiRoutes.issueBadge}`;
   return axiosWrapper.post({ url, payload });
 }
-export const badgeService = { getBadges, getBadgeDetail, issueBadge };
+
+async function getBadgeDetailByEncryptedId(payload: { badge: string }) {
+  const url = `${apiRoutes.badgeDetailByEncryptedId}`;
+  return axiosWrapper.post({ url, payload });
+}
+
+export const badgeService = {
+  getBadges,
+  getBadgeDetail,
+  issueBadge,
+  getBadgeDetailByEncryptedId,
+};

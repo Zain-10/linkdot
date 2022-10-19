@@ -2,6 +2,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_SERVER_URI;
 const v1 = `${BASE_URL}/v1/`;
 
 const apiRoutes = {
+  register: `${v1}auth/register`,
   connectWallet: `${v1}auth/register/wallet`,
   userType: `${v1}auth/register/type`,
   setUsername: `${v1}auth/register/username`,
@@ -11,6 +12,7 @@ const apiRoutes = {
 
   // user routes
   getUser: `${v1}user/get`,
+  updateUser: `${v1}user/`,
   // badge routes
   createBadge: `${v1}badge/create`,
   getBadge: `${v1}badge/show`,
@@ -20,6 +22,7 @@ const apiRoutes = {
   // claim routes
   claimBadge: `${v1}claim/badge`,
   claimBadgeContractData: `${v1}claim/badge_details`,
+  badgeDetailByEncryptedId: `${v1}badge/badge-detail-encrypted`,
 };
 
 export { apiRoutes };

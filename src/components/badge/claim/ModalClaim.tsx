@@ -1,13 +1,12 @@
 import { Dialog, Transition } from "@headlessui/react";
 // import { CheckIcon } from "@heroicons/react/24/outline";
-import type { NextPage } from "next";
 import { Fragment, useRef, useState } from "react";
 
 interface FuncProps {
   claimBadge: () => void;
 }
 
-const ModalClaim: NextPage<FuncProps> = ({ claimBadge }: FuncProps) => {
+const ClaimModal = ({ claimBadge }: FuncProps) => {
   const [open, setOpen] = useState(true);
 
   const cancelButtonRef = useRef(null);
@@ -45,13 +44,7 @@ const ModalClaim: NextPage<FuncProps> = ({ claimBadge }: FuncProps) => {
               >
                 <Dialog.Panel className="relative overflow-hidden rounded-lg bg-slate-800 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
                   <div>
-                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-800">
-                      {/* <CheckIcon
-                        className="h-6 w-6 text-green-600"
-                        aria-hidden="true"
-                      /> */}
-                      <img src="" alt="badge image" />
-                    </div>
+                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-800"></div>
                     <div className="mt-3 text-center sm:mt-5">
                       <Dialog.Title
                         as="h3"
@@ -91,4 +84,4 @@ const ModalClaim: NextPage<FuncProps> = ({ claimBadge }: FuncProps) => {
   );
 };
 
-export default ModalClaim;
+export default ClaimModal;
