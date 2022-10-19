@@ -62,7 +62,7 @@ const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
       const response = await axiosClient.post(apiRoutes.claimBadge, payload);
       if (response.status === 200) {
         toast.success("Badge Issued Successfully");
-        console.log(`alert("Badge claimed successfully")`);
+        console.log("Badge claimed successfully");
         router.push("/badge/claim/success");
       }
     }
@@ -117,14 +117,6 @@ const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
   useEffect(() => {
     if (address) {
       setToken(Token.WALLET_ID, address);
-
-      // Steps:
-      // 1. Fetch user wallet_id
-      // 1.1 If user exists, update the wallet_id
-      // 2. Fetch badge details
-      // 3. Fetch contract details
-      // 4. Claim badge
-
       fetchUser(address);
     }
   }, [address]);
@@ -139,7 +131,6 @@ const Claim: NextPage<PageProps> = ({ email_data, badge_data }) => {
     <>
       <Base>
         <Toaster />
-
         <div className="flex h-full w-full flex-1 content-center justify-center border-gray-400">
           <div className="m-auto">
             <div
@@ -177,7 +168,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const {
     query: { badge_data, email_data },
   } = context;
-  console.log({ badge_data, email_data });
 
   return {
     props: { email_data, badge_data },
