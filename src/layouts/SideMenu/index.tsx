@@ -11,7 +11,7 @@ const SideMenu = () => {
   ];
   return (
     <div className="flex h-full w-full flex-col justify-between">
-      <ul className="h-full">
+      <ul className="h-full  p-3 ">
         {routes.map(({ route, path }) => (
           <MenuItem
             key={route}

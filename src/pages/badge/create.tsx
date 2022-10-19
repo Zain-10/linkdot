@@ -11,9 +11,7 @@ const CreateBadge: NextPage = () => (
     <WithUserBase>
       <Header />
       <div className="flex h-full w-full flex-1 justify-center">
-        <div className="mb-6 md:w-1/2 lg:w-1/3">
-          <CreateBadgeForm />
-        </div>
+        <CreateBadgeForm />
       </div>
       <div className="text-left">
         <Footer textAlign="left" />
