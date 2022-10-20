@@ -1,6 +1,5 @@
 import type { NextPage } from "next";
 import { useEffect, useState } from "react";
-import { Scrollbars } from "react-custom-scrollbars-2";
 
 import { Tab } from "@/components/tab";
 import { ClaimTable } from "@/components/table/ClaimTable";
@@ -41,29 +40,28 @@ const Insights: NextPage = () => {
     <Main>
       <Tab tabList={TabList} onChangeCallBack={onChange} activeTab={activeTab}>
         {/* ************************************** */}
-
-        <Scrollbars />
-        {activeTab === BadgeType.ISSUED && (
-          <>
-            {issuedBadges ? (
-              <IssuedTable badges={issuedBadges} />
-            ) : (
-              <NoDataAVailable />
-            )}
-          </>
-        )}
-        {/* *************************************** */}
-        {activeTab === BadgeType.CLAIMED && (
-          <>
-            {claimedBadges ? (
-              <ClaimTable badges={claimedBadges} />
-            ) : (
-              <NoDataAVailable />
-            )}
-          </>
-        )}
-        {/* *************************************** */}
-        <Scrollbars />
+        <>
+          {activeTab === BadgeType.ISSUED && (
+            <>
+              {issuedBadges ? (
+                <IssuedTable badges={issuedBadges} />
+              ) : (
+                <NoDataAVailable />
+              )}
+            </>
+          )}
+          {/* *************************************** */}
+          {activeTab === BadgeType.CLAIMED && (
+            <>
+              {claimedBadges ? (
+                <ClaimTable badges={claimedBadges} />
+              ) : (
+                <NoDataAVailable />
+              )}
+            </>
+          )}
+          {/* *************************************** */}
+        </>
       </Tab>
     </Main>
   );
