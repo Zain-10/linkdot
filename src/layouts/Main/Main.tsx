@@ -11,8 +11,8 @@ const Main = ({ children }: React.PropsWithChildren<{}>) => {
       <WithUserBase>
         <Header />
         <div className="flex flex-1">
-          <div className="flex flex-1">
-            <div className="md:w-1/6 lg:w-1/6 ">
+          <div className="flex h-[calc(100vh-110px)] flex-1 overflow-hidden">
+            <div className=" md:w-1/6 lg:w-1/6 ">
               <SideMenu />
             </div>
             <div className="h-screen w-full flex-1 pl-8">{children}</div>

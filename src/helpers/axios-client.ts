@@ -21,41 +21,67 @@ axiosClient.interceptors.request.use(async (config: AxiosRequestConfig) => {
   return config;
 });
 
+/**
+ * @description get new access_token & refresh_token from backend
+ * @param walletId
+ * @returns {Promise<AxiosResponse>}
+ */
+const getTokensByWalletId = async (walletId: string) => {
+  await axios.get(`${apiRoutes.getToken}?wallet_id=${walletId}`).then((res) => {
+    const { access_token, refresh_token } = res.data.data;
+    localStorage.setItem("access_token", access_token);
+    localStorage.setItem("refresh_token", refresh_token);
+  });
+};
+
+/**
+ * @description retry the axios request in following cases:
+ * 1. access_token expired
+ * 2. refresh_token expired
+ * redirect to /auth if access_token or refresh_token is not found in localStorage
+ */
 axiosClient.interceptors.response.use(
   (response: AxiosResponse) => response,
   async (error: AxiosError) => {
     const status = error.response?.status;
     if (status === StatusCode.Unauthorized) {
-      console.log("🍹Jwt token expired, refreshing token...");
-
+      console.log("JWT token expired, refreshing token...");
+      /// /////////////////////////////////////////
       // get new access_token from backend, and retry request
+      /// /////////////////////////////////////////
       const refresh_token = localStorage.getItem("refresh_token");
-
-      await axios
-        .post(apiRoutes.refreshToken, { refresh_token })
-        .then((res) => {
-          const { access_token } = res.data.data;
-          // Set new access_token token in localStorage
-          console.log("🍹New access_token received, retrying request...");
-          localStorage.setItem("access_token", access_token);
-        })
-        .catch(async (err) => {
-          console.log(err);
-
-          // if (err.response?.status === 406) {
-          //   const walletId = "0x3d3135EB3F26d5eBfC40CCc0C57f39B469D61641";
-          //   const response = await axios.get(
-          //     `${apiRoutes.getToken}?wallet_id=${walletId}`
-          //   );
-          //   const { access_token, refresh_token } = response.data.data;
-          //   localStorage.setItem("access_token", access_token);
-          //   localStorage.setItem("refresh_token", refresh_token);
-          // }
-        });
-
-      error.config.baseURL = undefined;
-      // Retry the request once again after updating the access_token
-      return axiosClient.request(error.config);
+      if (refresh_token) {
+        await axios
+          .post(apiRoutes.refreshToken, { refresh_token })
+          .then((res) => {
+            const { access_token } = res.data.data;
+            // Set new access_token token in localStorage
+            localStorage.setItem("access_token", access_token);
+          })
+          .catch(async (err) => {
+            if (err.response?.status === StatusCode.NotAcceptable) {
+              // refresh_token expired, getting new tokens
+              console.log("refresh_token expired, getting new tokens...");
+              const walletId = localStorage.getItem("walletId");
+              if (walletId) {
+                getTokensByWalletId(walletId);
+              } else {
+                console.log("WalletId not found");
+                window.location.href = "/auth";
+              }
+            }
+          });
+        /// /////////////////////////////////////////
+        // Retry the request once again after updating the access_token
+        /// /////////////////////////////////////////
+        const access_token = localStorage.getItem("access_token");
+        // @ts-ignore
+        error.config.headers.Authorization = access_token;
+        error.config.baseURL = undefined;
+        return axiosClient.request(error.config);
+      }
+      console.log("Refresh token not found");
+      window.location.href = "/auth";
     }
     return Promise.reject(error);
   }

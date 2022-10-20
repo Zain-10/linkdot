@@ -5,6 +5,7 @@
 
 const LocalRoutes = {
   auth: {
+    connect: "/auth",
     selectCategory: "/auth/select-category",
     setUserName: "/auth/username",
     setEmail: "/auth/email",

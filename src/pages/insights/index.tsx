@@ -8,8 +8,11 @@ import { BadgeType } from "@/constants/badge";
 import { badgeService } from "@/helpers/service/badge";
 import { Main } from "@/layouts/Main/Main";
 
+const NoDataAVailable = () => <div>No Data Available</div>;
+
 const Insights: NextPage = () => {
-  const [badges, setBadges] = useState<NTTBadge[]>();
+  const [issuedBadges, setIssuedBadges] = useState<NTTBadge[]>();
+  const [claimedBadges, setIssuedClaimedBadges] = useState<NTTBadge[]>();
   const TabList: BadgeType[] = Object.values(BadgeType);
   const [activeTab, setActiveTab] = useState<BadgeType>(BadgeType.ISSUED);
 
@@ -19,14 +22,13 @@ const Insights: NextPage = () => {
   const fetchBadgesByType = async (badgeType: BadgeType) => {
     const response = await badgeService.getBadges(badgeType);
     if (response) {
-      const newBadges =
-        activeTab === BadgeType.ISSUED
-          ? // @ts-ignore
-            [...response.badges_issued]
-          : // @ts-ignore
-            [...response.badges_earned.map((e) => e.badge_id)];
-      setBadges(newBadges);
-      console.log(badges);
+      if (badgeType === BadgeType.ISSUED) {
+        // @ts-ignore
+        setIssuedBadges(response.badges_issued);
+      } else {
+        // @ts-ignore
+        setIssuedClaimedBadges(response.badges_earned);
+      }
     }
   };
 
@@ -37,7 +39,29 @@ const Insights: NextPage = () => {
   return (
     <Main>
       <Tab tabList={TabList} onChangeCallBack={onChange} activeTab={activeTab}>
-        {activeTab === BadgeType.ISSUED ? <IssuedTable /> : <ClaimTable />}
+        {/* ************************************** */}
+        <>
+          {activeTab === BadgeType.ISSUED && (
+            <>
+              {issuedBadges ? (
+                <IssuedTable badges={issuedBadges} />
+              ) : (
+                <NoDataAVailable />
+              )}
+            </>
+          )}
+          {/* *************************************** */}
+          {activeTab === BadgeType.CLAIMED && (
+            <>
+              {claimedBadges ? (
+                <ClaimTable badges={claimedBadges} />
+              ) : (
+                <NoDataAVailable />
+              )}
+            </>
+          )}
+          {/* *************************************** */}
+        </>
       </Tab>
     </Main>
   );

@@ -2,6 +2,7 @@ import { useAddress } from "@thirdweb-dev/react";
 import { useRouter } from "next/router";
 import React, { memo, useEffect } from "react";
 
+import { LocalRoutes } from "@/config/localRoutes";
 import { Action } from "@/constants";
 import { useGlobalDispatch, useUserState } from "@/context/global.context";
 import { userService } from "@/helpers/service/users";
@@ -13,9 +14,6 @@ interface WithAddressProps {}
 // Mark the function as a generic using T (or whatever variable you want)
 export function withUser<T extends WithAddressProps>(
   // FIXME: This HOC is not very efficient causes multiple re-renders.
-  // Then we need to type the incoming component.
-  // This creates a union type of whatever the component
-  // already accepts AND our WithAddressProps prop
   Component: React.ComponentType<T>
 ) {
   // FIXME: this component get rendered muliple times
@@ -33,11 +31,13 @@ export function withUser<T extends WithAddressProps>(
       console.log("fetching user data");
       try {
         // dispatch(Loading);
-        const user = await userService.getUserData();
+        // @ts-ignore
+        const user: User = await userService.getUserData();
 
-        if (user)
+        if (user) {
           // @ts-ignore
           dispatch({ type: Action.SetUser, payload: user });
+        }
       } catch (error) {
         // dispatch(NotLoading);
         console.log(error);
@@ -51,12 +51,15 @@ export function withUser<T extends WithAddressProps>(
     }, [address]);
 
     useEffect(() => {
+      console.log("user changed", user);
       if (user) {
         const path = fallbackToAuthPath(user, router.pathname);
         if (path && path !== router.pathname) {
           console.log("Redirecting to:", path);
           router.push(path);
         }
+      } else {
+        router.push(LocalRoutes.auth.connect);
       }
     }, [user]);
 
