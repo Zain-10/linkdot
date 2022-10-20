@@ -1,4 +1,10 @@
-const ClaimTable = () => {
+import moment from "moment";
+
+interface ClaimTableProps {
+  badges: NTTBadge[];
+}
+
+const ClaimTable = ({ badges }: ClaimTableProps) => {
   const TableHead = [
     "Sno.",
     "Badge Name",
@@ -8,6 +14,7 @@ const ClaimTable = () => {
     "Wallet ID",
     "Status",
   ];
+
   return (
     <table className="mt-7 w-full border-collapse border text-xs">
       <thead>
@@ -20,24 +27,30 @@ const ClaimTable = () => {
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td className="border border-gray-600 py-4 text-center">1</td>
-          <td className="border border-gray-600 py-4 text-center">
-            Linkdot Founding Team
-          </td>
-          <td className="border border-gray-600 py-4 text-center">
-            Founding Team
-          </td>
+        {badges.map((badge, index) => (
+          <tr key={badge.created_at}>
+            <td className="border border-gray-600 py-4 text-center">
+              {index + 1}
+            </td>
+            <td className="border border-gray-600 py-4 text-center">
+              {/* @ts-ignore */}
+              {badge.badge_id.name}
+            </td>
+            <td className="border border-gray-600 py-4 text-center">
+              {/* @ts-ignore */}
+              {badge.badge_id.badge_type}
+            </td>
 
-          <td className="border border-gray-600 py-4 text-center">MMYYYY</td>
-          <td className="border border-gray-600 py-4 text-center">
-            vijin@linkdot.xyz
-          </td>
-          <td className="border border-gray-600 py-4 text-center">-</td>
-          <td className="border border-gray-600 py-4 text-center text-yellow-500">
-            Pending
-          </td>
-        </tr>
+            <td className="border border-gray-600 py-4 text-center">
+              {`${moment(badge.issued_date).format("D-MMM-YYYY")}`}
+            </td>
+            <td className="border border-gray-600 py-4 text-center">--</td>
+            <td className="border border-gray-600 py-4 text-center">-</td>
+            <td className="border border-gray-600 py-4 text-center text-yellow-500">
+              --
+            </td>
+          </tr>
+        ))}
       </tbody>
     </table>
   );
