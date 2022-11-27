@@ -8,22 +8,22 @@ module.exports = {
 
   theme: {
     screens: {
-      '2xl': {'max': '1535px'},
+      "2xl": { max: "1535px" },
       // => @media (max-width: 1535px) { ... }
 
-      'xl': {'max': '1279px'},
+      xl: { max: "1279px" },
       // => @media (max-width: 1279px) { ... }
 
-      'lg': {'max': '1023px'},
+      lg: { max: "1023px" },
       // => @media (max-width: 1023px) { ... }
 
-      'md': {'max': '767px'},
+      md: { max: "767px" },
       // => @media (max-width: 767px) { ... }
 
-      'sm': {'max': '639px'},
+      sm: { max: "639px" },
       // => @media (max-width: 639px) { ... }
     },
-   
+
     fontFamily: {
       "poppins-regular": ["Poppins-Regular"],
     },
@@ -82,13 +82,13 @@ module.exports = {
           purple: "#D538F6", // majenda
           blue: "#3271B6",
         },
-        yellow:{
-          100:"#F37C08",
-          200:"#FFB800",
-        }
+        yellow: {
+          100: "#F37C08",
+          200: "#FFB800",
+        },
       },
       boxShadow: {
-        '3xl': '4px 4px 0px rgba(243, 124, 8, 1)',
+        "3xl": "4px 4px 0px rgba(243, 124, 8, 1)",
       },
     },
   },
