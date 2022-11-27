@@ -7,6 +7,22 @@ module.exports = {
   plugins: [require("daisyui")],
 
   theme: {
+    screens: {
+      '2xl': {'max': '1535px'},
+      // => @media (max-width: 1535px) { ... }
+
+      'xl': {'max': '1279px'},
+      // => @media (max-width: 1279px) { ... }
+
+      'lg': {'max': '1023px'},
+      // => @media (max-width: 1023px) { ... }
+
+      'md': {'max': '767px'},
+      // => @media (max-width: 767px) { ... }
+
+      'sm': {'max': '639px'},
+      // => @media (max-width: 639px) { ... }
+    },
     fontFamily: {
       "poppins-regular": ["Poppins-Regular"],
     },
@@ -39,6 +55,12 @@ module.exports = {
           800: "#2d3748",
           900: "#1a202c",
           1000: "#edf2f75e",
+          1100: "#F2F2F2d9",
+          1200: "#00000080",
+          1300: "#f4f4f4",
+          1400: "#E5E5E5",
+          1500: "#00000033",
+          1600: "#959494",
         },
         blue: {
           100: "#ebf8ff",

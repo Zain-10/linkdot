@@ -1,9 +1,9 @@
 import type { NextPage } from "next";
 
-import { DemoCompontent } from "@/components/beta";
+import { HomeBeta } from "@/components/beta";
 
 const Beta: NextPage = () => {
-  return <DemoCompontent />;
+  return <HomeBeta />;
 };
 
 export default Beta;
