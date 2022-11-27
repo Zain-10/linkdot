@@ -94,7 +94,7 @@ const Profile = () => {
 				</div>
 				<div className="grid grid-cols-3 gap-4 py-4 xl:grid-cols-2">
 					{constants.map((item) => (
-						<div className="rounded border border-solid border-black">
+						<div className="rounded border border-solid border-black" key={item.id}>
 							<div className="badge-card h-44  w-full overflow-hidden rounded-t object-contain">
 								<Image
                   src={item.image}

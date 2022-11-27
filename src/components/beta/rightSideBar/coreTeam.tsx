@@ -37,7 +37,7 @@ const CoreTeam = () => {
 				project
 			</p>
 			{constants.map((item) => (
-				<div className="mb-4 flex items-center justify-between">
+				<div className="mb-4 flex items-center justify-between" key={item.id}>
 					<div className="flex items-center">
 						<Image
 							src={

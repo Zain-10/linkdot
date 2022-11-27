@@ -21,7 +21,7 @@ const TeamMembers = () => {
       You might like
 			</h2>
 			{constants.map((item) => (
-				<div className="mb-4 flex items-center justify-between">
+				<div className="mb-4 flex items-center justify-between" key={item.id}>
 					<div className="flex items-center">
 						<Image
 							src={
@@ -30,7 +30,7 @@ const TeamMembers = () => {
 							alt="profile logo"
 							className="!h-10 !w-10 min-w-0"
 						/>
-						<div className="pl-4 ">
+						<div className="pl-4">
 							<p className="text-sm font-bold text-black">
 								{item.name}
 							</p>

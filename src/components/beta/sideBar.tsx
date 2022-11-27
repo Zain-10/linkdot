@@ -37,7 +37,7 @@ const SideBarBeta = () => {
       <div className="pt-11">
         {constants.map((item) => (
           // eslint-disable-next-line react/jsx-key
-          <button className="mb-6 flex items-center text-black opacity-50 hover:opacity-100">
+          <button className="mb-6 flex items-center text-black opacity-50 hover:opacity-100" key={item.id}>
             <SVGIcon name={item.iconName}></SVGIcon>
             <p className="pl-6  text-lg font-bold leading-5">{item.name}</p>
           </button>
