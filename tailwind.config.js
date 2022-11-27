@@ -23,6 +23,7 @@ module.exports = {
       'sm': {'max': '639px'},
       // => @media (max-width: 639px) { ... }
     },
+   
     fontFamily: {
       "poppins-regular": ["Poppins-Regular"],
     },
@@ -61,6 +62,7 @@ module.exports = {
           1400: "#E5E5E5",
           1500: "#00000033",
           1600: "#959494",
+          1700: "#112211",
         },
         blue: {
           100: "#ebf8ff",
@@ -80,6 +82,13 @@ module.exports = {
           purple: "#D538F6", // majenda
           blue: "#3271B6",
         },
+        yellow:{
+          100:"#F37C08",
+          200:"#FFB800",
+        }
+      },
+      boxShadow: {
+        '3xl': '4px 4px 0px rgba(243, 124, 8, 1)',
       },
     },
   },
