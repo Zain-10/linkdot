@@ -18,16 +18,19 @@ const constants = [
     id: 3,
     name: "Need Badge",
     iconName: "badgeicon",
+    comingSoon: true,
   },
   {
     id: 4,
     name: "Notification",
     iconName: "bellicon",
+    comingSoon: true,
   },
   {
     id: 5,
     name: "Message",
     iconName: "messageicon",
+    comingSoon: true,
   },
 ];
 
@@ -37,7 +40,12 @@ const SideBarBeta = () => {
       <div className="pt-11">
         {constants.map((item) => (
           // eslint-disable-next-line react/jsx-key
-          <button className="mb-6 flex items-center text-black opacity-50 hover:opacity-100" key={item.id}>
+          <button
+            className={`mb-6 flex items-center text-black opacity-50 hover:opacity-100 ${
+              item.comingSoon ? "pointer-events-none opacity-20" : ""
+            }`}
+            key={item.id}
+          >
             <SVGIcon name={item.iconName}></SVGIcon>
             <p className="pl-6  text-lg font-bold leading-5">{item.name}</p>
           </button>

@@ -1,5 +1,5 @@
+import { Explore } from "./explore";
 import { Header } from "./header";
-import { Profile } from "./profile";
 import { RightSideBar } from "./rightSideBar";
 import { SideBarBeta } from "./sideBar";
 
@@ -10,8 +10,9 @@ const HomeBeta = () => {
       <div className="w-full ">
         <Header />
         <div className="custom-scrollbar flex pl-4 pr-8">
-          <Profile />
-          <RightSideBar/>
+          {/* <Profile /> */}
+          <Explore />
+          <RightSideBar />
         </div>
       </div>
     </div>
