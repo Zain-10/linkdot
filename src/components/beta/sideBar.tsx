@@ -1,6 +1,5 @@
 import Image from "next/image";
 
-import SVGIcon from "@/public/assets/icons";
 import logo from "@/public/assets/svg/logoBlack.svg";
 
 const constants = [
@@ -46,7 +45,7 @@ const SideBarBeta = () => {
             }`}
             key={item.id}
           >
-            <SVGIcon name={item.iconName}></SVGIcon>
+            {/* <SVGIcon name={item.iconName}></SVGIcon> */}
             <p className="pl-6  text-lg font-bold leading-5">{item.name}</p>
           </button>
         ))}

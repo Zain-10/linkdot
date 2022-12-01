@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import linkDotText from "../../../../public/assets/images/linkdottext.svg";
+import linkDotText from "@/public/assets/svg/linkdot.svg";
 
 const HomePage = () => {
   return (
