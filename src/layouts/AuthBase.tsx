@@ -5,7 +5,7 @@ import { withUser } from "@/components/hoc/WithUser";
 import { Footer } from "./Footer";
 
 const AuthBase = withUser(({ children }: React.PropsWithChildren<{}>) => (
-  <div className="flex h-full w-full flex-1 flex-col items-center justify-center">
+  <div className="flex h-full  w-full flex-1 flex-col items-center justify-center">
     <div
       style={{
         gridTemplateColumns: "2fr 0fr 2fr",

@@ -12,7 +12,7 @@ interface BadgeListProps {
 
 const BadgeList = ({ badgeList }: BadgeListProps) => {
   return (
-    <div className="grid grid-cols-2 gap-6 md:grid-cols-2 md:gap-x-24 lg:grid-cols-3 lg:gap-6">
+    <div className="grid grid-cols-2 gap-6 md:grid-cols-2  md:gap-x-24 lg:grid-cols-3 lg:gap-6">
       {badgeList.map(
         ({
           _id,

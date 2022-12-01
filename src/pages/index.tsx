@@ -1,85 +1,27 @@
+import { useAddress } from "@thirdweb-dev/react";
 import type { NextPage } from "next";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { Scrollbars } from "react-custom-scrollbars-2";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
-import { BadgeList } from "@/components/badge/BadgeList";
-import { NoBadge } from "@/components/badge/NoBadge";
-import { Button } from "@/components/button";
-import { Tab } from "@/components/tab";
-import { LocalRoutes } from "@/config/localRoutes";
-import { BadgeType } from "@/constants/badge";
-import { badgeService } from "@/helpers/service/badge";
-import { Main } from "@/layouts/Main/Main";
+import { LinkDotLoader } from "@/components/beta/loader";
 
-const Dashboard: NextPage = () => {
-  const [badges, setBadges] = useState<NTTBadge[]>([]);
-  const TabList: BadgeType[] = Object.values(BadgeType);
-  const [activeTab, setActiveTab] = useState<BadgeType>(BadgeType.ISSUED);
-
-  const onChange = (tabItem: BadgeType) => {
-    setActiveTab(tabItem);
-  };
-
-  const getBadgesByType = async (badgeType: BadgeType) => {
-    const response = await badgeService.getBadges(badgeType);
-    if (response) {
-      const newBadges =
-        activeTab === BadgeType.ISSUED
-          ? // @ts-ignore
-            [...response.badges_issued]
-          : // @ts-ignore
-            [...response.badges_earned.map((e) => e.badge_id)];
-      setBadges(newBadges);
-    }
-  };
+const Beta: NextPage = () => {
+  const address = useAddress();
+  const router = useRouter();
 
   useEffect(() => {
-    console.log("acive tabe changed");
+    if (!address) {
+      router.push("/connect");
+    }
+  }, []);
 
-    getBadgesByType(activeTab);
-  }, [activeTab]);
+  useEffect(() => {
+    if (!address) {
+      router.push("/connect");
+    }
+  }, [address]);
 
-  return (
-    <Main>
-      <Tab tabList={TabList} onChangeCallBack={onChange} activeTab={activeTab}>
-        <div className="h-[calc(100vh-150px)] overflow-auto pt-7">
-          <Scrollbars>
-            {badges?.length !== 0 && <BadgeList badgeList={badges} />}
-            {badges?.length === 0 && activeTab === BadgeType.ISSUED && (
-              <NoBadge>
-                <div>
-                  <p>
-                    You are almost there! <br />
-                    Start issuing your first PoAC badges for your community.
-                  </p>
-
-                  <Link href={LocalRoutes.badge.create}>
-                    <div className="mx-auto mt-6 w-1/2">
-                      <Button
-                        boxShadowVariant={2}
-                        borderWidth={"2px"}
-                        outerBoxShadowColor="#A58E09"
-                      >
-                        <span className="p-2 font-semibold">Create Badge</span>
-                      </Button>
-                    </div>
-                  </Link>
-                </div>
-              </NoBadge>
-            )}
-            {badges?.length === 0 && activeTab === BadgeType.CLAIMED && (
-              <NoBadge>
-                <div>
-                  <p>You don&apos;t have any claimed badges yet!</p>
-                </div>
-              </NoBadge>
-            )}
-          </Scrollbars>
-        </div>
-      </Tab>
-    </Main>
-  );
+  return <LinkDotLoader />;
 };
 
-export default Dashboard;
+export default Beta;
