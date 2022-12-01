@@ -11,13 +11,13 @@ const Beta: NextPage = () => {
 
   useEffect(() => {
     if (!address) {
-      router.push("/beta/connect");
+      router.push("/connect");
     }
   }, []);
 
   useEffect(() => {
     if (!address) {
-      router.push("/beta/connect");
+      router.push("/connect");
     }
   }, [address]);
 

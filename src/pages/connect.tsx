@@ -7,6 +7,7 @@ import { useEffect } from "react";
 
 import { ConnectComponent } from "@/components/beta/connect";
 import { apiRoutes } from "@/config/apiRoutes";
+import { LocalRoutes } from "@/config/localRoutes";
 import { Action } from "@/constants";
 import { useGlobalDispatch, useUserState } from "@/context/global.context";
 import { userService } from "@/helpers/service/users";
@@ -20,7 +21,7 @@ const Connect: NextPage = () => {
   const dispatch = useGlobalDispatch();
 
   const redirect = (user: User) => {
-    const redirectPath = fallbackToAuthPath(user, "/beta");
+    const redirectPath = fallbackToAuthPath(user, LocalRoutes.dashboard);
 
     if (redirectPath) {
       console.log("Redirecting to:", redirectPath);
@@ -36,7 +37,7 @@ const Connect: NextPage = () => {
         if (access_token && refresh_token) {
           setToken(Token.ACCESS_TOKEN, access_token);
           setToken(Token.REFRESH_TOKEN, refresh_token);
-          router.push("/beta");
+          router.push(LocalRoutes.dashboard);
         }
       });
   };
@@ -63,7 +64,7 @@ const Connect: NextPage = () => {
               setToken(Token.ACCESS_TOKEN, access_token);
               setToken(Token.REFRESH_TOKEN, refresh_token);
             }
-            router.push("/beta");
+            router.push(LocalRoutes.dashboard);
           }
         }
       })
@@ -87,7 +88,7 @@ const Connect: NextPage = () => {
   useEffect(() => {
     // useAddress only works on the client side, so we need to check after the component has mounted
     if (address) {
-      router.push("/beta");
+      router.push(LocalRoutes.dashboard);
     }
   }, []);
 
@@ -96,7 +97,7 @@ const Connect: NextPage = () => {
     if (address && user) {
       console.log("wallet has connected");
 
-      const redirectPath = fallbackToAuthPath(user, "/beta");
+      const redirectPath = fallbackToAuthPath(user, LocalRoutes.dashboard);
 
       if (redirectPath) {
         router.push(redirectPath);
