@@ -1,32 +1,43 @@
 import Image from "next/image";
 
-import badgeImage from "../../../public/assets/images/badgeImage.png";
+import BlockChainSVG from "@/public/assets/svg/blockchain.svg";
+import CalendarSVG from "@/public/assets/svg/calendar.svg";
+
+// import badgeImage from "../../../public/assets/images/badgeImage.png";
 import profileLogo from "../../../public/assets/svg/profileLogo.svg";
 
-const constants = [
-  {
-    id: 1,
-    image: badgeImage,
-    name: "2022 Go Ethereum Contributor",
-    ownerName: "Go-ethereum",
-    date: "Oct 2022",
-  },
-  {
-    id: 2,
-    image: badgeImage,
-    name: "2022 Go Ethereum Contributor",
-    ownerName: "Go-ethereum",
-    date: "Oct 2022",
-  },
-  {
-    id: 3,
-    image: badgeImage,
-    name: "2022 Go Ethereum Contributor",
-    ownerName: "Go-ethereum",
-    date: "Oct 2022",
-  },
-];
-const Profile = () => {
+// const constants = [
+//   {
+//     id: 1,
+//     image: badgeImage,
+//     name: "2022 Go Ethereum Contributor",
+//     ownerName: "Go-ethereum",
+//     date: "Oct 2022",
+//   },
+//   {
+//     id: 2,
+//     image: badgeImage,
+//     name: "2022 Go Ethereum Contributor",
+//     ownerName: "Go-ethereum",
+//     date: "Oct 2022",
+//   },
+//   {
+//     id: 3,
+//     image: badgeImage,
+//     name: "2022 Go Ethereum Contributor",
+//     ownerName: "Go-ethereum",
+//     date: "Oct 2022",
+//   },
+// ];
+
+interface Props {
+  user: User;
+  address: string;
+}
+
+const Profile = ({ user, address }: Props) => {
+  console.log(user);
+
   return (
     // eslint-disable-next-line tailwindcss/no-custom-classname
     <div className="profileWrapper mr-4 h-full w-full">
@@ -37,18 +48,23 @@ const Profile = () => {
       </div>
       <div className="px-3 pt-12 pb-6">
         <h2 className="max-w-[10.563rem] truncate text-lg font-normal leading-5 text-black">
-          0x6b1bd5erfgt53ddddddddd
+          {`${address.slice(0, 10)}...${address.slice(-4)}`}
         </h2>
         <div className="pt-4">
           <div className="mb-4 flex items-center">
             <div className="mr-5 flex items-center">
-              {/* <SVGIcon name="ethereumicon"></SVGIcon> */}
+              <Image src={BlockChainSVG} alt="ethereum logo" />
               <p className="p-2 text-xs font-normal leading-[0.875rem] text-gray-1200">
                 Ethereum
               </p>
             </div>
-            <div className="mr-5 flex items-center">
-              {/* <SVGIcon name="calendaricon"></SVGIcon> */}
+            <div className="mr-5 flex items-center text-gray-1200">
+              <Image
+                src={CalendarSVG}
+                alt="ethereum logo"
+                height={12}
+                width={12}
+              />
               <p className="p-2 text-xs font-normal leading-[0.875rem] text-gray-1200">
                 November 2022
               </p>
@@ -87,7 +103,8 @@ const Profile = () => {
           </button>
         </div>
         <div className="grid grid-cols-3 gap-4 py-4 xl:grid-cols-2">
-          {constants.map((item) => (
+          Coming Soon
+          {/* {constants.map((item) => (
             <div
               className="rounded border border-solid border-black"
               key={item.id}
@@ -105,7 +122,7 @@ const Profile = () => {
                 </h2>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
-                    {/* <SVGIcon name="badgeindicationicon"></SVGIcon> */}
+                <SVGIcon name="badgeindicationicon"></SVGIcon> 
                     <p className="ml-2 text-xs font-normal text-gray-1600">
                       {item.ownerName}
                     </p>
@@ -116,7 +133,7 @@ const Profile = () => {
                 </div>
               </div>
             </div>
-          ))}
+          ))} */}
         </div>
       </div>
     </div>
