@@ -1,54 +1,37 @@
 import Image from "next/image";
 
-import logo from "@/public/assets/svg/logoBlack.svg";
+import AwardSVG from "@/public/assets/svg/award.svg";
+import BellSVG from "@/public/assets/svg/bell.svg";
+import HashSVG from "@/public/assets/svg/hash.svg";
+import logo from "@/public/assets/svg/logoblack.svg";
+import MessageSVG from "@/public/assets/svg/message-square.svg";
+import UserSVG from "@/public/assets/svg/user.svg";
 
-const constants = [
-  {
-    id: 1,
-    name: "Profile",
-    iconName: "usericon",
-  },
-  {
-    id: 2,
-    name: "Explore",
-    iconName: "hashicon",
-  },
-  {
-    id: 3,
-    name: "Need Badge",
-    iconName: "badgeicon",
-    comingSoon: true,
-  },
-  {
-    id: 4,
-    name: "Notification",
-    iconName: "bellicon",
-    comingSoon: true,
-  },
-  {
-    id: 5,
-    name: "Message",
-    iconName: "messageicon",
-    comingSoon: true,
-  },
-];
+import { MenuItem } from "./menuitem";
 
-const SideBarBeta = () => {
+const SideBar = () => {
   return (
     <div className="sticky top-0 flex h-screen w-[16.875rem] flex-col items-center justify-between bg-gray-1100 p-8">
       <div className="pt-11">
-        {constants.map((item) => (
-          // eslint-disable-next-line react/jsx-key
-          <button
-            className={`mb-6 flex items-center text-black opacity-50 hover:opacity-100 ${
-              item.comingSoon ? "pointer-events-none opacity-20" : ""
-            }`}
-            key={item.id}
-          >
-            {/* <SVGIcon name={item.iconName}></SVGIcon> */}
-            <p className="pl-6  text-lg font-bold leading-5">{item.name}</p>
-          </button>
-        ))}
+        <div>
+          <MenuItem title={"Profile"} route={"/"}>
+            <Image src={UserSVG} alt="user" />
+          </MenuItem>
+        </div>
+        <div>
+          <MenuItem title={"Explore"} disabled route={"/coming-soon"}>
+            <Image src={HashSVG} alt="expolre" />
+          </MenuItem>
+        </div>
+        <MenuItem title={"Need Badge"} disabled route={"/coming-soon"}>
+          <Image src={AwardSVG} alt="badge" />
+        </MenuItem>
+        <MenuItem title={"Notification"} disabled route={"/coming-soon"}>
+          <Image src={BellSVG} alt="notification" />
+        </MenuItem>
+        <MenuItem title={"Message"} disabled route={"/coming-soon"}>
+          <Image src={MessageSVG} alt="message" />
+        </MenuItem>
       </div>
       <div>
         <Image src={logo} alt="logo" />
@@ -57,4 +40,4 @@ const SideBarBeta = () => {
   );
 };
 
-export { SideBarBeta };
+export { SideBar };

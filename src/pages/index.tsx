@@ -3,11 +3,14 @@ import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-import { LinkDotLoader } from "@/components/beta/loader";
+import { Main } from "@/components/beta/main";
+import { Profile } from "@/components/beta/profile";
+import { useUserState } from "@/context/global.context";
 
-const Beta: NextPage = () => {
+const Home: NextPage = () => {
   const address = useAddress();
   const router = useRouter();
+  const user = useUserState();
 
   useEffect(() => {
     if (!address) {
@@ -21,7 +24,14 @@ const Beta: NextPage = () => {
     }
   }, [address]);
 
-  return <LinkDotLoader />;
+  if (address && user) {
+    return (
+      <Main>
+        <Profile user={user} address={address} />
+      </Main>
+    );
+  }
+  return null;
 };
 
-export default Beta;
+export default Home;
