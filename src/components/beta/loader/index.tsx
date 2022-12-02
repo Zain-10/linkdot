@@ -5,20 +5,23 @@ import { useEffect, useState } from "react";
 
 import linkdotSVG from "@/public/assets/svg/linkdot-small.svg";
 
-const LinkDotLoader = () => {
-  const [progress, setProgress] = useState(0);
+interface LoaderProps {
+  callback: () => void;
+}
 
+const LinkDotLoader = ({ callback }: LoaderProps) => {
+  const [progress, setProgress] = useState(0);
   useEffect(() => {
-    const intervalId = setInterval(() => {
+    const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
-          clearInterval(intervalId);
+          clearInterval(interval);
+          callback();
           return 100;
         }
         return prev + 5;
       });
     }, 100);
-    return () => clearInterval(intervalId);
   }, []);
 
   return (

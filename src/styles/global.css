@@ -81,9 +81,7 @@ progress::-webkit-progress-bar {
 }
 progress::-webkit-progress-value {
   background-color: black;
-  transition : width 5s ease;
 }
 progress::-moz-progress-bar {
   background-color: black;
-  transition : width 5s ease;
 }
