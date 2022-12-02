@@ -11,7 +11,6 @@ import { LocalRoutes } from "@/config/localRoutes";
 import { Action } from "@/constants";
 import { useGlobalDispatch, useUserState } from "@/context/global.context";
 import { userService } from "@/helpers/service/users";
-import { fallbackToAuthPath } from "@/helpers/utils/getAuthRedirectPage";
 import { setToken, Token } from "@/helpers/utils/setTokens";
 
 const Connect: NextPage = () => {
@@ -20,13 +19,8 @@ const Connect: NextPage = () => {
   const router = useRouter();
   const dispatch = useGlobalDispatch();
 
-  const redirect = (user: User) => {
-    const redirectPath = fallbackToAuthPath(user, LocalRoutes.dashboard);
-
-    if (redirectPath) {
-      console.log("Redirecting to:", redirectPath);
-      router.push(redirectPath);
-    }
+  const redirect = () => {
+    router.push(LocalRoutes.dashboard);
   };
 
   const fetchTokens = async (address: Address) => {
@@ -79,7 +73,7 @@ const Connect: NextPage = () => {
     if (user) {
       dispatch({ type: Action.SetUser, payload: user });
       // @ts-ignore
-      redirect(user);
+      redirect();
     } else {
       console.log("user not found");
       if (address) createNewUser(address);
@@ -97,11 +91,7 @@ const Connect: NextPage = () => {
     if (address && user) {
       console.log("wallet has connected");
 
-      const redirectPath = fallbackToAuthPath(user, LocalRoutes.dashboard);
-
-      if (redirectPath) {
-        router.push(redirectPath);
-      }
+      redirect();
     }
     /**
      * Fecth user data from the backend.
