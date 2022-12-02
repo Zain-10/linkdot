@@ -1,11 +1,17 @@
+import { useDisconnect } from "@thirdweb-dev/react";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 import listenForOutsideClicks from "@/helpers/utils/listen-for-outside-click";
+import ChevronDownSVG from "@/public/assets/svg/chevron-down.svg";
+import LogoutSVG from "@/public/assets/svg/log-out.svg";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [listening, setListening] = useState(false);
   const menuRef = useRef(null);
+  const disconnect = useDisconnect();
+
   useEffect(
     listenForOutsideClicks(listening, setListening, menuRef, setIsOpen)
   );
@@ -38,13 +44,16 @@ const Header = () => {
               </p>
             </div>
             <div className={isOpen ? "origin-center rotate-180" : "rotate-0"}>
-              {/* <SVGIcon name="downarrowicon"></SVGIcon> */}
+              <Image src={ChevronDownSVG} alt="logout" />
             </div>
           </div>
         </button>
         {isOpen && (
-          <div className="solid absolute  z-10 flex w-full cursor-pointer items-center rounded-b border border-t-0 border-gray-1200 bg-gray-1300 p-3">
-            {/* <SVGIcon name="logouticon"></SVGIcon> */}
+          <div
+            className="solid absolute  z-10 flex w-full cursor-pointer items-center rounded-b border border-t-0 border-gray-1200 bg-gray-1300 p-3"
+            onClick={disconnect}
+          >
+            <Image src={LogoutSVG} alt="logout" />
             <div>
               <span className="ml-3.5 text-base text-black">Disconnect</span>
             </div>
