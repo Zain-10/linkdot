@@ -5,12 +5,12 @@ import profileFrame from "../../../../public/assets/svg/profilepic.svg";
 const constants = [
   {
     id: 1,
-    name: "0x6b1bd5",
+    name: "0xccd372",
     role: "Co-Founder of linkDOT",
   },
   {
     id: 2,
-    name: "0x6b1bd5",
+    name: "0x6B1BD5",
     role: "Co-Founder of linkDOT",
   },
 ];

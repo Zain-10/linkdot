@@ -4,4 +4,5 @@ type User = {
   user_name: string;
   category: string;
   email: string;
+  created_at: string;
 };

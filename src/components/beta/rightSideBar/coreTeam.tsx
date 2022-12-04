@@ -5,24 +5,28 @@ import profileFrame from "../../../../public/assets/svg/profilepic.svg";
 const constants = [
   {
     id: 1,
-    name: "0x6b1bd5",
+    name: "0x3d3135",
     role: "Co-Founder of linkDOT",
+    follwing: false,
   },
   {
     id: 2,
-    name: "0x6b1bd5",
+    name: "0xccd372",
     // eslint-disable-next-line prettier/prettier
     role: "Co-Founder of linkDOT",
+    follwing: false,
   },
   {
     id: 3,
-    name: "0x6b1bd5",
+    name: "0x6B1BD5",
     role: "Co-Founder of linkDOT",
+    follwing: false,
   },
   {
     id: 4,
-    name: "0x6b1bd5",
+    name: "0x8438F3",
     role: "Co-Founder of linkDOT",
+    follwing: false,
   },
 ];
 
@@ -48,8 +52,12 @@ const CoreTeam = () => {
               <p className="font-noraml text-xs text-gray-1200">{item.role}</p>
             </div>
           </div>
-          <button className="ml-4 flex h-8 min-w-[5.5rem] items-center justify-center rounded-sm border border-solid border-black py-2 text-xs font-bold text-black hover:bg-black hover:text-white">
-            Following
+          <button
+            className={`'ml-4 flex h-8 min-w-[5.5rem] items-center justify-center rounded-sm border border-solid border-black py-2 text-xs font-bold ${
+              item.follwing ? "bg-white text-black" : "bg-black text-white"
+            }`}
+          >
+            {item.follwing ? "Following" : "Follow"}
           </button>
         </div>
       ))}

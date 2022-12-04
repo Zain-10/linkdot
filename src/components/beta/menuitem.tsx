@@ -12,8 +12,8 @@ const MenuItem = ({ title, disabled, route, children }: MenuProps) => {
     <Link href={route}>
       <div>
         <button
-          className={`mb-6 flex items-center text-black opacity-50 hover:opacity-100 ${
-            disabled && "pointer-events-none opacity-20"
+          className={`mb-6 flex items-center text-black ${
+            disabled ? "pointer-events-none opacity-20" : "opacity-80"
           }`}
         >
           {children}
