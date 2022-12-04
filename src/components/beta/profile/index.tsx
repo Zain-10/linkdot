@@ -1,34 +1,12 @@
+import moment from "moment";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 import BlockChainSVG from "@/public/assets/svg/blockchain.svg";
 import CalendarSVG from "@/public/assets/svg/calendar.svg";
+import profileLogo from "@/public/assets/svg/profileLogo.svg";
 
-// import badgeImage from "../../../public/assets/images/badgeImage.png";
-import profileLogo from "../../../public/assets/svg/profileLogo.svg";
-
-// const constants = [
-//   {
-//     id: 1,
-//     image: badgeImage,
-//     name: "2022 Go Ethereum Contributor",
-//     ownerName: "Go-ethereum",
-//     date: "Oct 2022",
-//   },
-//   {
-//     id: 2,
-//     image: badgeImage,
-//     name: "2022 Go Ethereum Contributor",
-//     ownerName: "Go-ethereum",
-//     date: "Oct 2022",
-//   },
-//   {
-//     id: 3,
-//     image: badgeImage,
-//     name: "2022 Go Ethereum Contributor",
-//     ownerName: "Go-ethereum",
-//     date: "Oct 2022",
-//   },
-// ];
+import { AssetsTab } from "./tab";
 
 interface Props {
   user: User;
@@ -36,7 +14,26 @@ interface Props {
 }
 
 const Profile = ({ user, address }: Props) => {
-  console.log(user);
+  const [NFTs, setNFTs] = useState([]);
+
+  const fetchNFTs = async () => {
+    const url = `https://api.opensea.io/api/v1/assets/?limit=50&offset=0&order_by=sale_price&owner=${address}`;
+    const res = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-KEY": "b0732dede973489dacfd1d31e6a24212",
+      },
+    });
+    const data = await res.json();
+    console.log(data);
+
+    setNFTs(data.assets);
+  };
+
+  useEffect(() => {
+    fetchNFTs();
+  }, []);
 
   return (
     // eslint-disable-next-line tailwindcss/no-custom-classname
@@ -66,7 +63,7 @@ const Profile = ({ user, address }: Props) => {
                 width={12}
               />
               <p className="p-2 text-xs font-normal leading-[0.875rem] text-gray-1200">
-                November 2022
+                {moment(user?.created_at).format("MMMM YYYY")}
               </p>
             </div>
           </div>
@@ -94,47 +91,7 @@ const Profile = ({ user, address }: Props) => {
         </div>
       </div>
       <div className="pb-6">
-        <div className="solid flex items-center overflow-hidden border-b border-b-gray-1400">
-          <button className="solid mr-3 min-w-[3.75rem] border-b-2 border-b-gray-1400 p-1.5 text-base font-bold text-black">
-            PoAPs
-          </button>
-          <button className="mr-3 min-w-[3.75rem] p-1.5 text-base font-bold text-black opacity-30">
-            NFT
-          </button>
-        </div>
-        <div className="grid grid-cols-3 gap-4 py-4 xl:grid-cols-2">
-          Coming Soon
-          {/* {constants.map((item) => (
-            <div
-              className="rounded border border-solid border-black"
-              key={item.id}
-            >
-              <div className="badge-card h-44  w-full overflow-hidden rounded-t object-contain">
-                <Image
-                  src={item.image}
-                  alt="badge image"
-                  className="h-full w-full object-contain"
-                />
-              </div>
-              <div className="rounded-b border-t border-solid border-black px-4 pt-2.5 pb-4">
-                <h2 className="mb-1.5 text-sm font-bold text-black">
-                  {item.name}
-                </h2>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                <SVGIcon name="badgeindicationicon"></SVGIcon> 
-                    <p className="ml-2 text-xs font-normal text-gray-1600">
-                      {item.ownerName}
-                    </p>
-                  </div>
-                  <p className=" text-xs font-normal text-gray-1600">
-                    {item.date}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))} */}
-        </div>
+        <AssetsTab nfts={NFTs} />
       </div>
     </div>
   );

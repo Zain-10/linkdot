@@ -1,4 +1,4 @@
-import { useDisconnect } from "@thirdweb-dev/react";
+import { useAddress, useDisconnect } from "@thirdweb-dev/react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
@@ -11,6 +11,7 @@ const Header = () => {
   const [listening, setListening] = useState(false);
   const menuRef = useRef(null);
   const disconnect = useDisconnect();
+  const address = useAddress();
 
   useEffect(
     listenForOutsideClicks(listening, setListening, menuRef, setIsOpen)
@@ -39,8 +40,9 @@ const Header = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               {/* <SVGIcon name="octagonicon"></SVGIcon> */}
+              <div className="mask mask-hexagon-2 h-7 w-7 bg-gradient-to-r from-gradient-purple to-gradient-blue"></div>
               <p className="ml-2 w-24 overflow-hidden text-ellipsis whitespace-nowrap text-base text-black">
-                0x6b1bd5ddddddddddd....
+                {address}
               </p>
             </div>
             <div className={isOpen ? "origin-center rotate-180" : "rotate-0"}>
