@@ -15,24 +15,41 @@ interface Props {
 
 const Profile = ({ user, address }: Props) => {
   const [NFTs, setNFTs] = useState([]);
+  const [PoAPs, setPoAPs] = useState([]);
 
-  const fetchNFTs = async () => {
-    const url = `https://api.opensea.io/api/v1/assets/?limit=50&offset=0&order_by=sale_price&owner=${address}`;
+  const fetchNFTs = async (address: string) => {
+    const url = `${process.env.NEXT_PUBLIC_OPENSEA_API_URI}/assets/?limit=50&offset=0&order_by=sale_price&owner=${address}`;
     const res = await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "X-API-KEY": "b0732dede973489dacfd1d31e6a24212",
+        "X-API-KEY": `${process.env.NEXT_PUBLIC_OPENSEA_API_KEY}`,
       },
     });
     const data = await res.json();
-    console.log(data);
 
     setNFTs(data.assets);
   };
 
+  const fetchPoAPs = async (address: string) => {
+    const url = `${process.env.NEXT_PUBLIC_POAP_API_URI}/actions/scan/${address}`;
+    const res = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-KEY": `${process.env.NEXT_PUBLIC_POAP_API_KEY}`,
+      },
+    });
+    const data = await res.json();
+
+    setPoAPs(data);
+  };
+
   useEffect(() => {
-    fetchNFTs();
+    if (address) {
+      fetchNFTs(address);
+      fetchPoAPs(address);
+    }
   }, []);
 
   return (
@@ -91,7 +108,7 @@ const Profile = ({ user, address }: Props) => {
         </div>
       </div>
       <div className="pb-6">
-        <AssetsTab nfts={NFTs} />
+        <AssetsTab nfts={NFTs} poaps={PoAPs} />
       </div>
     </div>
   );
