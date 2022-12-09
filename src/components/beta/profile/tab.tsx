@@ -15,18 +15,18 @@ const AssetsTab = ({ nfts, poaps }: AssetsTabProps) => {
     <Tab.Group>
       <Tab.List className="solid flex items-center overflow-hidden border-b border-b-gray-1400">
         <Tab className="solid mr-3 min-w-[3.75rem] border-b-2 border-b-gray-1400 p-1.5 text-base font-bold text-black">
-          NFTs
+          PoAPs
         </Tab>
         <Tab className="mr-3 min-w-[3.75rem] p-1.5 text-base font-bold text-black opacity-30">
-          PoAPs
+          NFTs
         </Tab>
       </Tab.List>
       <Tab.Panels>
         <Tab.Panel>
-          <ShowNFTs nfts={nfts} />
+          <ShowPoAPs poaps={poaps} />
         </Tab.Panel>
         <Tab.Panel>
-          <ShowPoAPs poaps={poaps} />
+          <ShowNFTs nfts={nfts} />
         </Tab.Panel>
       </Tab.Panels>
     </Tab.Group>
