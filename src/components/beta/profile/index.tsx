@@ -14,6 +14,8 @@ interface Props {
 }
 
 const Profile = ({ user, address }: Props) => {
+  console.log(user.loggedIn);
+
   const [NFTs, setNFTs] = useState([]);
   const [PoAPs, setPoAPs] = useState([]);
 
@@ -80,7 +82,7 @@ const Profile = ({ user, address }: Props) => {
                 width={12}
               />
               <p className="p-2 text-xs font-normal leading-[0.875rem] text-gray-1200">
-                {moment(user?.created_at).format("MMMM YYYY")}
+                {moment(user?.createdAt).format("MMMM YYYY")}
               </p>
             </div>
           </div>
