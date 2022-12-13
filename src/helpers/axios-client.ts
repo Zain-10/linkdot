@@ -2,7 +2,7 @@ import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import axios from "axios";
 
 import { apiRoutes } from "@/config/apiRoutes";
-import { StatusCode } from "@/constants/statusCode";
+import { StatusCodes } from "@/constants";
 
 const axiosClientPublic = axios.create({
   baseURL: process.env.API_SERVER_URI,
@@ -44,7 +44,7 @@ axiosClient.interceptors.response.use(
   (response: AxiosResponse) => response,
   async (error: AxiosError) => {
     const status = error.response?.status;
-    if (status === StatusCode.Unauthorized) {
+    if (status === StatusCodes.UNAUTHORIZED) {
       console.log("JWT token expired, refreshing token...");
       /// /////////////////////////////////////////
       // get new access_token from backend, and retry request
@@ -59,7 +59,7 @@ axiosClient.interceptors.response.use(
             localStorage.setItem("access_token", access_token);
           })
           .catch(async (err) => {
-            if (err.response?.status === StatusCode.NotAcceptable) {
+            if (err.response?.status === StatusCodes.NOT_ACCEPTABLE) {
               // refresh_token expired, getting new tokens
               console.log("refresh_token expired, getting new tokens...");
               const walletId = localStorage.getItem("walletId");
