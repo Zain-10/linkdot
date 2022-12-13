@@ -1,21 +1,25 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { followUserToDB, getUserFromDB } from "@/backend/service/user";
+import { dbService } from "@/backend/service";
 import { StatusCodes } from "@/constants";
-import prisma from "@/lib";
 
 const getUsers = async (_: NextApiRequest, res: NextApiResponse) => {
   console.log("Requesting users");
-  const uers = await prisma.user.findMany();
+  const uers = await dbService.allUsers();
   return res.status(StatusCodes.OK).json(uers);
 };
 
 const createUser = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body } = req;
   console.log("creating user with data: ", body);
-  const user = await prisma.user.create({
-    data: body,
-  });
+
+  if (!body.walletId) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ message: "walletId is required" });
+  }
+
+  const user = await dbService.createUser(body.walletId);
   return res.status(StatusCodes.CREATED).json(user);
 };
 
@@ -36,7 +40,7 @@ const getUser = async (req: NextApiRequest, res: NextApiResponse) => {
       .json({ message: "id must be a string" });
   }
 
-  const user = await getUserFromDB(id);
+  const user = await dbService.getUser(id);
 
   if (!user) {
     return res
@@ -63,7 +67,7 @@ const followUser = async (req: NextApiRequest, res: NextApiResponse) => {
       .json({ message: "id must be a string" });
   }
 
-  const user = await followUserToDB(id, req.body.userId);
+  const user = await dbService.followUser(id, req.body.userId);
 
   return res.status(StatusCodes.OK).json(user);
 };

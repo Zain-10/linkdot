@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import type { NextApiResponse } from "next";
 
-import type { StatusCodes } from "@/constants";
+import { StatusCodes } from "@/constants";
 
 export class ApiError extends Error {
   code: StatusCodes;
@@ -26,13 +26,23 @@ const handleError = (error: Error | ApiError, res: NextApiResponse) => {
       if (error.meta?.target) {
         // @ts-ignore
         const key = error.meta.target.split("_")[1];
-        return res.status(400).json({
+        return res.status(StatusCodes.BAD_REQUEST).json({
           message: `${key} already exists`,
         });
       }
     }
+    switch (error.code) {
+      case "P2023":
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          message: "Invalid id",
+        });
+      default:
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          message: "Bad Request",
+        });
+    }
   } else if (error instanceof Prisma.PrismaClientValidationError) {
-    return res.status(400).json({
+    return res.status(StatusCodes.BAD_REQUEST).json({
       message: "Validation Error",
     });
   }
@@ -40,7 +50,7 @@ const handleError = (error: Error | ApiError, res: NextApiResponse) => {
   // Log any un handled error
   console.error(error);
   // For non prisma errors
-  return res.status(500).json({
+  return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
     message: "Internal Server Error",
   });
 };

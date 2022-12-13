@@ -2,7 +2,29 @@ import { ApiError } from "@/backend/helpers/handle-error";
 import { StatusCodes } from "@/constants";
 import prisma from "@/lib";
 
-const getUserFromDB = async (id: string) => {
+import { RelatedFields } from "../db/utils";
+
+const allUsers = async () => {
+  // get all users from the database
+  const users = await prisma.user.findMany({
+    // include the following related users
+    include: RelatedFields,
+  });
+  return users;
+};
+
+const createUser = async (walletId: string) => {
+  // create a user in the database
+  console.log("creating user with walletId: ", walletId);
+  const newUser = await prisma.user.create({
+    data: {
+      walletId,
+    },
+  });
+  return newUser;
+};
+
+const getUser = async (id: string) => {
   // get a user from the database
   const user = await prisma.user.findUnique({
     where: {
@@ -34,11 +56,11 @@ const getUserFromDB = async (id: string) => {
   return user;
 };
 
-const followUserToDB = async (userId: string, followedId: string) => {
+const followUser = async (userId: string, followedId: string) => {
   // add a relationship between the follower and the followed
 
-  const user = await getUserFromDB(userId);
-  const followed = await getUserFromDB(followedId);
+  const user = await getUser(userId);
+  const followed = await getUser(followedId);
 
   // Check if the user is already following the followed
   if (user.followingIDs.find((user) => user === followed.id)) {
@@ -75,8 +97,8 @@ const followUserToDB = async (userId: string, followedId: string) => {
       },
     },
   });
-  const updatedUser = await getUserFromDB(user.id);
+  const updatedUser = await getUser(user.id);
   return updatedUser;
 };
 
-export { followUserToDB, getUserFromDB };
+export { allUsers, createUser, followUser, getUser };
