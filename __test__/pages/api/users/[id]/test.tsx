@@ -5,7 +5,7 @@
 // import { userService } from "@/helpers/service/users";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import handler from "@/pages/api/users/[id]";
+import handler from "@/pages/api/v1/users/[id]";
 // import { mocked } from "ts-jest/utils";
 
 describe("GET /api/users/:id", () => {

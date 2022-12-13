@@ -1,7 +1,7 @@
 import nock from "nock";
 import nodeMocks from "node-mocks-http";
 
-import handler from "@/pages/api/users";
+import handler from "@/pages/api/v1/users";
 
 describe("GET /api/user", () => {
   const BASE_URL = `${process.env.BASE_API_URL}`;
