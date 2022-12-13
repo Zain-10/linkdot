@@ -2,7 +2,7 @@ import { ApiError } from "@/backend/helpers/handle-error";
 import { StatusCodes } from "@/constants";
 import prisma from "@/lib";
 
-import { RelatedFields } from "../db/utils";
+import { RelatedFields } from "../utils";
 
 const allUsers = async () => {
   // get all users from the database
@@ -31,27 +31,27 @@ const getUser = async (id: string) => {
       id,
     },
     // include the following related users
-    include: {
-      following: {
-        select: {
-          id: true,
-          name: true,
-          walletId: true,
-        },
-      },
-      // include the followedBy related users
-      followedBy: {
-        select: {
-          id: true,
-          name: true,
-          walletId: true,
-        },
-      },
-    },
+    include: RelatedFields,
   });
 
   if (!user) {
     throw new ApiError(StatusCodes.NOT_FOUND, `User: ${id} not found`);
+  }
+  return user;
+};
+
+const searchUser = async (
+  query: Pick<User, "email" | "id" | "name" | "walletId">
+) => {
+  // get a user from the database
+  const user = await prisma.user.findUnique({
+    where: query,
+    // include the following related users
+    include: RelatedFields,
+  });
+
+  if (!user) {
+    throw new ApiError(StatusCodes.NOT_FOUND, `User with ${query} not found`);
   }
   return user;
 };
@@ -101,4 +101,27 @@ const followUser = async (userId: string, followedId: string) => {
   return updatedUser;
 };
 
-export { allUsers, createUser, followUser, getUser };
+const getUserByWalletAddress = async (walletId: string) => {
+  // get a user from the database
+  const user = await prisma.user.findUnique({
+    where: {
+      walletId,
+    },
+    // include the following related users
+    include: RelatedFields,
+  });
+
+  if (!user) {
+    throw new ApiError(StatusCodes.NOT_FOUND, `User: ${walletId} not found`);
+  }
+  return user;
+};
+
+export {
+  allUsers,
+  createUser,
+  followUser,
+  getUser,
+  getUserByWalletAddress,
+  searchUser,
+};
