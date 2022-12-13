@@ -14,16 +14,17 @@ const Home: NextPage = () => {
   const router = useRouter();
   const user = useUserState();
 
-  useEffect(() => {
-    if (!address) {
-      router.push("/connect");
-    }
-  }, []);
-
   const stopLoading = () => setLoading(false);
 
   useEffect(() => {
     if (!address) {
+      console.log("wallet not connected");
+      router.push("/connect");
+    }
+
+    // User not found
+    if (!user && address) {
+      console.log("User not found or not logged in");
       router.push("/connect");
     }
   }, [address]);

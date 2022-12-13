@@ -13,6 +13,7 @@ export class ApiError extends Error {
 }
 
 const handleError = (error: Error | ApiError, res: NextApiResponse) => {
+  console.error(error);
   if (error instanceof ApiError) {
     console.error(error.message);
     return res.status(error.code).json({
