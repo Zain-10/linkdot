@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from "react";
 
 import { ApiRoutes } from "@/config/betaApis";
 import { Action, StatusCodes } from "@/constants";
-import { CoFounders } from "@/constants/cofounders";
 import { useGlobalDispatch } from "@/context/global.context";
 
 import { CoreTeam } from "./coreTeam";
@@ -16,10 +15,6 @@ interface Props {
 const RightSideBar = ({ currentUser }: Props) => {
   const [recentUsers, setRecentUsers] = useState<User[]>([]);
   const [cofounders, setCofounders] = useState<User[]>([]);
-
-  console.log("recentUsers", recentUsers);
-
-  console.log("cofounders", cofounders);
 
   const dispatch = useGlobalDispatch();
 
@@ -52,19 +47,11 @@ const RightSideBar = ({ currentUser }: Props) => {
     const url = `${ApiRoutes.SEARCH_USER}?role=COFOUNDER&limit=4`; // will fetch the 4 most first users
     const response = await axios.get(url);
     if (response.status === StatusCodes.OK) {
-      // Check if the current user is a cofounder
-      // TODO: This is a temporary fix, we need to add `COFOUNDER` role to the user model
-      const cofounderWalletIds = CoFounders.map(
-        (cofounder) => cofounder.walletId
-      );
-      const filtered = response.data.filter((user: User) =>
-        cofounderWalletIds.includes(user.walletId)
-      );
-      setCofounders(filtered);
+      setCofounders(response.data);
     }
   };
 
-  // create a filteredUsers function that accepts a list of users and returns a filtered list
+  // remove the current user from the list of recent users
   const filteredUsers = useMemo(() => {
     return (users: User[]) => {
       return users.filter((user) => user.id !== currentUser.id);
