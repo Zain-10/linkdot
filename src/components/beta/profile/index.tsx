@@ -14,8 +14,6 @@ interface Props {
 }
 
 const Profile = ({ user, address }: Props) => {
-  console.log(user.loggedIn);
-
   const [NFTs, setNFTs] = useState([]);
   const [PoAPs, setPoAPs] = useState([]);
 
@@ -89,7 +87,7 @@ const Profile = ({ user, address }: Props) => {
           <div className="mb-4 flex items-center">
             <div className="mr-5 flex items-center">
               <p className="text-xs font-normal leading-[0.875rem] text-gray-1200">
-                0
+                {user.followingIDs.length}
               </p>
               <p className="p-2 text-xs font-normal leading-[0.875rem] text-gray-1200">
                 Following
@@ -97,7 +95,7 @@ const Profile = ({ user, address }: Props) => {
             </div>
             <div className="mr-5 flex items-center">
               <p className="text-xs font-normal leading-[0.875rem] text-gray-1200">
-                0
+                {user.followedByIDs.length}
               </p>
               <p className="p-2 text-xs font-normal leading-[0.875rem] text-gray-1200">
                 Followers

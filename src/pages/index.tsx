@@ -35,7 +35,7 @@ const Home: NextPage = () => {
         {loading ? (
           <LinkDotLoader callback={stopLoading} />
         ) : (
-          <Main>
+          <Main address={address} user={user}>
             <Profile user={user} address={address} />
           </Main>
         )}

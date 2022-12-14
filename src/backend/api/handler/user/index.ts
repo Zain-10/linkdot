@@ -19,6 +19,15 @@ const createUser = async (req: NextApiRequest, res: NextApiResponse) => {
       .json({ message: "walletId is required" });
   }
 
+  // Check if user already exists
+  const existingUser = await dbService.getUserByWalletAddress(body.walletId);
+
+  if (existingUser) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      message: "user already exists",
+    });
+  }
+
   const user = await dbService.createUser(body.walletId);
   return res.status(StatusCodes.CREATED).json(user);
 };
@@ -101,4 +110,26 @@ const getUserByAddress = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(StatusCodes.OK).json(user);
 };
 
-export { createUser, followUser, getUser, getUserByAddress, getUsers };
+const searchUsers = async (req: NextApiRequest, res: NextApiResponse) => {
+  const { query } = req;
+
+  console.log("Requesting users with search query: ", query);
+
+  if (!query) {
+    const users = await dbService.allUsers();
+    return res.status(StatusCodes.OK).json(users);
+  }
+
+  const users = await dbService.searchUsers(query);
+
+  return res.status(StatusCodes.OK).json(users);
+};
+
+export {
+  createUser,
+  followUser,
+  getUser,
+  getUserByAddress,
+  getUsers,
+  searchUsers,
+};
