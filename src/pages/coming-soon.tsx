@@ -4,10 +4,12 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 import { Main } from "@/components/beta/main";
+import { useUserState } from "@/context/global.context";
 
 const ComingSoon: NextPage = () => {
   const address = useAddress();
   const router = useRouter();
+  const user = useUserState();
 
   useEffect(() => {
     if (!address) {
@@ -21,13 +23,16 @@ const ComingSoon: NextPage = () => {
     }
   }, [address]);
 
-  return (
-    <Main>
-      <div className="profileWrapper mr-4 flex h-full w-full flex-1 content-center justify-center">
-        Coming Soon
-      </div>
-    </Main>
-  );
+  if (address) {
+    return (
+      <Main address={address} user={user}>
+        <div className="profileWrapper mr-4 flex h-full w-full flex-1 content-center justify-center">
+          Coming Soon
+        </div>
+      </Main>
+    );
+  }
+  return null;
 };
 
 export default ComingSoon;

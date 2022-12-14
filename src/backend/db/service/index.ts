@@ -4,7 +4,7 @@ import {
   followUser,
   getUser,
   getUserByWalletAddress,
-  searchUser,
+  searchUsers,
 } from "./user";
 
 export const dbService = {
@@ -13,5 +13,5 @@ export const dbService = {
   getUser,
   followUser,
   getUserByWalletAddress,
-  searchUser,
+  searchUsers,
 };

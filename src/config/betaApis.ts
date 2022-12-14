@@ -1,4 +1,4 @@
-const BASE_URL = `${process.env.NEXT_PUBLIC_API_SERVER_URI}/api/v1`;
+const BASE_URL = `/api/v1`;
 
 export const ApiRoutes = {
   GET_USERS: `${BASE_URL}/users`,

@@ -5,9 +5,12 @@ type User = {
   walletId: string;
   walletName: string;
   following: string[];
+  followingIDs: string[];
   followers: string[];
+  followedByIDs: string[];
   createdAt: string;
   loggedIn?: boolean;
+  role?: string;
 
   // TODO: To be removed
   created_at: string;

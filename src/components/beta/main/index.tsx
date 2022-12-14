@@ -2,7 +2,12 @@ import { Header } from "../header";
 import { RightSideBar } from "../rightSideBar";
 import { SideBar } from "../sideBar";
 
-const Main = ({ children }: React.PropsWithChildren<{}>) => {
+interface MainProps extends React.PropsWithChildren<{}> {
+  address: string;
+  user: User;
+}
+
+const Main = ({ children, user }: MainProps) => {
   return (
     <div className="flex bg-white">
       <SideBar />
@@ -10,7 +15,7 @@ const Main = ({ children }: React.PropsWithChildren<{}>) => {
         <Header />
         <div className="custom-scrollbar flex pl-4 pr-8">
           {children}
-          <RightSideBar />
+          <RightSideBar currentUser={user} />
         </div>
       </div>
     </div>

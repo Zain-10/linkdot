@@ -2,7 +2,8 @@ import { ApiError } from "@/backend/helpers/handle-error";
 import { StatusCodes } from "@/constants";
 import prisma from "@/lib";
 
-import { RelatedFields } from "../utils";
+import type { Query } from "../utils";
+import { RelatedFields, SortByCreatedAt } from "../utils";
 
 const allUsers = async () => {
   // get all users from the database
@@ -40,20 +41,36 @@ const getUser = async (id: string) => {
   return user;
 };
 
-const searchUser = async (
-  query: Pick<User, "email" | "id" | "name" | "walletId">
-) => {
-  // get a user from the database
-  const user = await prisma.user.findUnique({
-    where: query,
-    // include the following related users
-    include: RelatedFields,
-  });
+type UserQuery = {
+  sort?: User["createdAt"];
+  limit?: string;
+  id?: User["id"];
+  email?: User["email"];
+  name?: User["name"];
+  walletId?: User["walletId"];
+  createdAt?: User["createdAt"];
+};
 
-  if (!user) {
-    throw new ApiError(StatusCodes.NOT_FOUND, `User with ${query} not found`);
+const searchUsers = async (params: UserQuery) => {
+  // construct the sort query object
+  const { sort, limit, ...where } = params;
+
+  const query: Query = { where, include: RelatedFields };
+
+  if (sort) {
+    query.orderBy = SortByCreatedAt;
   }
-  return user;
+
+  if (limit) {
+    query.take = Number(limit);
+  }
+
+  console.log("Finding users with query:", query);
+
+  // get a user from the database
+  const users = await prisma.user.findMany(query);
+
+  return users;
 };
 
 const followUser = async (userId: string, followedId: string) => {
@@ -110,10 +127,6 @@ const getUserByWalletAddress = async (walletId: string) => {
     // include the following related users
     include: RelatedFields,
   });
-
-  if (!user) {
-    throw new ApiError(StatusCodes.NOT_FOUND, `User: ${walletId} not found`);
-  }
   return user;
 };
 
@@ -123,5 +136,5 @@ export {
   followUser,
   getUser,
   getUserByWalletAddress,
-  searchUser,
+  searchUsers,
 };

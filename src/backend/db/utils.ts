@@ -14,3 +14,14 @@ export const RelatedFields = {
     },
   },
 };
+
+export type Query = {
+  orderBy?: object;
+  where: object;
+  include?: object;
+  take?: number;
+};
+
+export const SortByCreatedAt = {
+  createdAt: "desc",
+};
