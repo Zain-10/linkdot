@@ -7,7 +7,7 @@ export const CoFounders: CoFounder[] = [
     name: "chindu_grey",
   },
   {
-    walletId: "0x6B1BD5BC6D527Ea8E59F676af498EAfd61707FcBBB",
+    walletId: "0x6B1BD5BC6D527Ea8E59F676af498EAfd61707FcB",
     email: "vijingovind7@gmail.com",
     name: "Vijin Govind",
   },
