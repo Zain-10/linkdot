@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import listenForOutsideClicks from "@/helpers/utils/listen-for-outside-click";
 import ChevronDownSVG from "@/public/assets/svg/chevron-down.svg";
 import LogoutSVG from "@/public/assets/svg/log-out.svg";
+import { Search } from "./search";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,16 +20,7 @@ const Header = () => {
 
   return (
     <div className="sticky top-0 z-10 flex h-[4.75rem] w-full items-center bg-white pt-3 pr-8 pb-6 pl-4">
-      <form className="relative mr-4 w-full">
-        <input
-          type="search"
-          placeholder="Search by wallet id, badge, name..."
-          className="solid h-10 w-full rounded border border-gray-1200 bg-gray-1300 py-3.5 pl-7 pr-14 text-xs text-black outline-0"
-        />
-        <button type="submit" className="absolute right-0 h-full w-12">
-          {/* <SVGIcon name="searchicon"></SVGIcon> */}
-        </button>
-      </form>
+      <Search />
       <div className="relative h-10 w-[21.875rem] shrink-0 grow-0">
         <button
           onClick={() => setIsOpen(!isOpen)}
