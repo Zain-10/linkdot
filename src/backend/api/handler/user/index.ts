@@ -6,6 +6,7 @@ import { StatusCodes } from "@/constants";
 const getUsers = async (_: NextApiRequest, res: NextApiResponse) => {
   console.log("Requesting users");
   const uers = await dbService.allUsers();
+  res.setHeader("Cache-Control", "s-maxage=10, must-revalidate");
   return res.status(StatusCodes.OK).json(uers);
 };
 
@@ -106,7 +107,7 @@ const getUserByAddress = async (req: NextApiRequest, res: NextApiResponse) => {
       .status(StatusCodes.NOT_FOUND)
       .json({ message: "user not found" });
   }
-
+  res.setHeader("Cache-Control", "s-maxage=10, must-revalidate");
   return res.status(StatusCodes.OK).json(user);
 };
 
@@ -121,8 +122,38 @@ const searchUsers = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   const users = await dbService.searchUsers(query);
-
+  res.setHeader("Cache-Control", "s-maxage=10, must-revalidate");
   return res.status(StatusCodes.OK).json(users);
+};
+
+const updateEmail = async (req: NextApiRequest, res: NextApiResponse) => {
+  const { email } = req.body;
+  const { id } = req.query;
+
+  console.log("recieved request for updating email for user with id: ", id);
+
+  if (!id) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ message: "id is required" });
+  }
+
+  if (!email) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ message: "email is required" });
+  }
+
+  if (typeof id !== "string") {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ message: "id must be a string" });
+  }
+
+  // TODO: validate email
+  const user = await dbService.updateEmail(id, email);
+
+  return res.status(StatusCodes.OK).json(user);
 };
 
 export {
@@ -132,4 +163,5 @@ export {
   getUserByAddress,
   getUsers,
   searchUsers,
+  updateEmail,
 };

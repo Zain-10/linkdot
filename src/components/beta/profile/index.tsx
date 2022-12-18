@@ -2,7 +2,6 @@ import moment from "moment";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-import BlockChainSVG from "@/public/assets/svg/blockchain.svg";
 import CalendarSVG from "@/public/assets/svg/calendar.svg";
 import profileLogo from "@/public/assets/svg/profileLogo.svg";
 
@@ -61,23 +60,25 @@ const Profile = ({ user, address }: Props) => {
         </div>
       </div>
       <div className="px-3 pt-12 pb-6">
-        <h2 className="max-w-[10.563rem] truncate text-lg font-normal leading-5 text-black">
-          {`${address.slice(0, 10)}...${address.slice(-4)}`}
+        <h2 className="max-w-[10.563rem]  text-lg font-normal leading-5 text-black">
+          {user.name
+            ? user.name
+            : `${address.slice(0, 6)}...${address.slice(-6)}`}
         </h2>
         <div className="pt-4">
           <div className="mb-4 flex items-center">
-            <div className="mr-5 flex items-center">
+            {/* <div className="mr-5 flex items-center">
               <Image src={BlockChainSVG} alt="ethereum logo" />
               <p className="p-2 text-xs font-normal leading-[0.875rem] text-gray-1200">
                 Ethereum
               </p>
-            </div>
+            </div> */}
             <div className="mr-5 flex items-center text-gray-1200">
               <Image
                 src={CalendarSVG}
                 alt="ethereum logo"
-                height={12}
-                width={12}
+                height={18}
+                width={18}
               />
               <p className="p-2 text-xs font-normal leading-[0.875rem] text-gray-1200">
                 {moment(user?.createdAt).format("MMMM YYYY")}

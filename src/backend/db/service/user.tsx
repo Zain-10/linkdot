@@ -1,9 +1,11 @@
 import { ApiError } from "@/backend/helpers/handle-error";
+import { sendEmailVerification } from "@/backend/helpers/send-email";
 import { StatusCodes } from "@/constants";
 import prisma from "@/lib";
 
 import type { Query } from "../utils";
 import { RelatedFields, SortByCreatedAt } from "../utils";
+import { generateOTP } from "./otp";
 
 const allUsers = async () => {
   // get all users from the database
@@ -80,7 +82,7 @@ const followUser = async (userId: string, followedId: string) => {
   const followed = await getUser(followedId);
 
   // Check if the user is already following the followed
-  if (user.followingIDs.find((user) => user === followed.id)) {
+  if (user.followingIDs.find((id: User["id"]) => id === followed.id)) {
     throw new ApiError(StatusCodes.BAD_REQUEST, "Already following");
   }
 
@@ -130,6 +132,43 @@ const getUserByWalletAddress = async (walletId: string) => {
   return user;
 };
 
+const updateUser = async (id: string, data: Partial<User>) => {
+  // update a user in the database
+  // TODO: currently only updates the email
+  const user = await prisma.user.update({
+    where: {
+      id,
+    },
+    data: {
+      email: data.email,
+    },
+  });
+  return user;
+};
+
+const updateEmail = async (id: string, email: string) => {
+  // update a user's email in the database
+  console.log("updating email for user: ", id);
+  const user = await getUser(id);
+
+  if (!user) {
+    throw new ApiError(StatusCodes.NOT_FOUND, `User: ${id} not found`);
+  }
+
+  if (user.email === email && user.emailVerified === true) {
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      "Cannot update email to same email"
+    );
+  }
+
+  const otp = await generateOTP(email);
+  await sendEmailVerification(email, otp);
+
+  const updatedUser = await updateUser(user.id, { email });
+  return updatedUser;
+};
+
 export {
   allUsers,
   createUser,
@@ -137,4 +176,5 @@ export {
   getUser,
   getUserByWalletAddress,
   searchUsers,
+  updateEmail,
 };

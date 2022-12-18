@@ -5,6 +5,7 @@ import {
   getUser,
   getUserByWalletAddress,
   searchUsers,
+  updateEmail,
 } from "./user";
 
 export const dbService = {
@@ -14,4 +15,5 @@ export const dbService = {
   followUser,
   getUserByWalletAddress,
   searchUsers,
+  updateEmail,
 };

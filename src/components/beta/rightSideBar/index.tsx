@@ -25,7 +25,6 @@ const RightSideBar = ({ currentUser }: Props) => {
       .then((response) => {
         if (response.status === StatusCodes.OK) {
           console.log("Successfully followed user");
-          console.log(response.data);
           dispatch({ type: Action.SetUser, payload: response.data });
         }
       })
@@ -67,12 +66,12 @@ const RightSideBar = ({ currentUser }: Props) => {
     <div className="sticky top-[4.75rem] h-[calc(100vh-76px)] w-[21.875rem] shrink-0 grow-0 overflow-auto">
       <CoreTeam
         users={filteredUsers(cofounders)}
-        currentUser={currentUser}
+        currentlyFollowing={currentUser.followingIDs}
         followUser={handleFollow}
       />
       <TeamMembers
         users={filteredUsers(recentUsers)}
-        currentUser={currentUser}
+        currentlyFollowing={currentUser.followingIDs}
         followUser={handleFollow}
       />
     </div>
