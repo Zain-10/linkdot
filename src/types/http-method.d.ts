@@ -1,0 +1,3 @@
+type HttpMethod = {
+  key: string;
+};

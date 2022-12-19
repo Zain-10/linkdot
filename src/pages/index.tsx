@@ -1,85 +1,48 @@
+import { useAddress } from "@thirdweb-dev/react";
 import type { NextPage } from "next";
-import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Scrollbars } from "react-custom-scrollbars-2";
 
-import { BadgeList } from "@/components/badge/BadgeList";
-import { NoBadge } from "@/components/badge/NoBadge";
-import { Button } from "@/components/button";
-import { Tab } from "@/components/tab";
-import { LocalRoutes } from "@/config/localRoutes";
-import { BadgeType } from "@/constants/badge";
-import { badgeService } from "@/helpers/service/badge";
-import { Main } from "@/layouts/Main/Main";
+import { LinkDotLoader } from "@/components/beta/loader";
+import { Main } from "@/components/beta/main";
+import { Profile } from "@/components/beta/profile";
+import { useUserState } from "@/context/global.context";
 
-const Dashboard: NextPage = () => {
-  const [badges, setBadges] = useState<NTTBadge[]>([]);
-  const TabList: BadgeType[] = Object.values(BadgeType);
-  const [activeTab, setActiveTab] = useState<BadgeType>(BadgeType.ISSUED);
+const Home: NextPage = () => {
+  const [loading, setLoading] = useState(true);
+  const address = useAddress();
+  const router = useRouter();
+  const user = useUserState();
 
-  const onChange = (tabItem: BadgeType) => {
-    setActiveTab(tabItem);
-  };
-
-  const getBadgesByType = async (badgeType: BadgeType) => {
-    const response = await badgeService.getBadges(badgeType);
-    if (response) {
-      const newBadges =
-        activeTab === BadgeType.ISSUED
-          ? // @ts-ignore
-            [...response.badges_issued]
-          : // @ts-ignore
-            [...response.badges_earned.map((e) => e.badge_id)];
-      setBadges(newBadges);
-    }
-  };
+  const stopLoading = () => setLoading(false);
 
   useEffect(() => {
-    console.log("acive tabe changed");
+    if (!address) {
+      console.log("wallet not connected");
+      router.push("/connect");
+    }
 
-    getBadgesByType(activeTab);
-  }, [activeTab]);
+    // User not found
+    if (!user && address) {
+      console.log("User not found or not logged in");
+      router.push("/connect");
+    }
+  }, [address]);
 
-  return (
-    <Main>
-      <Tab tabList={TabList} onChangeCallBack={onChange} activeTab={activeTab}>
-        <div className="h-[calc(100vh-150px)] overflow-auto pt-7">
-          <Scrollbars>
-            {badges?.length !== 0 && <BadgeList badgeList={badges} />}
-            {badges?.length === 0 && activeTab === BadgeType.ISSUED && (
-              <NoBadge>
-                <div>
-                  <p>
-                    You are almost there! <br />
-                    Start issuing your first PoAC badges for your community.
-                  </p>
-
-                  <Link href={LocalRoutes.badge.create}>
-                    <div className="mx-auto mt-6 w-1/2">
-                      <Button
-                        boxShadowVariant={2}
-                        borderWidth={"2px"}
-                        outerBoxShadowColor="#A58E09"
-                      >
-                        <span className="p-2 font-semibold">Create Badge</span>
-                      </Button>
-                    </div>
-                  </Link>
-                </div>
-              </NoBadge>
-            )}
-            {badges?.length === 0 && activeTab === BadgeType.CLAIMED && (
-              <NoBadge>
-                <div>
-                  <p>You don&apos;t have any claimed badges yet!</p>
-                </div>
-              </NoBadge>
-            )}
-          </Scrollbars>
-        </div>
-      </Tab>
-    </Main>
-  );
+  if (address && user) {
+    return (
+      <>
+        {loading ? (
+          <LinkDotLoader callback={stopLoading} />
+        ) : (
+          <Main address={address} user={user}>
+            <Profile user={user} address={address} />
+          </Main>
+        )}
+      </>
+    );
+  }
+  return null;
 };
 
-export default Dashboard;
+export default Home;
