@@ -5,27 +5,59 @@ import { Action } from "@/constants";
 import { useGlobalDispatch } from "@/context/global.context";
 import LetterSVG from "@/public/assets/svg/letter.svg";
 
-const Email = () => {
+interface Props {
+  email?: string;
+}
+
+const Email = ({ email }: Props) => {
   const [formData, setFormData] = useState({
-    email: "",
+    email,
     otp: "",
   });
 
+  const [showOtpInput, setShowOtpInput] = useState(false);
+
   const dispatch = useGlobalDispatch();
 
-  const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setFormData({ ...formData, email: value });
   };
 
-  const handleSumbit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleOtpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setFormData({ ...formData, otp: value });
+  };
+
+  const handleUpdateEmail = async (email: User["email"]) => {
     dispatch({
       type: Action.SetUser,
-      payload: { email: formData.email, emailVerified: true },
+      payload: { email, emailVerified: false },
     });
   };
 
-  console.log(formData);
+  const verifyEmail = async (email: User["email"], otp: string) => {
+    console.log("otp", otp);
+
+    dispatch({
+      type: Action.SetUser,
+      payload: { email, emailVerified: true },
+    });
+  };
+
+  const handleSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setShowOtpInput(true);
+    if (formData.otp === "") {
+      // Send OTP
+      // @ts-ignore
+      await handleUpdateEmail(formData.email);
+    } else {
+      // Verify OTP
+      // @ts-ignore
+      await verifyEmail(formData.email, formData.otp);
+    }
+  };
 
   return (
     <div className="relative flex w-full flex-col rounded-lg border-0 bg-white px-12 pt-20 pb-12 shadow-lg outline-none focus:outline-none">
@@ -46,31 +78,51 @@ const Email = () => {
               border: "1px solid #581ED7",
             }}
             value={formData.email}
-            onChange={handleEmail}
+            onChange={handleEmailChange}
           />
-          {/* OTP INPUT */}
-          {/* <input type="text" placeholder="Enter your 5 digit OTP" className="w-full p-4 border border-solid border-gray-1800  text-xs text-black mb-4"/> */}
-
-          <button
-            className="shadow-4xl p-4 text-sm font-normal"
-            style={{
-              width: "100%",
-              border: "1px solid rgb(88 30 215)",
-              boxShadow:
-                "rgb(88 30 215) 0px 0px 0px 0px, rgb(88 30 215) 3px 3px",
-              backgroundColor: "rgba(88, 30, 215, 0.1)",
-            }}
-          >
-            Send OTP
-          </button>
-
-          {/* OTP MESSAGE */}
-          {/* <p className="text-xs font-xs text-black text-center mt-5">OTP sent to your registed mail</p> */}
+          {showOtpInput && (
+            <>
+              <input
+                type="text"
+                placeholder="Enter your 5 digit OTP"
+                className="border-gray-1800 mb-4 w-full border border-solid  p-4 text-xs text-black"
+                value={formData.otp}
+                onChange={handleOtpChange}
+              />
+              <button
+                className="shadow-4xl p-4 text-sm font-normal"
+                style={{
+                  width: "100%",
+                  border: "1px solid rgb(88 30 215)",
+                  boxShadow:
+                    "rgb(88 30 215) 0px 0px 0px 0px, rgb(88 30 215) 3px 3px",
+                  backgroundColor: "rgba(88, 30, 215, 0.1)",
+                }}
+              >
+                Verify
+              </button>
+              <p className="font-xs mt-5 text-center text-xs text-black">
+                OTP sent to your registed mail
+              </p>
+            </>
+          )}
+          {!showOtpInput && (
+            <button
+              className="shadow-4xl p-4 text-sm font-normal"
+              style={{
+                width: "100%",
+                border: "1px solid rgb(88 30 215)",
+                boxShadow:
+                  "rgb(88 30 215) 0px 0px 0px 0px, rgb(88 30 215) 3px 3px",
+                backgroundColor: "rgba(88, 30, 215, 0.1)",
+              }}
+            >
+              Send OTP
+            </button>
+          )}
         </div>
       </form>
     </div>
-
-    // <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
   );
 };
 

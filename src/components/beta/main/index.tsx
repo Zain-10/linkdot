@@ -41,7 +41,7 @@ const Main = ({ children, user, address }: MainProps) => {
     <div className="flex bg-white">
       {/* Show email registration modal if not email verified */}
       <Modal show={emailNotComplete}>
-        <Email />
+        <Email email={user.email} />
       </Modal>
 
       <SideBar />

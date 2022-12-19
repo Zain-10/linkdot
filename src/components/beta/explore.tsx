@@ -27,7 +27,6 @@ const Explore = ({ users, address, currentUser, loaded }: Props) => {
   };
 
   useEffect(() => {
-    console.log("users", users);
     setEmpty(users.length === 0 && loaded);
   }, [users]);
 
