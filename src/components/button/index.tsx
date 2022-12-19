@@ -37,6 +37,7 @@ export const Button = ({
     color: textColor,
     opacity: `${opacityEffect ? "0.75" : 1}`,
   };
+
   return (
     <button
       disabled={isLoading}

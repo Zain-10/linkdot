@@ -7,8 +7,6 @@ const globalContextReducer = (
 ): GlobalStateType => {
   switch (action.type) {
     case Action.SetUser: {
-      console.log(Action.SetUser, action.payload);
-
       return { ...state, user: { ...state.user, ...action.payload } };
     }
     case Action.SetLoading: {
