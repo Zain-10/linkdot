@@ -1,15 +1,18 @@
+import axios from "axios";
 import Image from "next/image";
 import { useState } from "react";
 
+import { ApiRoutes } from "@/config/betaApis";
 import { Action } from "@/constants";
 import { useGlobalDispatch } from "@/context/global.context";
 import LetterSVG from "@/public/assets/svg/letter.svg";
 
 interface Props {
   email?: string;
+  userId: string;
 }
 
-const Email = ({ email }: Props) => {
+const Email = ({ email, userId }: Props) => {
   const [formData, setFormData] = useState({
     email,
     otp: "",
@@ -29,19 +32,27 @@ const Email = ({ email }: Props) => {
     setFormData({ ...formData, otp: value });
   };
 
-  const handleUpdateEmail = async (email: User["email"]) => {
-    dispatch({
-      type: Action.SetUser,
-      payload: { email, emailVerified: false },
+  const handleUpdateEmail = async (id: User["id"], email: User["email"]) => {
+    const url = ApiRoutes.UPDATE_EMAIL.replace(":id", id);
+    await axios.post(url, { email }).then(() => {
+      dispatch({
+        type: Action.SetUser,
+        payload: { email, emailVerified: false },
+      });
     });
   };
 
-  const verifyEmail = async (email: User["email"], otp: string) => {
-    console.log("otp", otp);
-
-    dispatch({
-      type: Action.SetUser,
-      payload: { email, emailVerified: true },
+  const verifyEmail = async (
+    id: User["id"],
+    email: User["email"],
+    otp: string
+  ) => {
+    const url = ApiRoutes.VERIFY_EMAIL.replace(":id", id);
+    await axios.post(url, { email, otp }).then((res) => {
+      dispatch({
+        type: Action.SetUser,
+        payload: res.data,
+      });
     });
   };
 
@@ -51,11 +62,11 @@ const Email = ({ email }: Props) => {
     if (formData.otp === "") {
       // Send OTP
       // @ts-ignore
-      await handleUpdateEmail(formData.email);
+      await handleUpdateEmail(userId, formData.email);
     } else {
       // Verify OTP
       // @ts-ignore
-      await verifyEmail(formData.email, formData.otp);
+      await verifyEmail(userId, formData.email, formData.otp);
     }
   };
 
