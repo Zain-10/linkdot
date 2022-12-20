@@ -1,11 +1,9 @@
 import { ApiError } from "@/backend/helpers/handle-error";
-import { sendEmailVerification } from "@/backend/helpers/send-email";
 import { StatusCodes } from "@/constants";
 import prisma from "@/lib";
 
 import type { Query } from "../utils";
 import { RelatedFields, SortByCreatedAt } from "../utils";
-import { generateOTP } from "./otp";
 
 const allUsers = async () => {
   // get all users from the database
@@ -67,7 +65,7 @@ const searchUsers = async (params: UserQuery) => {
     query.take = Number(limit);
   }
 
-  console.log("Finding users with query:", query);
+  console.log("Finding users with query:", query.where);
 
   // get a user from the database
   const users = await prisma.user.findMany(query);
@@ -132,41 +130,21 @@ const getUserByWalletAddress = async (walletId: string) => {
   return user;
 };
 
-const updateUser = async (id: string, data: Partial<User>) => {
-  // update a user in the database
-  // TODO: currently only updates the email
+type PartialUser = {
+  email?: User["email"];
+  name?: User["name"];
+  emailVerified?: User["emailVerified"];
+};
+
+const updateUser = async (id: string, userData: PartialUser) => {
+  console.log("updating user:id with data: ", id, userData);
   const user = await prisma.user.update({
     where: {
       id,
     },
-    data: {
-      email: data.email,
-    },
+    data: userData,
   });
   return user;
-};
-
-const updateEmail = async (id: string, email: string) => {
-  // update a user's email in the database
-  console.log("updating email for user: ", id);
-  const user = await getUser(id);
-
-  if (!user) {
-    throw new ApiError(StatusCodes.NOT_FOUND, `User: ${id} not found`);
-  }
-
-  if (user.email === email && user.emailVerified === true) {
-    throw new ApiError(
-      StatusCodes.BAD_REQUEST,
-      "Cannot update email to same email"
-    );
-  }
-
-  const otp = await generateOTP(email);
-  await sendEmailVerification(email, otp);
-
-  const updatedUser = await updateUser(user.id, { email });
-  return updatedUser;
 };
 
 export {
@@ -176,5 +154,5 @@ export {
   getUser,
   getUserByWalletAddress,
   searchUsers,
-  updateEmail,
+  updateUser,
 };
