@@ -90,15 +90,20 @@ const Email = ({ email, userId }: Props) => {
             }}
             value={formData.email}
             onChange={handleEmailChange}
+            required
           />
           {showOtpInput && (
             <>
               <input
                 type="text"
-                placeholder="Enter your 5 digit OTP"
+                placeholder="Enter your 6 digit OTP"
                 className="border-gray-1800 mb-4 w-full border border-solid  p-4 text-xs text-black"
                 value={formData.otp}
                 onChange={handleOtpChange}
+                required
+                style={{
+                  border: "1px solid #581ED7",
+                }}
               />
               <button
                 className="shadow-4xl p-4 text-sm font-normal"
@@ -110,10 +115,10 @@ const Email = ({ email, userId }: Props) => {
                   backgroundColor: "rgba(88, 30, 215, 0.1)",
                 }}
               >
-                Verify
+                Go to Profile
               </button>
               <p className="font-xs mt-5 text-center text-xs text-black">
-                OTP sent to your registed mail
+                OTP sent to your mail
               </p>
             </>
           )}
