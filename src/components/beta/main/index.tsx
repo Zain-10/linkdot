@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { Email } from "@/components/forms/email";
 import { Modal } from "@/components/Modal";
@@ -18,30 +18,40 @@ interface MainProps extends React.PropsWithChildren<{}> {
 
 const Main = ({ children, user, address }: MainProps) => {
   const dispatch = useGlobalDispatch();
-  const emailNotComplete = !user.email || !user.emailVerified;
+  const [showEmailModal, setShowEmailModal] = useState(false);
 
   useEffect(() => {
-    axios
-      .get(ApiRoutes.GET_USER_BY_WALLET_ADDRESS.replace(":address", address))
-      .then((res) => {
-        if (res.status === StatusCodes.OK) {
-          console.log(res.data);
-          dispatch({
-            type: Action.SetUser,
-            payload: res.data,
-          });
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if (address !== user.walletId) {
+      axios
+        .get(ApiRoutes.GET_USER_BY_WALLET_ADDRESS.replace(":address", address))
+        .then((res) => {
+          if (res.status === StatusCodes.OK) {
+            console.log(res.data);
+            dispatch({
+              type: Action.SetUser,
+              payload: res.data,
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }, [address]);
+
+  useEffect(() => {
+    // show email modal logic handled here otherwise it will flicker on every render
+    const emailSkipValidity = localStorage.getItem("emailSkipValidity");
+    const emailNotComplete = !user.email || !user.emailVerified;
+    const showModal = new Date(Number(emailSkipValidity)) < new Date();
+    setShowEmailModal(showModal && emailNotComplete);
+  }, [user]);
 
   return (
     <div className="flex bg-white">
       {/* Show email registration modal if not email verified */}
-      <Modal show={emailNotComplete}>
-        <Email email={user.email} userId={user.id} />
+      <Modal show={showEmailModal} showClose={true}>
+        <Email userId={user.id} />
       </Modal>
 
       <SideBar />
