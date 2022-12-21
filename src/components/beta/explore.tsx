@@ -24,6 +24,9 @@ const Explore = ({ users, address, currentUser, loaded }: Props) => {
   const handleFollow = async (userId: string) => {
     const user = await followUser(currentUser.id, userId);
     dispatch({ type: Action.SetUser, payload: user });
+    // TODO: global state is not updating immediately, so we need to manually update the following list
+    // Fix this by updating global state
+    currentlyFollowing.push(userId);
   };
 
   useEffect(() => {
