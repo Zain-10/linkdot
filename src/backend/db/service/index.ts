@@ -1,3 +1,4 @@
+import { deleteOtp, generateOTP, validateOtp } from "./otp";
 import {
   allUsers,
   createUser,
@@ -5,6 +6,7 @@ import {
   getUser,
   getUserByWalletAddress,
   searchUsers,
+  updateUser,
 } from "./user";
 
 export const dbService = {
@@ -14,4 +16,8 @@ export const dbService = {
   followUser,
   getUserByWalletAddress,
   searchUsers,
+  updateUser,
+  validateOtp,
+  generateOTP,
+  deleteOtp,
 };

@@ -18,5 +18,4 @@ module.exports = withBundleAnalyzer({
   // So, the source code is "basePath-ready".
   // You can remove `basePath` if you don't need it.
   reactStrictMode: true,
-  NEXT_PUBLIC_API_SERVER_URI: process.env.API_SERVER_URI,
 });

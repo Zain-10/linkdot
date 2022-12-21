@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import listenForOutsideClicks from "@/helpers/utils/listen-for-outside-click";
 import ChevronDownSVG from "@/public/assets/svg/chevron-down.svg";
 import LogoutSVG from "@/public/assets/svg/log-out.svg";
+
 import { Search } from "./search";
 
 const Header = () => {

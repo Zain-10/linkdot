@@ -65,7 +65,7 @@ const searchUsers = async (params: UserQuery) => {
     query.take = Number(limit);
   }
 
-  console.log("Finding users with query:", query);
+  console.log("Finding users with query:", query.where);
 
   // get a user from the database
   const users = await prisma.user.findMany(query);
@@ -80,7 +80,7 @@ const followUser = async (userId: string, followedId: string) => {
   const followed = await getUser(followedId);
 
   // Check if the user is already following the followed
-  if (user.followingIDs.find((user) => user === followed.id)) {
+  if (user.followingIDs.find((id: User["id"]) => id === followed.id)) {
     throw new ApiError(StatusCodes.BAD_REQUEST, "Already following");
   }
 
@@ -130,6 +130,23 @@ const getUserByWalletAddress = async (walletId: string) => {
   return user;
 };
 
+type PartialUser = {
+  email?: User["email"];
+  name?: User["name"];
+  emailVerified?: User["emailVerified"];
+};
+
+const updateUser = async (id: string, userData: PartialUser) => {
+  console.log("updating user:id with data: ", id, userData);
+  const user = await prisma.user.update({
+    where: {
+      id,
+    },
+    data: userData,
+  });
+  return user;
+};
+
 export {
   allUsers,
   createUser,
@@ -137,4 +154,5 @@ export {
   getUser,
   getUserByWalletAddress,
   searchUsers,
+  updateUser,
 };

@@ -1,7 +1,8 @@
-import SearcgSVg from "@/public/assets/svg/search.svg";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState } from "react";
+
+import SearcgSVg from "@/public/assets/svg/search.svg";
 
 const Search = () => {
   const [query, setQuery] = useState<string>("");

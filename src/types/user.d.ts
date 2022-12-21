@@ -11,6 +11,7 @@ type User = {
   createdAt: string;
   loggedIn?: boolean;
   role?: string;
+  emailVerified?: boolean;
 
   // TODO: To be removed
   created_at: string;
