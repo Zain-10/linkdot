@@ -3,7 +3,7 @@ import axios from "axios";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 
-import { ConnectComponent } from "@/components/beta/connect";
+import { ConnectComponent } from "@/components/connect";
 import { ApiRoutes } from "@/config/betaApis";
 import { LocalRoutes } from "@/config/localRoutes";
 import { Action, LOCAL_STORAGE, StatusCodes } from "@/constants";

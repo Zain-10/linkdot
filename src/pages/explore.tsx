@@ -4,8 +4,8 @@ import type { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-import { Explore } from "@/components/beta/explore";
-import { Main } from "@/components/beta/main";
+import { Explore } from "@/components/explore";
+import { Main } from "@/components/main";
 import { ApiRoutes } from "@/config/betaApis";
 import { StatusCodes } from "@/constants";
 import { useUserState } from "@/context/global.context";
