@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 
 import { Action } from "@/constants";
 import { useGlobalDispatch } from "@/context/global.context";
+import profileFrame from "@/public/assets/svg/profilepic.svg";
 
-import profileFrame from "../../../public/assets/svg/profilepic.svg";
 import { Follow } from "./followButton";
 import { followUser } from "./helpers/followUser";
 

@@ -3,9 +3,9 @@ import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-import { LinkDotLoader } from "@/components/beta/loader";
-import { Main } from "@/components/beta/main";
-import { Profile } from "@/components/beta/profile";
+import { LinkDotLoader } from "@/components/loader";
+import { Main } from "@/components/main";
+import { Profile } from "@/components/profile";
 import { useUserState } from "@/context/global.context";
 
 const Home: NextPage = () => {
