@@ -3,7 +3,7 @@ import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-import { Main } from "@/components/beta/main";
+import { Main } from "@/components/main";
 import { useUserState } from "@/context/global.context";
 
 const ComingSoon: NextPage = () => {
