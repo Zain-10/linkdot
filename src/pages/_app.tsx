@@ -1,10 +1,10 @@
 import "../styles/global.css";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ChainId, ThirdwebProvider } from "@thirdweb-dev/react";
 import type { AppProps } from "next/app";
 
 import GlobalProvider from "@/context/providers/global.provider";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 /**
  * Configure Persistent Page Layouts
@@ -14,7 +14,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 const MyApp = ({ Component, pageProps }: AppProps) => {
   const queryClient = new QueryClient();
   return (
-    <ThirdwebProvider desiredChainId={ChainId.Mainnet}>
+    <ThirdwebProvider desiredChainId={ChainId.Polygon}>
       <QueryClientProvider client={queryClient}>
         <GlobalProvider>
           <Component {...pageProps} />
