@@ -1,5 +1,10 @@
-import type { UseQueryOptions } from "@tanstack/react-query";
-import { useQuery } from "@tanstack/react-query";
+import type {
+  UseMutationOptions,
+  UseQueryOptions,
+} from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+
+import { fetcher } from "./auth-fetcher";
 
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -12,31 +17,6 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
   [SubKey in K]: Maybe<T[SubKey]>;
 };
-
-function fetcher<TData, TVariables>(
-  endpoint: string,
-  requestInit: RequestInit,
-  query: string,
-  variables?: TVariables
-) {
-  return async (): Promise<TData> => {
-    const res = await fetch(endpoint, {
-      method: "POST",
-      ...requestInit,
-      body: JSON.stringify({ query, variables }),
-    });
-
-    const json = await res.json();
-
-    if (json.errors) {
-      const { message } = json.errors[0];
-
-      throw new Error(message);
-    }
-
-    return json.data;
-  };
-}
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -3796,6 +3776,28 @@ export type WorldcoinPhoneVerifyWebhookRequest = {
   nullifierHash: Scalars["String"];
   signal: Scalars["EthereumAddress"];
   signalType: WorldcoinPhoneVerifyType;
+};
+
+export type AuthenticateMutationVariables = Exact<{
+  request: SignedAuthChallenge;
+}>;
+
+export type AuthenticateMutation = {
+  __typename?: "Mutation";
+  authenticate: {
+    __typename?: "AuthenticationResult";
+    accessToken: any;
+    refreshToken: any;
+  };
+};
+
+export type ChallengeQueryVariables = Exact<{
+  request: ChallengeRequest;
+}>;
+
+export type ChallengeQuery = {
+  __typename?: "Query";
+  challenge: { __typename?: "AuthChallengeResult"; text: string };
 };
 
 export type MediaFieldsFragment = {
@@ -29866,6 +29868,495 @@ export type ExplorePublicationsQuery = {
   };
 };
 
+export type DefaultProfileQueryVariables = Exact<{
+  request: DefaultProfileRequest;
+}>;
+
+export type DefaultProfileQuery = {
+  __typename?: "Query";
+  defaultProfile?: {
+    __typename?: "Profile";
+    id: any;
+    name?: string | null;
+    bio?: string | null;
+    isFollowedByMe: boolean;
+    isFollowing: boolean;
+    followNftAddress?: any | null;
+    metadata?: any | null;
+    isDefault: boolean;
+    handle: any;
+    ownedBy: any;
+    attributes?: Array<{
+      __typename?: "Attribute";
+      displayType?: string | null;
+      traitType?: string | null;
+      key: string;
+      value: string;
+    }> | null;
+    picture?:
+      | {
+          __typename?: "MediaSet";
+          original: {
+            __typename?: "Media";
+            url: any;
+            width?: number | null;
+            height?: number | null;
+            mimeType?: any | null;
+          };
+          small?: {
+            __typename?: "Media";
+            url: any;
+            width?: number | null;
+            height?: number | null;
+            mimeType?: any | null;
+          } | null;
+          medium?: {
+            __typename?: "Media";
+            url: any;
+            width?: number | null;
+            height?: number | null;
+            mimeType?: any | null;
+          } | null;
+        }
+      | {
+          __typename?: "NftImage";
+          contractAddress: any;
+          tokenId: string;
+          uri: any;
+          verified: boolean;
+        }
+      | null;
+    coverPicture?:
+      | {
+          __typename?: "MediaSet";
+          original: {
+            __typename?: "Media";
+            url: any;
+            width?: number | null;
+            height?: number | null;
+            mimeType?: any | null;
+          };
+          small?: {
+            __typename?: "Media";
+            url: any;
+            width?: number | null;
+            height?: number | null;
+            mimeType?: any | null;
+          } | null;
+          medium?: {
+            __typename?: "Media";
+            url: any;
+            width?: number | null;
+            height?: number | null;
+            mimeType?: any | null;
+          } | null;
+        }
+      | {
+          __typename?: "NftImage";
+          contractAddress: any;
+          tokenId: string;
+          uri: any;
+          verified: boolean;
+        }
+      | null;
+    dispatcher?: {
+      __typename?: "Dispatcher";
+      address: any;
+      canUseRelay: boolean;
+    } | null;
+    stats: {
+      __typename?: "ProfileStats";
+      totalFollowers: number;
+      totalFollowing: number;
+      totalPosts: number;
+      totalComments: number;
+      totalMirrors: number;
+      totalPublications: number;
+      totalCollects: number;
+    };
+    followModule?:
+      | {
+          __typename?: "FeeFollowModuleSettings";
+          type: FollowModules;
+          recipient: any;
+          amount: {
+            __typename?: "ModuleFeeAmount";
+            value: string;
+            asset: {
+              __typename?: "Erc20";
+              name: string;
+              symbol: string;
+              decimals: number;
+              address: any;
+            };
+          };
+        }
+      | {
+          __typename?: "ProfileFollowModuleSettings";
+          type: FollowModules;
+          contractAddress: any;
+        }
+      | {
+          __typename?: "RevertFollowModuleSettings";
+          type: FollowModules;
+          contractAddress: any;
+        }
+      | {
+          __typename?: "UnknownFollowModuleSettings";
+          type: FollowModules;
+          contractAddress: any;
+          followModuleReturnData: any;
+        }
+      | null;
+    onChainIdentity: {
+      __typename?: "OnChainIdentity";
+      proofOfHumanity: boolean;
+      ens?: { __typename?: "EnsOnChainIdentity"; name?: any | null } | null;
+      sybilDotOrg: {
+        __typename?: "SybilDotOrgIdentity";
+        verified: boolean;
+        source: {
+          __typename?: "SybilDotOrgIdentitySource";
+          twitter: {
+            __typename?: "SybilDotOrgTwitterIdentity";
+            handle?: string | null;
+          };
+        };
+      };
+      worldcoin: { __typename?: "WorldcoinIdentity"; isHuman: boolean };
+    };
+  } | null;
+};
+
+export type ProfileQueryVariables = Exact<{
+  request: SingleProfileQueryRequest;
+}>;
+
+export type ProfileQuery = {
+  __typename?: "Query";
+  profile?: {
+    __typename?: "Profile";
+    id: any;
+    name?: string | null;
+    bio?: string | null;
+    isFollowedByMe: boolean;
+    isFollowing: boolean;
+    followNftAddress?: any | null;
+    metadata?: any | null;
+    isDefault: boolean;
+    handle: any;
+    ownedBy: any;
+    attributes?: Array<{
+      __typename?: "Attribute";
+      displayType?: string | null;
+      traitType?: string | null;
+      key: string;
+      value: string;
+    }> | null;
+    picture?:
+      | {
+          __typename?: "MediaSet";
+          original: {
+            __typename?: "Media";
+            url: any;
+            width?: number | null;
+            height?: number | null;
+            mimeType?: any | null;
+          };
+          small?: {
+            __typename?: "Media";
+            url: any;
+            width?: number | null;
+            height?: number | null;
+            mimeType?: any | null;
+          } | null;
+          medium?: {
+            __typename?: "Media";
+            url: any;
+            width?: number | null;
+            height?: number | null;
+            mimeType?: any | null;
+          } | null;
+        }
+      | {
+          __typename?: "NftImage";
+          contractAddress: any;
+          tokenId: string;
+          uri: any;
+          verified: boolean;
+        }
+      | null;
+    coverPicture?:
+      | {
+          __typename?: "MediaSet";
+          original: {
+            __typename?: "Media";
+            url: any;
+            width?: number | null;
+            height?: number | null;
+            mimeType?: any | null;
+          };
+          small?: {
+            __typename?: "Media";
+            url: any;
+            width?: number | null;
+            height?: number | null;
+            mimeType?: any | null;
+          } | null;
+          medium?: {
+            __typename?: "Media";
+            url: any;
+            width?: number | null;
+            height?: number | null;
+            mimeType?: any | null;
+          } | null;
+        }
+      | {
+          __typename?: "NftImage";
+          contractAddress: any;
+          tokenId: string;
+          uri: any;
+          verified: boolean;
+        }
+      | null;
+    dispatcher?: {
+      __typename?: "Dispatcher";
+      address: any;
+      canUseRelay: boolean;
+    } | null;
+    stats: {
+      __typename?: "ProfileStats";
+      totalFollowers: number;
+      totalFollowing: number;
+      totalPosts: number;
+      totalComments: number;
+      totalMirrors: number;
+      totalPublications: number;
+      totalCollects: number;
+    };
+    followModule?:
+      | {
+          __typename?: "FeeFollowModuleSettings";
+          type: FollowModules;
+          recipient: any;
+          amount: {
+            __typename?: "ModuleFeeAmount";
+            value: string;
+            asset: {
+              __typename?: "Erc20";
+              name: string;
+              symbol: string;
+              decimals: number;
+              address: any;
+            };
+          };
+        }
+      | {
+          __typename?: "ProfileFollowModuleSettings";
+          type: FollowModules;
+          contractAddress: any;
+        }
+      | {
+          __typename?: "RevertFollowModuleSettings";
+          type: FollowModules;
+          contractAddress: any;
+        }
+      | {
+          __typename?: "UnknownFollowModuleSettings";
+          type: FollowModules;
+          contractAddress: any;
+          followModuleReturnData: any;
+        }
+      | null;
+    onChainIdentity: {
+      __typename?: "OnChainIdentity";
+      proofOfHumanity: boolean;
+      ens?: { __typename?: "EnsOnChainIdentity"; name?: any | null } | null;
+      sybilDotOrg: {
+        __typename?: "SybilDotOrgIdentity";
+        verified: boolean;
+        source: {
+          __typename?: "SybilDotOrgIdentitySource";
+          twitter: {
+            __typename?: "SybilDotOrgTwitterIdentity";
+            handle?: string | null;
+          };
+        };
+      };
+      worldcoin: { __typename?: "WorldcoinIdentity"; isHuman: boolean };
+    };
+  } | null;
+};
+
+export type ProfilesQueryVariables = Exact<{
+  request: ProfileQueryRequest;
+}>;
+
+export type ProfilesQuery = {
+  __typename?: "Query";
+  profiles: {
+    __typename?: "PaginatedProfileResult";
+    items: Array<{
+      __typename?: "Profile";
+      id: any;
+      name?: string | null;
+      bio?: string | null;
+      isFollowedByMe: boolean;
+      isFollowing: boolean;
+      followNftAddress?: any | null;
+      metadata?: any | null;
+      isDefault: boolean;
+      handle: any;
+      ownedBy: any;
+      attributes?: Array<{
+        __typename?: "Attribute";
+        displayType?: string | null;
+        traitType?: string | null;
+        key: string;
+        value: string;
+      }> | null;
+      picture?:
+        | {
+            __typename?: "MediaSet";
+            original: {
+              __typename?: "Media";
+              url: any;
+              width?: number | null;
+              height?: number | null;
+              mimeType?: any | null;
+            };
+            small?: {
+              __typename?: "Media";
+              url: any;
+              width?: number | null;
+              height?: number | null;
+              mimeType?: any | null;
+            } | null;
+            medium?: {
+              __typename?: "Media";
+              url: any;
+              width?: number | null;
+              height?: number | null;
+              mimeType?: any | null;
+            } | null;
+          }
+        | {
+            __typename?: "NftImage";
+            contractAddress: any;
+            tokenId: string;
+            uri: any;
+            verified: boolean;
+          }
+        | null;
+      coverPicture?:
+        | {
+            __typename?: "MediaSet";
+            original: {
+              __typename?: "Media";
+              url: any;
+              width?: number | null;
+              height?: number | null;
+              mimeType?: any | null;
+            };
+            small?: {
+              __typename?: "Media";
+              url: any;
+              width?: number | null;
+              height?: number | null;
+              mimeType?: any | null;
+            } | null;
+            medium?: {
+              __typename?: "Media";
+              url: any;
+              width?: number | null;
+              height?: number | null;
+              mimeType?: any | null;
+            } | null;
+          }
+        | {
+            __typename?: "NftImage";
+            contractAddress: any;
+            tokenId: string;
+            uri: any;
+            verified: boolean;
+          }
+        | null;
+      dispatcher?: {
+        __typename?: "Dispatcher";
+        address: any;
+        canUseRelay: boolean;
+      } | null;
+      stats: {
+        __typename?: "ProfileStats";
+        totalFollowers: number;
+        totalFollowing: number;
+        totalPosts: number;
+        totalComments: number;
+        totalMirrors: number;
+        totalPublications: number;
+        totalCollects: number;
+      };
+      followModule?:
+        | {
+            __typename?: "FeeFollowModuleSettings";
+            type: FollowModules;
+            recipient: any;
+            amount: {
+              __typename?: "ModuleFeeAmount";
+              value: string;
+              asset: {
+                __typename?: "Erc20";
+                name: string;
+                symbol: string;
+                decimals: number;
+                address: any;
+              };
+            };
+          }
+        | {
+            __typename?: "ProfileFollowModuleSettings";
+            type: FollowModules;
+            contractAddress: any;
+          }
+        | {
+            __typename?: "RevertFollowModuleSettings";
+            type: FollowModules;
+            contractAddress: any;
+          }
+        | {
+            __typename?: "UnknownFollowModuleSettings";
+            type: FollowModules;
+            contractAddress: any;
+            followModuleReturnData: any;
+          }
+        | null;
+      onChainIdentity: {
+        __typename?: "OnChainIdentity";
+        proofOfHumanity: boolean;
+        ens?: { __typename?: "EnsOnChainIdentity"; name?: any | null } | null;
+        sybilDotOrg: {
+          __typename?: "SybilDotOrgIdentity";
+          verified: boolean;
+          source: {
+            __typename?: "SybilDotOrgIdentitySource";
+            twitter: {
+              __typename?: "SybilDotOrgTwitterIdentity";
+              handle?: string | null;
+            };
+          };
+        };
+        worldcoin: { __typename?: "WorldcoinIdentity"; isHuman: boolean };
+      };
+    }>;
+    pageInfo: {
+      __typename?: "PaginatedResultInfo";
+      prev?: any | null;
+      next?: any | null;
+      totalCount?: number | null;
+    };
+  };
+};
+
 export const MediaFieldsFragmentDoc = `
     fragment MediaFields on Media {
   url
@@ -30458,6 +30949,55 @@ export const OrConditionFieldsNoRecursiveFragmentDoc = `
   }
 }
     `;
+export const AuthenticateDocument = `
+    mutation authenticate($request: SignedAuthChallenge!) {
+  authenticate(request: $request) {
+    accessToken
+    refreshToken
+  }
+}
+    `;
+export const useAuthenticateMutation = <TError = unknown, TContext = unknown>(
+  options?: UseMutationOptions<
+    AuthenticateMutation,
+    TError,
+    AuthenticateMutationVariables,
+    TContext
+  >
+) =>
+  useMutation<
+    AuthenticateMutation,
+    TError,
+    AuthenticateMutationVariables,
+    TContext
+  >(
+    ["authenticate"],
+    (variables?: AuthenticateMutationVariables) =>
+      fetcher<AuthenticateMutation, AuthenticateMutationVariables>(
+        AuthenticateDocument,
+        variables
+      )(),
+    options
+  );
+export const ChallengeDocument = `
+    query Challenge($request: ChallengeRequest!) {
+  challenge(request: $request) {
+    text
+  }
+}
+    `;
+export const useChallengeQuery = <TData = ChallengeQuery, TError = unknown>(
+  variables: ChallengeQueryVariables,
+  options?: UseQueryOptions<ChallengeQuery, TError, TData>
+) =>
+  useQuery<ChallengeQuery, TError, TData>(
+    ["Challenge", variables],
+    fetcher<ChallengeQuery, ChallengeQueryVariables>(
+      ChallengeDocument,
+      variables
+    ),
+    options
+  );
 export const ExplorePublicationsDocument = `
     query ExplorePublications($request: ExplorePublicationRequest!) {
   explorePublications(request: $request) {
@@ -30508,18 +31048,81 @@ export const useExplorePublicationsQuery = <
   TData = ExplorePublicationsQuery,
   TError = unknown
 >(
-  dataSource: { endpoint: string; fetchParams?: RequestInit },
   variables: ExplorePublicationsQueryVariables,
   options?: UseQueryOptions<ExplorePublicationsQuery, TError, TData>
 ) =>
   useQuery<ExplorePublicationsQuery, TError, TData>(
     ["ExplorePublications", variables],
     fetcher<ExplorePublicationsQuery, ExplorePublicationsQueryVariables>(
-      dataSource.endpoint,
-      dataSource.fetchParams || {},
       ExplorePublicationsDocument,
       variables
     ),
+    options
+  );
+export const DefaultProfileDocument = `
+    query defaultProfile($request: DefaultProfileRequest!) {
+  defaultProfile(request: $request) {
+    ...ProfileFields
+  }
+}
+    ${ProfileFieldsFragmentDoc}
+${MediaFieldsFragmentDoc}
+${FollowModuleFieldsFragmentDoc}`;
+export const useDefaultProfileQuery = <
+  TData = DefaultProfileQuery,
+  TError = unknown
+>(
+  variables: DefaultProfileQueryVariables,
+  options?: UseQueryOptions<DefaultProfileQuery, TError, TData>
+) =>
+  useQuery<DefaultProfileQuery, TError, TData>(
+    ["defaultProfile", variables],
+    fetcher<DefaultProfileQuery, DefaultProfileQueryVariables>(
+      DefaultProfileDocument,
+      variables
+    ),
+    options
+  );
+export const ProfileDocument = `
+    query profile($request: SingleProfileQueryRequest!) {
+  profile(request: $request) {
+    ...ProfileFields
+  }
+}
+    ${ProfileFieldsFragmentDoc}
+${MediaFieldsFragmentDoc}
+${FollowModuleFieldsFragmentDoc}`;
+export const useProfileQuery = <TData = ProfileQuery, TError = unknown>(
+  variables: ProfileQueryVariables,
+  options?: UseQueryOptions<ProfileQuery, TError, TData>
+) =>
+  useQuery<ProfileQuery, TError, TData>(
+    ["profile", variables],
+    fetcher<ProfileQuery, ProfileQueryVariables>(ProfileDocument, variables),
+    options
+  );
+export const ProfilesDocument = `
+    query profiles($request: ProfileQueryRequest!) {
+  profiles(request: $request) {
+    items {
+      ...ProfileFields
+    }
+    pageInfo {
+      ...CommonPaginatedResultInfoFields
+    }
+  }
+}
+    ${ProfileFieldsFragmentDoc}
+${MediaFieldsFragmentDoc}
+${FollowModuleFieldsFragmentDoc}
+${CommonPaginatedResultInfoFieldsFragmentDoc}`;
+export const useProfilesQuery = <TData = ProfilesQuery, TError = unknown>(
+  variables: ProfilesQueryVariables,
+  options?: UseQueryOptions<ProfilesQuery, TError, TData>
+) =>
+  useQuery<ProfilesQuery, TError, TData>(
+    ["profiles", variables],
+    fetcher<ProfilesQuery, ProfilesQueryVariables>(ProfilesDocument, variables),
     options
   );
 

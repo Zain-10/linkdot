@@ -15,4 +15,9 @@ generates:
     
     config:
       dedupeFragments: true
+      fetcher:
+        # path to the fetcher function
+        func: "./auth-fetcher#fetcher"
+        isReactHook: false
+
       
