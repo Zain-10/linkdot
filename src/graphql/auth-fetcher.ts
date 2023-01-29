@@ -1,7 +1,5 @@
 const endpoint = process.env.NEXT_PUBLIC_LENS_API_URI;
 
-console.log("endpoint", endpoint);
-
 export const fetcher = <TData, TVariables>(
   query: string,
   variables?: TVariables,
