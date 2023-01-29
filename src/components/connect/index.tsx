@@ -3,16 +3,20 @@ import Image from "next/image";
 
 import LinkDotSVG from "@/public/assets/svg/linkdot.svg";
 
-import styles from "./connect.module.css";
-
 const ConnectComponent = () => {
   const connectWithMetamask = useMetamask();
+  // TODO: Add network check and switch functionality
+  // const isOnWrongNetwork = useNetworkMismatch();
+
+  // const [, switchNetwork] = useNetwork();
+
+  // if (isOnWrongNetwork) {
+  //   switchNetwork?.(ChainId.Polygon);
+  // }
 
   return (
     <div className="flex h-screen w-full bg-white">
-      <div
-        className={`${styles.left_section} flex flex-col items-end justify-end p-32`}
-      >
+      <div className={"flex flex-col items-end justify-end p-32"}>
         <Image src={LinkDotSVG} alt="link dot name" />
         <div className="mt-7">
           <p className="text-right text-base font-normal leading-6 text-white">
