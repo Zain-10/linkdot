@@ -33,6 +33,7 @@ User profile page is currently using the old design. It needs to be updated to u
 
 - FIX: the active tab is not highlighted
 - Convert Proof of Work and Verified Credentials image/cards components to use the new design
+- Convert the `Cover` banner into `CSS` instead of `image` to make it faster.
 
 **Acceptance criteria**
 
