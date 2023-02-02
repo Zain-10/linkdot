@@ -30357,6 +30357,164 @@ export type ProfilesQuery = {
   };
 };
 
+export type RecommendedProfilesQueryVariables = Exact<{ [key: string]: never }>;
+
+export type RecommendedProfilesQuery = {
+  __typename?: "Query";
+  recommendedProfiles: Array<{
+    __typename?: "Profile";
+    id: any;
+    name?: string | null;
+    bio?: string | null;
+    isFollowedByMe: boolean;
+    isFollowing: boolean;
+    followNftAddress?: any | null;
+    metadata?: any | null;
+    isDefault: boolean;
+    handle: any;
+    ownedBy: any;
+    attributes?: Array<{
+      __typename?: "Attribute";
+      displayType?: string | null;
+      traitType?: string | null;
+      key: string;
+      value: string;
+    }> | null;
+    picture?:
+      | {
+          __typename?: "MediaSet";
+          original: {
+            __typename?: "Media";
+            url: any;
+            width?: number | null;
+            height?: number | null;
+            mimeType?: any | null;
+          };
+          small?: {
+            __typename?: "Media";
+            url: any;
+            width?: number | null;
+            height?: number | null;
+            mimeType?: any | null;
+          } | null;
+          medium?: {
+            __typename?: "Media";
+            url: any;
+            width?: number | null;
+            height?: number | null;
+            mimeType?: any | null;
+          } | null;
+        }
+      | {
+          __typename?: "NftImage";
+          contractAddress: any;
+          tokenId: string;
+          uri: any;
+          verified: boolean;
+        }
+      | null;
+    coverPicture?:
+      | {
+          __typename?: "MediaSet";
+          original: {
+            __typename?: "Media";
+            url: any;
+            width?: number | null;
+            height?: number | null;
+            mimeType?: any | null;
+          };
+          small?: {
+            __typename?: "Media";
+            url: any;
+            width?: number | null;
+            height?: number | null;
+            mimeType?: any | null;
+          } | null;
+          medium?: {
+            __typename?: "Media";
+            url: any;
+            width?: number | null;
+            height?: number | null;
+            mimeType?: any | null;
+          } | null;
+        }
+      | {
+          __typename?: "NftImage";
+          contractAddress: any;
+          tokenId: string;
+          uri: any;
+          verified: boolean;
+        }
+      | null;
+    dispatcher?: {
+      __typename?: "Dispatcher";
+      address: any;
+      canUseRelay: boolean;
+    } | null;
+    stats: {
+      __typename?: "ProfileStats";
+      totalFollowers: number;
+      totalFollowing: number;
+      totalPosts: number;
+      totalComments: number;
+      totalMirrors: number;
+      totalPublications: number;
+      totalCollects: number;
+    };
+    followModule?:
+      | {
+          __typename?: "FeeFollowModuleSettings";
+          type: FollowModules;
+          recipient: any;
+          amount: {
+            __typename?: "ModuleFeeAmount";
+            value: string;
+            asset: {
+              __typename?: "Erc20";
+              name: string;
+              symbol: string;
+              decimals: number;
+              address: any;
+            };
+          };
+        }
+      | {
+          __typename?: "ProfileFollowModuleSettings";
+          type: FollowModules;
+          contractAddress: any;
+        }
+      | {
+          __typename?: "RevertFollowModuleSettings";
+          type: FollowModules;
+          contractAddress: any;
+        }
+      | {
+          __typename?: "UnknownFollowModuleSettings";
+          type: FollowModules;
+          contractAddress: any;
+          followModuleReturnData: any;
+        }
+      | null;
+    onChainIdentity: {
+      __typename?: "OnChainIdentity";
+      proofOfHumanity: boolean;
+      ens?: { __typename?: "EnsOnChainIdentity"; name?: any | null } | null;
+      sybilDotOrg: {
+        __typename?: "SybilDotOrgIdentity";
+        verified: boolean;
+        source: {
+          __typename?: "SybilDotOrgIdentitySource";
+          twitter: {
+            __typename?: "SybilDotOrgTwitterIdentity";
+            handle?: string | null;
+          };
+        };
+      };
+      worldcoin: { __typename?: "WorldcoinIdentity"; isHuman: boolean };
+    };
+  }>;
+};
+
 export const MediaFieldsFragmentDoc = `
     fragment MediaFields on Media {
   url
@@ -31123,6 +31281,32 @@ export const useProfilesQuery = <TData = ProfilesQuery, TError = unknown>(
   useQuery<ProfilesQuery, TError, TData>(
     ["profiles", variables],
     fetcher<ProfilesQuery, ProfilesQueryVariables>(ProfilesDocument, variables),
+    options
+  );
+export const RecommendedProfilesDocument = `
+    query recommendedProfiles {
+  recommendedProfiles {
+    ...ProfileFields
+  }
+}
+    ${ProfileFieldsFragmentDoc}
+${MediaFieldsFragmentDoc}
+${FollowModuleFieldsFragmentDoc}`;
+export const useRecommendedProfilesQuery = <
+  TData = RecommendedProfilesQuery,
+  TError = unknown
+>(
+  variables?: RecommendedProfilesQueryVariables,
+  options?: UseQueryOptions<RecommendedProfilesQuery, TError, TData>
+) =>
+  useQuery<RecommendedProfilesQuery, TError, TData>(
+    variables === undefined
+      ? ["recommendedProfiles"]
+      : ["recommendedProfiles", variables],
+    fetcher<RecommendedProfilesQuery, RecommendedProfilesQueryVariables>(
+      RecommendedProfilesDocument,
+      variables
+    ),
     options
   );
 
