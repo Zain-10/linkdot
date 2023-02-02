@@ -20,4 +20,3 @@ generates:
         func: "./auth-fetcher#fetcher"
         isReactHook: false
 
-      
