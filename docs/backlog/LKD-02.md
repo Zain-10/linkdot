@@ -4,6 +4,15 @@
 
 > Assigned to: @nishad
 
+> **Labels**: `UI`
+
+> **Estimate**: 0
+
+> **Time Spent**: 0
+
+> **Priority**: High
+
+
 _Story_: [As a user, I want to be able to see top `posts` and `profiles` so that I can see what's trending, without connecting my wallet.](./stories.md#STR-02)
 
 ## Purpose
@@ -58,5 +67,5 @@ Existing components have been utilized in the construction of the Main layout
 [Figma](https://www.figma.com/proto/ZqztN4YeJWjo5kDecefr9U/linkDOT_V1?page-id=1%3A2&node-id=1329%3A7552&viewport=23923%2C-3335%2C0.29&scaling=min-zoom&starting-point-node-id=1281%3A5996)
 
 ## Story
-As a user, I want to be able to see top posts and profiles so that I can see what's trending, without connecting my wallet. (Reference: stories.md)
+As a user, I want to be able to see top posts and profiles so that I can see what's trending, without connecting my wallet. (Reference: [stories.md/STR-02](./stories.md#STR-02))
 
