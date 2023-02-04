@@ -1,5 +1,14 @@
 # Backlog
 
+- Figma Links
+  - [Sign in](http://shorturl.at/fmrsv)
+  - [Profile](http://shorturl.at/rGQT5)
+  - [Profile View from others](http://shorturl.at/djK23)
+  - [Credential Badges](http://shorturl.at/hjkoq)
+  - [Inbox](http://shorturl.at/mvwOV)
+  - [Notifications](http://shorturl.at/ajSW7)
+  - [Explore](http://shorturl.at/cGIK3)
+
 ## Tasks
 
 | Task ID                                                                   | Task Name          | Tag  |             | Status             | Assignee | Estimate | Time Spent | Priority |
@@ -11,7 +20,81 @@
 | [LKD-9](#lkd-9-research-and-design-proof-of-work-functionality-flow)      | Research and       | `UI` | In Progress | sreejinsreenivasan |          | 0        |            |          |
 | [LKD-10](#lkd-10-build-proof-of-work-functionality)                       | Build              | `UI` | In Progress | sreejinsreenivasan |          | 0        |            |          |
 | [LKD-11](#lkd-11-build-proof-of-work-details-page)                        | Build              | `UI` | In Progress | sreejinsreenivasan |          | 0        |            |          |
-| [LKD-12](#lkd-12-research-and-design-invite-collaboration-functionality-  | Research and       | `UI` | In Progress | sreejinsreenivasan |          | 0        |            |          |
+| [LKD-12](#lkd-12-research-and-design-invite-collaboration-functionality-flow)  | Research and       | `UI` | In Progress | sreejinsreenivasan |          | 0        |            |          |
+
+### LKD-1: Configure `Theme`, 'Color' and 'Typography' for the app
+
+---
+
+**Overview**
+
+The app needs to have a consistent theme, color, and typography.
+
+**Proposed work**
+
+- Configure the theme, color, and typography for the app using the `tailwind.config.js` file.
+- Remove the existing theme, color, and typography which are unused.
+
+**Acceptance criteria**
+
+- successful configuration of the theme, color, and typography for the app
+- successful removal of the unused theme, color, and typography
+
+### LKD-2: Build the `Main` layout for the app
+
+---
+
+**Overview**
+
+The app needs to have a `Main` layout. The `Main` layout should have the following components:
+
+- `Header` component
+- `Sidebar` component
+
+**Proposed work**
+
+- Use the existing components to build the `Main` layout
+- Build the `Main` layout
+- Build the `Header` component
+- Build the `Sidebar` component which should have the following components:
+
+  - `Navigation` Links
+  - Create `POW` button
+
+**Acceptance criteria**
+
+- successful build of the `Main` layout
+- successful build of the `Header` component
+- successful build of the `Sidebar` component
+- Use the existing components to build the `Main` layout
+
+### LKD-3: Build the `Index` page
+
+---
+
+**Overview**
+
+The app needs to have an `Index` page. The `Index` page should have the following components:
+
+- Sidebar
+- Top Users component
+- Search component
+- Connect Wallet component
+
+
+**Proposed work**
+
+- Modify the `index` page file located at `pages/index.tsx`
+- Build new components for the `Index` page
+- Write necessary logic if needed
+- Write tests for the new components
+
+**Acceptance criteria**
+
+- successful build of the `Index` page
+- successful build of the new components
+
+
 
 ### LKD-5: Convert and update the profile page to use the new design
 
@@ -185,6 +268,8 @@ NOTE: Reference
   **Proposed work**
 
 - Build UI for the `Invite Collaboration` functionality
+- Research and design the flow for the `Invite Collaboration` functionality
+- Find out way to track the invited users 
 
 **Acceptance criteria**
 
@@ -192,4 +277,4 @@ NOTE: Reference
 - successful research and design of the flow for the `Invite Collaboration` functionality
 - Document the research and design
 
-## Tasks
+
