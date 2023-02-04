@@ -3,6 +3,7 @@
 Elevate your career in web3 by showcasing peer-verified proof-of-work and on-chain /off-chain credentials
 
 ## Backlog
+---
 Backlog is a tool that is commonly used in Agile software development to help teams manage their development process. Here's how you can use Backlog to manage your software development process:
 
 Define the product backlog: The first step is to create a list of user stories and features that you want to include in your product. This will serve as the product backlog.
@@ -18,28 +19,29 @@ Review and Retrospect: At the end of the sprint, you can review the work complet
 Repeat: The process of planning, tracking, and reviewing is repeated until the product is complete.
 
 ## User Stories
+---
+User stories are a simple way to capture a requirement for a product. They are written from the perspective of the user and describe a unit of desired functionality. User stories are often written on index cards and organized on a wall or board. This helps the team to visualize the product backlog and prioritize the user stories based on their importance.
 
 ### STR-01: As a user, I want to be able to connect my `wallet` to the app so that I can use the app.
 
 ### STR-02: As a user, I want to be able to see top `posts` and `profiles` so that I can see what's trending, without connecting my wallet.
 
-- STR-01: As a user, I want to be able to connect my `wallet` to the app so that I can use the app.
+### STR-03: As a user, I want to be able to `search` for users, posts, and comments so that I can find what I'm looking for without connecting my wallet.
 
-- STR-02: As a user, I want to be able to see top `posts` and `profiles` so that I can see what's trending, without connecting my wallet.
+### STR-04: As a user, I want to be able to see my `profile` so that can see my `posts` and `follow` other users.
 
-- STR-03: As a user, I want to be able to `search` for users, posts, and comments so that I can find what I'm looking for without connecting my wallet.
+### STR-05: As a user, I want to be able to create a `Proof of Work`(posts) so that I can showcase my skills and achievements.
 
-- STR-04: As a user, I want to be able to see my `profile` so that can see my `posts` and `follow` other users.
+### STR-06: As a user, I want to be able to show my credentials so that I can showcase my skills and achievements.
 
-As a user, I want to be able to see top `posts` and `profiles` so that I can see what's trending, without connecting my wallet.
-3. As a user, I want to be able to `search` for users, posts, and comments so that I can find what I'm looking for without connecting my wallet.
-4. After connecting my wallet, I want to be able to see my `profile` so that can see my `posts` and `follow` other users.
-5. As a user, I want to be able to create a `Proof of Work`(posts) so that I can showcase my skills and achievements.
-6. As a user, I want to be able to show my credentials so that I can showcase my skills and achievements.
-7. As a user, I want to be able to see other users' `profiles` so that I can follow them and see their posts.
-8. As a user, I want to be able to see other users' `posts` so that I can see their `Proof of Work`.
-9. As a user, I need to `invite collaborators` to my `Proof of Work` so that they can contribute to it.
-10. As a user, I need to be able to see the `Proof of Work` of other users so that I can see and `endorse` their work.
+### STR-07: As a user, I want to be able to see other users' `profiles` so that I can follow them and see their posts.
+
+### STR-08: As a user, I want to be able to see other users' `posts` so that I can see their `Proof of Work`.
+
+### STR-09: As a user, I need to `invite collaborators` to my `Proof of Work` so that they can contribute to it.
+
+### STR-10: As a user, I need to be able to see the `Proof of Work` of other users so that I can see and `endorse` their work.
+
 
 ## Tasks
 
