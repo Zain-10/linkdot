@@ -31,6 +31,10 @@ The app needs to have a landing page which will be the first page that the user 
 - Build the `Search` component
 - Build the `Trending` profiles component
 - Build the `Wallet` connect component
+- Add social media links in the footer section
+  1. Instagram - connect vijin to get the link
+  2. Twitter - https://twitter.com/Linkdotoff
+  3. LinkedIn - https://www.linkedin.com/company/linkdot/
 
 **Important**: All the components are already built. You just need to use them and modify them to fit the new design. Make use of them as much as possible.
 
@@ -48,6 +52,8 @@ The app needs to have a landing page which will be the first page that the user 
 
 ## Design Reference
 
-## Story 
+## Story
+
+[STR-02](./stories.md/#str-02-as-a-user-i-want-to-be-able-to-see-top-posts-and-profiles-so-that-i-can-see-whats-trending-without-connecting-my-wallet): As a user, I want to be able to see top posts and profiles so that I can see what's trending, without connecting my wallet.
 
 
