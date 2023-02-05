@@ -1,7 +1,8 @@
 import type { NextPage } from "next";
 import { useEffect, useState } from "react";
 
-import { ConnectComponent } from "@/components/connect";
+import LandingSection from "@/components/home/LandingSection";
+import { SideBar } from "@/components/sideBar";
 import {
   PublicationSortCriteria,
   useExplorePublicationsQuery,
@@ -63,16 +64,23 @@ const Explore: NextPage = () => {
       setProfileIds(getProfileIds());
     }
   }, [publications]);
+
+  console.log(profiles, isProfilesLoading);
+
   return (
-    <>
-      {isProfilesLoading && <div>Loading...</div>}
-      {profiles?.map((profile) => (
-        <div key={profile.id}>
-          <div>{profile.handle}</div>
-        </div>
-      ))}
-      <ConnectComponent />
-    </>
+    <div className="h-screen bg-white text-black">
+      <div className="flex">
+        <SideBar />
+        <LandingSection />
+
+        {/* {isProfilesLoading && <div>Loading...</div>}
+        {profiles?.map((profile) => (
+          <div key={profile.id}>
+            <div>{profile.handle}</div>
+          </div>
+        ))} */}
+      </div>
+    </div>
   );
 };
 
