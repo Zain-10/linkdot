@@ -9,9 +9,8 @@
   - [Notifications](http://shorturl.at/ajSW7)
   - [Explore](http://shorturl.at/cGIK3)
 
-## Tasks
 
-# Task List
+## Task List
 
 | Task                                                                  | Status      | Assigned to | Priority |
 | --------------------------------------------------------------------- | ----------- | ----------- | -------- |
