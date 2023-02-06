@@ -13,11 +13,11 @@
 
 # Task List
 
-| Task                                                   | Status      | Assigned to | Priority |
-| ------------------------------------------------------ | ----------- | ----------- | -------- |
-| LDT-01: Modify the `tailwind.config.js`                | In Progress | nishad      | High     |
-| LDT-02: Build the Main layout                          | In Progress | nishad      | High     |
-| LDT-03: Buikd the Landing Page                         | In Progress | nishad      | High     |
-| LDT-04: Build the Create Proof of Work Modal Component | Not Started | none        | High     |
-| LDT-05: Research and Implement Proof of Work Flow      | Not Started | Able        | High     |
+| Task                                                                  | Status      | Assigned to | Priority |
+| --------------------------------------------------------------------- | ----------- | ----------- | -------- |
+| [LDT-01: Modify the `tailwind.config.js`](./LKD-01.md)                | In Progress | nishad      | High     |
+| [LDT-02: Build the Main layout](./LKD-02.md)                          | In Progress | nishad      | High     |
+| [LDT-03: Buikd the Landing Page](./LKD-03.md)                         | In Progress | nishad      | High     |
+| [LDT-04: Build the Create Proof of Work Modal Component](./LKD-04.md) | Not Started | none        | High     |
+| [LDT-05: Research and Implement Proof of Work Flow](./LKD-05.md)      | Not Started | Able        | High     |
 
