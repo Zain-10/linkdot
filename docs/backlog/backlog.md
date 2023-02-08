@@ -19,4 +19,6 @@
 | [LDT-03: Buikd the Landing Page](./LKD-03.md)                         | In Progress | nishad      | High     |
 | [LDT-04: Build the Create Proof of Work Modal Component](./LKD-04.md) | Not Started | none        | High     |
 | [LDT-05: Research and Implement Proof of Work Flow](./LKD-05.md)      | Not Started | Able        | High     |
+| [LDT-06: Implement Lens Authentication Flow](./LKD-06.md)             | Not Started | Able        | High     |
+
 
