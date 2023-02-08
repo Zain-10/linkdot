@@ -1,7 +1,9 @@
 import type { NextPage } from "next";
 import { useEffect, useState } from "react";
 
-import LandingSection from "@/components/home/LandingSection";
+import { ConnectComponent } from "@/components/connect";
+import { Search } from "@/components/header/search";
+import RecommendedProfiles from "@/components/recommended-profiles";
 import { SideBar } from "@/components/sideBar";
 import {
   PublicationSortCriteria,
@@ -19,7 +21,7 @@ const Explore: NextPage = () => {
   const { data: publicationsData, isLoading: isPublicationsLoading } =
     useExplorePublicationsQuery({
       request: {
-        sortCriteria: PublicationSortCriteria.TopCommented,
+        sortCriteria: PublicationSortCriteria.TopCollected,
         limit: PUB_LIMIT,
       },
     });
@@ -70,8 +72,22 @@ const Explore: NextPage = () => {
   return (
     <div className="h-screen bg-white text-black">
       <div className="flex">
-        <SideBar />
-        <LandingSection />
+        <SideBar type="public" />
+        <div className="flexCenter flex-1 flex-col gap-10 px-24">
+          <h1 className="text-5xl font-bold">Discover top web3 experts here</h1>
+          <div className="border-1 rounded md:w-full lg:w-3/4">
+            <Search />
+          </div>
+
+          <p className="text-xl font-bold">
+            Join the biggest community of web 3
+          </p>
+          <div className="flex w-full flex-wrap justify-between gap-8">
+            {/* @ts-ignore */}
+            <RecommendedProfiles profiles={profiles} />
+            <ConnectComponent />
+          </div>
+        </div>
 
         {/* {isProfilesLoading && <div>Loading...</div>}
         {profiles?.map((profile) => (
