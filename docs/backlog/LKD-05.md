@@ -37,7 +37,7 @@ The app needs to have `Proof of Work` creation logic. The logic will be used to 
 
 ## Notes
 
--
+- This task is dependent on [LKD-06-Authentication](./LKD-06.md)
 
 ## Design Reference
 
