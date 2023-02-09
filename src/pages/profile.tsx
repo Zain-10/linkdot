@@ -10,7 +10,6 @@ import { useEffect, useState } from "react";
 
 import { ConnectComponent } from "@/components/connect";
 import {
-  Profile,
   useDefaultProfileQuery,
   useRecommendedProfilesQuery,
 } from "@/graphql/generated";
@@ -32,7 +31,7 @@ const RecommendedProfiles = () => {
       <h2>Recommended Profiles</h2>
       <hr />
       <ul>
-        {recommendedProfiles.recommendedProfiles.map((profile: Profile) => (
+        {recommendedProfiles.recommendedProfiles.map((profile) => (
           <li key={profile.id}>{profile.handle}</li>
         ))}
       </ul>
