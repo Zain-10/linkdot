@@ -14,7 +14,7 @@ import {
 const CHINDU_GREY_PROFILE_ID = "0x019bb6";
 const PUB_LIMIT = 5;
 
-const Explore: NextPage = () => {
+const Index: NextPage = () => {
   const [profileIds, setProfileIds] = useState<string[]>([]);
 
   // get the list of publications
@@ -100,4 +100,4 @@ const Explore: NextPage = () => {
   );
 };
 
-export default Explore;
+export default Index;
