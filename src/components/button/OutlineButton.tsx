@@ -1,6 +1,6 @@
 const OutlineButton = ({ children }: { children: string }) => {
   return (
-    <div className="primaryHover rounded-sm border border-black px-7 py-1 text-sm font-bold">
+    <div className="primaryHover h-full rounded-sm border border-black px-7 py-1 text-sm font-bold">
       {children}
     </div>
   );
