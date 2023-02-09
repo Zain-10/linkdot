@@ -1,5 +1,4 @@
 import OutlineButton from "../button/OutlineButton";
-import { Profile } from "../profile";
 
 type Profile = {
   id: string;
@@ -16,22 +15,40 @@ const RecommendedProfiles = ({ profiles }: RecommendedProfilesProps) => {
   return (
     <div>
       <p className="mb-6 text-xl font-bold">Recommended profiles</p>
-      <div className="flex flex-col gap-8">
-        {profiles?.map((profile) => (
-          <div key={profile.id} className="flexCenter gap-6">
-            <div className="h-10 w-10 rounded-full bg-black" />
-            <div>
-              <h6 className="text-base font-bold">{profile.handle}</h6>
-              <p className="text-sm font-normal text-[#000000b3]">
-                {profile.bio.slice(0, 20)}
-              </p>
-            </div>
-            <OutlineButton>Follow</OutlineButton>
+      {profiles?.map((profile) => (
+        <div className="flex justify-between">
+          <div className="pr-2">
+            <Profile key={profile.id} profile={profile} />
           </div>
-        ))}
-      </div>
+
+          <OutlineButton>Follow</OutlineButton>
+        </div>
+      ))}
     </div>
   );
 };
 
 export default RecommendedProfiles;
+
+interface ProfileProps {
+  profile: Profile;
+}
+
+const Profile = ({ profile }: ProfileProps) => (
+  <div className="mb-4 flex items-center justify-between" key={profile.id}>
+    <div className="flex items-center">
+      <div className="h-10 w-10 rounded-full bg-black" />
+      <div className="pl-4">
+        <p className="text-base font-bold text-black">{profile.handle}</p>
+        <p className="font-noraml text-gray-1200 text-xs">
+          {profile.bio.slice(0, 40)}
+        </p>
+      </div>
+    </div>
+    {/* <Follow
+      following={currentlyFollowing.includes(user.id)}
+      followUser={followUser}
+      userId={user.id}
+    /> */}
+  </div>
+);
