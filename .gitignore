@@ -45,3 +45,5 @@ local
 # docker volumes
 docker/
 db-data/
+
+backlog-workfile.md
