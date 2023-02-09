@@ -1,12 +1,5 @@
 import OutlineButton from "../button/OutlineButton";
 
-type Profile = {
-  id: string;
-  handle: string;
-  name: string;
-  bio: string;
-};
-
 interface RecommendedProfilesProps {
   profiles: Profile[];
 }
