@@ -31,7 +31,7 @@ const CoreTeam = ({ users, currentlyFollowing, followUser }: Props) => {
               <p className="text-sm font-bold text-black">
                 {user.name ? user.name : user.walletId.slice(0, 8)}
               </p>
-              <p className="font-noraml text-xs text-gray-1200">
+              <p className="font-noraml text-gray-1200 text-xs">
                 {"Co-Founder of linkDOT"}
               </p>
             </div>
