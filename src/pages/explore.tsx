@@ -1,14 +1,15 @@
-import { useAddress } from "@thirdweb-dev/react";
-import axios from "axios";
 import type { GetServerSideProps, NextPage } from "next";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-import { Explore } from "@/components/explore";
-import { Main } from "@/components/main";
-import { ApiRoutes } from "@/config/betaApis";
-import { StatusCodes } from "@/constants";
-import { useUserState } from "@/context/global.context";
+import OutlineButton from "@/components/button/OutlineButton";
+import { Search } from "@/components/header/search";
+import { ProfileItem } from "@/components/profileItem";
+import { SideBar, SideBarType } from "@/components/sideBar";
+import {
+  SearchRequestTypes,
+  useRecommendedProfilesQuery,
+  useSearchProfilesQuery,
+} from "@/graphql/generated";
 
 interface PageProps {
   query: {
@@ -17,59 +18,65 @@ interface PageProps {
 }
 
 const ExplorePage: NextPage<PageProps> = ({ query }) => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loaded, setLoaded] = useState<boolean>(false);
-  const address = useAddress();
-  const currentUser = useUserState();
-  const router = useRouter();
+  const queryStr = query.query;
 
-  const fetchUsers = async (query: string) => {
-    let queryParams = "";
-    if (query && query.length === 42) {
-      queryParams = `?walletId=${query}`;
-    } else if (query) {
-      queryParams = `?name=${query}`;
+  const [searchQuery, SetSearchQuery] = useState<string>(queryStr);
+
+  const { data: searchResults } = useSearchProfilesQuery(
+    {
+      request: {
+        query: searchQuery,
+        type: SearchRequestTypes.Profile,
+      },
+    },
+    {
+      enabled: !!queryStr,
     }
-    // TODO: Add search by badge and name
-    await axios.get(`${ApiRoutes.SEARCH_USER}/${queryParams}`).then((res) => {
-      if (res.status === StatusCodes.OK) {
-        setUsers(res.data);
-        setLoaded(true);
-      }
-    });
-  };
+  );
+
+  const { data: recommendedProfiles } = useRecommendedProfilesQuery(
+    {},
+    {
+      enabled: !searchQuery,
+    }
+  );
+
+  const profiles =
+    // @ts-ignore
+    searchResults?.search?.items ||
+    recommendedProfiles?.recommendedProfiles ||
+    [];
 
   useEffect(() => {
-    if (!address) {
-      router.push("/connect");
-    }
-
-    fetchUsers(query.query);
-  }, [address]);
-
-  useEffect(() => {
-    fetchUsers(query.query);
+    SetSearchQuery(query.query);
   }, [query.query]);
 
-  if (address) {
-    return (
-      <Main address={address} user={currentUser}>
-        <Explore
-          users={users}
-          address={address}
-          currentUser={currentUser}
-          loaded={loaded}
-        />
-      </Main>
-    );
-  }
-
-  return null;
+  return (
+    // TODO: Add a loading state
+    <div className="h-screen bg-white text-black">
+      <div className="flex">
+        <SideBar type={SideBarType.PUBLIC} />
+        <div className="flex-1 flex-col gap-10 py-8 px-24">
+          <div className="border-1 rounded md:w-full lg:w-3/4">
+            <Search />
+          </div>
+          <div className="w-full">
+            {/* @ts-ignore */}
+            {profiles?.map((profile) => (
+              <div key={profile.id} className="flex w-full justify-between">
+                <ProfileItem profile={profile} />
+                <OutlineButton>Follow</OutlineButton>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query } = context;
-
   return {
     props: { query },
   };

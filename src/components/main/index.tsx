@@ -9,7 +9,7 @@ import { useGlobalDispatch } from "@/context/global.context";
 
 import { Header } from "../header";
 import { RightSideBar } from "../rightSideBar";
-import { SideBar } from "../sideBar";
+import { SideBar, SideBarType } from "../sideBar";
 
 interface MainProps extends React.PropsWithChildren<{}> {
   address: string;
@@ -54,7 +54,7 @@ const Main = ({ children, user, address }: MainProps) => {
         <Email userId={user.id} />
       </Modal>
 
-      <SideBar />
+      <SideBar type={SideBarType.PRIVATE} />
       <div className="w-full ">
         <Header />
         <div className="custom-scrollbar flex pl-4 pr-8">

@@ -11,11 +11,16 @@ import primaryLogo from "@/public/assets/svg/primaryLogo.svg";
 
 import { MenuItem } from "./menuitem";
 
-interface SideBarProps {
-  type: "private" | "public";
+export enum SideBarType {
+  PRIVATE = "private",
+  PUBLIC = "public",
 }
 
-const SideBar = ({ type = "private" }: SideBarProps) => {
+interface SideBarProps {
+  type: SideBarType;
+}
+
+const SideBar = ({ type = SideBarType.PRIVATE }: SideBarProps) => {
   // use active path to highlight the menu item
   const { pathname } = useRouter();
 

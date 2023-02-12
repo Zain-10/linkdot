@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ConnectComponent } from "@/components/connect";
 import { Search } from "@/components/header/search";
 import RecommendedProfiles from "@/components/recommended-profiles";
-import { SideBar } from "@/components/sideBar";
+import { SideBar, SideBarType } from "@/components/sideBar";
 import {
   PublicationSortCriteria,
   useExplorePublicationsQuery,
@@ -26,7 +26,7 @@ const Index: NextPage = () => {
       },
     });
   // get the list of profiles for the profileIds
-  const { data: profilesData, isLoading: isProfilesLoading } = useProfilesQuery(
+  const { data: profilesData } = useProfilesQuery(
     {
       request: {
         profileIds,
@@ -54,8 +54,8 @@ const Index: NextPage = () => {
     const Ids = publications.map((publication) => publication.profile.id);
     // create a new set with the profileIds and the CHINDU_GREY_PROFILE_ID
     const newProfileIds: Set<string> = new Set([
-      ...Ids,
       CHINDU_GREY_PROFILE_ID,
+      ...Ids,
     ]);
     // return the array of profileIds
     return Array.from(newProfileIds);
@@ -67,15 +67,13 @@ const Index: NextPage = () => {
     }
   }, [publications]);
 
-  console.log(profiles, isProfilesLoading);
-
   return (
     <div className="h-screen bg-white text-black">
       <div className="flex">
-        <SideBar type="public" />
+        <SideBar type={SideBarType.PUBLIC} />
         <div className="flexCenter flex-1 flex-col gap-10 px-24">
           <h1 className="text-5xl font-bold">Discover top web3 experts here</h1>
-          <div className="border-1 rounded md:w-full lg:w-3/4">
+          <div className="border-1 w-full rounded">
             <Search />
           </div>
 
