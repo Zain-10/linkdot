@@ -12,7 +12,7 @@ import {
 } from "@/graphql/generated";
 
 const CHINDU_GREY_PROFILE_ID = "0x019bb6";
-const PUB_LIMIT = 5;
+const PUB_LIMIT = 4;
 
 const Index: NextPage = () => {
   const [profileIds, setProfileIds] = useState<string[]>([]);
@@ -62,7 +62,7 @@ const Index: NextPage = () => {
   };
 
   useEffect(() => {
-    if (!isPublicationsLoading && publications?.length === 5) {
+    if (!isPublicationsLoading && publications?.length === 4) {
       setProfileIds(getProfileIds());
     }
   }, [publications]);
@@ -76,7 +76,6 @@ const Index: NextPage = () => {
           <div className="border-1 w-full rounded">
             <Search />
           </div>
-
           <p className="text-xl font-bold">
             Join the biggest community of web 3
           </p>
@@ -86,13 +85,6 @@ const Index: NextPage = () => {
             <ConnectComponent />
           </div>
         </div>
-
-        {/* {isProfilesLoading && <div>Loading...</div>}
-        {profiles?.map((profile) => (
-          <div key={profile.id}>
-            <div>{profile.handle}</div>
-          </div>
-        ))} */}
       </div>
     </div>
   );

@@ -1,3 +1,5 @@
+import { useMetamask } from "@thirdweb-dev/react";
+
 import OutlineButton from "../button/OutlineButton";
 import { ProfileItem } from "../profileItem";
 
@@ -6,6 +8,7 @@ interface RecommendedProfilesProps {
 }
 
 const RecommendedProfiles = ({ profiles }: RecommendedProfilesProps) => {
+  const connectWithMetamask = useMetamask();
   return (
     <div>
       <p className="mb-6 text-xl font-bold">Recommended profiles</p>
@@ -15,7 +18,7 @@ const RecommendedProfiles = ({ profiles }: RecommendedProfilesProps) => {
             <ProfileItem profile={profile} trimBio={40} />
           </div>
 
-          <OutlineButton>Follow</OutlineButton>
+          <OutlineButton onClick={connectWithMetamask}>Follow</OutlineButton>
         </div>
       ))}
     </div>

@@ -1,6 +1,15 @@
-const OutlineButton = ({ children }: { children: string }) => {
+import type { PropsWithChildren } from "react";
+
+interface OutlineButtonProps extends PropsWithChildren<{}> {
+  onClick?: () => void;
+}
+
+const OutlineButton = ({ children, onClick }: OutlineButtonProps) => {
   return (
-    <div className="primaryHover h-full rounded-sm border border-black px-7 py-1 text-sm font-bold">
+    <div
+      onClick={onClick}
+      className="primaryHover h-full rounded-sm border border-black px-7 py-1 text-sm font-bold"
+    >
       {children}
     </div>
   );
