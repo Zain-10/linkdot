@@ -56,7 +56,7 @@ const Explore = ({ users, address, currentUser, loaded }: Props) => {
                 <p className="text-md font-bold text-black">
                   {user.name ? user.name : user.walletId}
                 </p>
-                <p className="text-sm font-normal text-gray-1200">
+                <p className="text-gray-1200 text-sm font-normal">
                   {user.role === "COFOUNDER"
                     ? "Co-Founder of linkDOT"
                     : user.role}

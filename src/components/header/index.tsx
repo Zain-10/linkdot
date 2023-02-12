@@ -26,7 +26,7 @@ const Header = () => {
         <button
           onClick={() => setIsOpen(!isOpen)}
           // eslint-disable-next-line tailwindcss/no-custom-classname
-          className={`solid h-full w-full rounded border border-gray-1200 bg-gray-1300 px-2 py-1 ${
+          className={`border-gray-1200 h-full w-full rounded border bg-gray-1300 px-2 py-1 ${
             isOpen ? "rounded-b-none  border-b-0 !pb-[0.313rem]" : "border-b"
           }`}
         >
@@ -45,7 +45,7 @@ const Header = () => {
         </button>
         {isOpen && (
           <div
-            className="solid absolute  z-10 flex w-full cursor-pointer items-center rounded-b border border-t-0 border-gray-1200 bg-gray-1300 p-3"
+            className="solid border-gray-1200 absolute z-10 flex w-full cursor-pointer items-center rounded-b border border-t-0 bg-gray-1300 p-3"
             onClick={disconnect}
           >
             <Image src={LogoutSVG} alt="logout" />

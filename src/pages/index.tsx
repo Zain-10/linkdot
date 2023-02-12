@@ -2,6 +2,9 @@ import type { NextPage } from "next";
 import { useEffect, useState } from "react";
 
 import { ConnectComponent } from "@/components/connect";
+import { Search } from "@/components/header/search";
+import RecommendedProfiles from "@/components/recommended-profiles";
+import { SideBar, SideBarType } from "@/components/sideBar";
 import {
   PublicationSortCriteria,
   useExplorePublicationsQuery,
@@ -9,21 +12,21 @@ import {
 } from "@/graphql/generated";
 
 const CHINDU_GREY_PROFILE_ID = "0x019bb6";
-const PUB_LIMIT = 5;
+const PUB_LIMIT = 4;
 
-const Explore: NextPage = () => {
+const Index: NextPage = () => {
   const [profileIds, setProfileIds] = useState<string[]>([]);
 
   // get the list of publications
   const { data: publicationsData, isLoading: isPublicationsLoading } =
     useExplorePublicationsQuery({
       request: {
-        sortCriteria: PublicationSortCriteria.TopCommented,
+        sortCriteria: PublicationSortCriteria.TopCollected,
         limit: PUB_LIMIT,
       },
     });
   // get the list of profiles for the profileIds
-  const { data: profilesData, isLoading: isProfilesLoading } = useProfilesQuery(
+  const { data: profilesData } = useProfilesQuery(
     {
       request: {
         profileIds,
@@ -51,29 +54,40 @@ const Explore: NextPage = () => {
     const Ids = publications.map((publication) => publication.profile.id);
     // create a new set with the profileIds and the CHINDU_GREY_PROFILE_ID
     const newProfileIds: Set<string> = new Set([
-      ...Ids,
       CHINDU_GREY_PROFILE_ID,
+      ...Ids,
     ]);
     // return the array of profileIds
     return Array.from(newProfileIds);
   };
 
   useEffect(() => {
-    if (!isPublicationsLoading && publications?.length === 5) {
+    if (!isPublicationsLoading && publications?.length === 4) {
       setProfileIds(getProfileIds());
     }
   }, [publications]);
+
   return (
-    <>
-      {isProfilesLoading && <div>Loading...</div>}
-      {profiles?.map((profile) => (
-        <div key={profile.id}>
-          <div>{profile.handle}</div>
+    <div className="h-screen bg-white text-black">
+      <div className="flex">
+        <SideBar type={SideBarType.PUBLIC} />
+        <div className="flexCenter flex-1 flex-col gap-10 px-24">
+          <h1 className="text-5xl font-bold">Discover top web3 experts here</h1>
+          <div className="border-1 w-full rounded">
+            <Search />
+          </div>
+          <p className="text-xl font-bold">
+            Join the biggest community of web 3
+          </p>
+          <div className="flex w-full flex-wrap justify-between gap-8">
+            {/* @ts-ignore */}
+            <RecommendedProfiles profiles={profiles} />
+            <ConnectComponent />
+          </div>
         </div>
-      ))}
-      <ConnectComponent />
-    </>
+      </div>
+    </div>
   );
 };
 
-export default Explore;
+export default Index;

@@ -70,7 +70,7 @@ const ShowPoAPs = ({ poaps }: PoAPs) => {
                     {poap.event.event_url}
                   </p> */}
                 </div>
-                <p className=" text-xs font-normal text-gray-1600">
+                <p className=" text-gray-1600 text-xs font-normal">
                   {poap.event.year}
                 </p>
               </div>

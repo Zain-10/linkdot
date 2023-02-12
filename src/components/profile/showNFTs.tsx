@@ -56,11 +56,11 @@ const ShowNFTs = ({ nfts }: NFTs) => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   {/* <SVGIcon name="badgeindicationicon"></SVGIcon>  */}
-                  <p className="ml-2 text-xs font-normal text-gray-1600">
+                  <p className="text-gray-1600 ml-2 text-xs font-normal">
                     {/* {item.ownerName} */}
                   </p>
                 </div>
-                <p className=" text-xs font-normal text-gray-1600">
+                <p className=" text-gray-1600 text-xs font-normal">
                   {nft.asset_contract.created_date.slice(0, 4)}
                 </p>
               </div>

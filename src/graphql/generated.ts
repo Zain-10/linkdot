@@ -2257,7 +2257,6 @@ export type NotificationRequest = {
   cursor?: InputMaybe<Scalars["Cursor"]>;
   customFilters?: InputMaybe<Array<CustomFiltersTypes>>;
   limit?: InputMaybe<Scalars["LimitScalar"]>;
-  metadata?: InputMaybe<PublicationMetadataFilters>;
   /** The profile id */
   notificationTypes?: InputMaybe<Array<NotificationTypes>>;
   /** The profile id */
@@ -2375,7 +2374,10 @@ export type PaginatedResultInfo = {
   next?: Maybe<Scalars["Cursor"]>;
   /** Cursor to query the actual results */
   prev?: Maybe<Scalars["Cursor"]>;
-  /** The total number of entities the pagination iterates over. If its null then its not been worked out due to it being an expensive query and not really needed for the client. All main counters are in counter tables to allow them to be faster fetching. */
+  /**
+   * The total number of entities the pagination iterates over. If its null then its not been worked out due to it being an expensive query and not really needed for the client. All main counters are in counter tables to allow them to be faster fetching.
+   * @deprecated Total counts is expensive and in dynamic nature of queries it slows stuff down. Most the time you do not need this you can just use the `next` property to see if there is more data. This will be removed soon. The only use case anyone is using this right now is on notification query, this should be changed to query the notifications and cache the last notification id. You can then keep checking if the id changes you know more notifications.
+   */
   totalCount?: Maybe<Scalars["Int"]>;
 };
 
@@ -30515,6 +30517,180 @@ export type RecommendedProfilesQuery = {
   }>;
 };
 
+export type SearchProfilesQueryVariables = Exact<{
+  request: SearchQueryRequest;
+}>;
+
+export type SearchProfilesQuery = {
+  __typename?: "Query";
+  search:
+    | {
+        __typename: "ProfileSearchResult";
+        items: Array<{
+          __typename?: "Profile";
+          id: any;
+          name?: string | null;
+          bio?: string | null;
+          isFollowedByMe: boolean;
+          isFollowing: boolean;
+          followNftAddress?: any | null;
+          metadata?: any | null;
+          isDefault: boolean;
+          handle: any;
+          ownedBy: any;
+          attributes?: Array<{
+            __typename?: "Attribute";
+            displayType?: string | null;
+            traitType?: string | null;
+            key: string;
+            value: string;
+          }> | null;
+          picture?:
+            | {
+                __typename?: "MediaSet";
+                original: {
+                  __typename?: "Media";
+                  url: any;
+                  width?: number | null;
+                  height?: number | null;
+                  mimeType?: any | null;
+                };
+                small?: {
+                  __typename?: "Media";
+                  url: any;
+                  width?: number | null;
+                  height?: number | null;
+                  mimeType?: any | null;
+                } | null;
+                medium?: {
+                  __typename?: "Media";
+                  url: any;
+                  width?: number | null;
+                  height?: number | null;
+                  mimeType?: any | null;
+                } | null;
+              }
+            | {
+                __typename?: "NftImage";
+                contractAddress: any;
+                tokenId: string;
+                uri: any;
+                verified: boolean;
+              }
+            | null;
+          coverPicture?:
+            | {
+                __typename?: "MediaSet";
+                original: {
+                  __typename?: "Media";
+                  url: any;
+                  width?: number | null;
+                  height?: number | null;
+                  mimeType?: any | null;
+                };
+                small?: {
+                  __typename?: "Media";
+                  url: any;
+                  width?: number | null;
+                  height?: number | null;
+                  mimeType?: any | null;
+                } | null;
+                medium?: {
+                  __typename?: "Media";
+                  url: any;
+                  width?: number | null;
+                  height?: number | null;
+                  mimeType?: any | null;
+                } | null;
+              }
+            | {
+                __typename?: "NftImage";
+                contractAddress: any;
+                tokenId: string;
+                uri: any;
+                verified: boolean;
+              }
+            | null;
+          dispatcher?: {
+            __typename?: "Dispatcher";
+            address: any;
+            canUseRelay: boolean;
+          } | null;
+          stats: {
+            __typename?: "ProfileStats";
+            totalFollowers: number;
+            totalFollowing: number;
+            totalPosts: number;
+            totalComments: number;
+            totalMirrors: number;
+            totalPublications: number;
+            totalCollects: number;
+          };
+          followModule?:
+            | {
+                __typename?: "FeeFollowModuleSettings";
+                type: FollowModules;
+                recipient: any;
+                amount: {
+                  __typename?: "ModuleFeeAmount";
+                  value: string;
+                  asset: {
+                    __typename?: "Erc20";
+                    name: string;
+                    symbol: string;
+                    decimals: number;
+                    address: any;
+                  };
+                };
+              }
+            | {
+                __typename?: "ProfileFollowModuleSettings";
+                type: FollowModules;
+                contractAddress: any;
+              }
+            | {
+                __typename?: "RevertFollowModuleSettings";
+                type: FollowModules;
+                contractAddress: any;
+              }
+            | {
+                __typename?: "UnknownFollowModuleSettings";
+                type: FollowModules;
+                contractAddress: any;
+                followModuleReturnData: any;
+              }
+            | null;
+          onChainIdentity: {
+            __typename?: "OnChainIdentity";
+            proofOfHumanity: boolean;
+            ens?: {
+              __typename?: "EnsOnChainIdentity";
+              name?: any | null;
+            } | null;
+            sybilDotOrg: {
+              __typename?: "SybilDotOrgIdentity";
+              verified: boolean;
+              source: {
+                __typename?: "SybilDotOrgIdentitySource";
+                twitter: {
+                  __typename?: "SybilDotOrgTwitterIdentity";
+                  handle?: string | null;
+                };
+              };
+            };
+            worldcoin: { __typename?: "WorldcoinIdentity"; isHuman: boolean };
+          };
+        }>;
+        pageInfo: {
+          __typename?: "PaginatedResultInfo";
+          prev?: any | null;
+          next?: any | null;
+          totalCount?: number | null;
+        };
+      }
+    | { __typename?: "PublicationSearchResult" };
+};
+
 export const MediaFieldsFragmentDoc = `
     fragment MediaFields on Media {
   url
@@ -31305,6 +31481,41 @@ export const useRecommendedProfilesQuery = <
       : ["recommendedProfiles", variables],
     fetcher<RecommendedProfilesQuery, RecommendedProfilesQueryVariables>(
       RecommendedProfilesDocument,
+      variables
+    ),
+    options
+  );
+export const SearchProfilesDocument = `
+    query SearchProfiles($request: SearchQueryRequest!) {
+  search(request: $request) {
+    ... on ProfileSearchResult {
+      __typename
+      items {
+        ... on Profile {
+          ...ProfileFields
+        }
+      }
+      pageInfo {
+        ...CommonPaginatedResultInfoFields
+      }
+    }
+  }
+}
+    ${ProfileFieldsFragmentDoc}
+${MediaFieldsFragmentDoc}
+${FollowModuleFieldsFragmentDoc}
+${CommonPaginatedResultInfoFieldsFragmentDoc}`;
+export const useSearchProfilesQuery = <
+  TData = SearchProfilesQuery,
+  TError = unknown
+>(
+  variables: SearchProfilesQueryVariables,
+  options?: UseQueryOptions<SearchProfilesQuery, TError, TData>
+) =>
+  useQuery<SearchProfilesQuery, TError, TData>(
+    ["SearchProfiles", variables],
+    fetcher<SearchProfilesQuery, SearchProfilesQueryVariables>(
+      SearchProfilesDocument,
       variables
     ),
     options

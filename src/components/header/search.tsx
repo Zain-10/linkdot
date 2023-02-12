@@ -25,8 +25,9 @@ const Search = () => {
       <input
         type="text"
         placeholder="Search by wallet id, badge, name..."
-        className="solid h-10 w-full rounded border border-gray-1200 bg-gray-1300 py-3.5 pl-7 pr-14 text-xs text-black outline-0"
+        className="solid border-gray-1200 h-10 w-full rounded border bg-gray-1300 py-3.5 pl-7 pr-14 text-xs text-black outline-0"
         onChange={handleChange}
+        required
       />
       <button type="submit" className="absolute right-0 h-full w-12">
         <Image src={SearcgSVg} alt="search" />

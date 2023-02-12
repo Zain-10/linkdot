@@ -1,18 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./src/**/*.{js,jsx,ts,tsx}",
-    // "node_modules/react-daisyui/dist/**/*.tsx'],",
-  ],
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
   plugins: [require("daisyui")],
 
   theme: {
     fontFamily: {
       "poppins-regular": ["Poppins-Regular"],
     },
-    // padding: {
-    //   0.25: "1px",
-    // },
     fontSize: {
       parasmall: "0.5rem",
       xs: "0.75rem",
@@ -27,6 +21,16 @@ module.exports = {
       "6xl": "4rem",
     },
     extend: {
+      textColor: {
+        yellow: "#D36D0A",
+        gray: "#112211",
+        link: "#413DF2",
+      },
+      borderColor: {
+        yellow: "#D36D0A",
+        gray: "#112211",
+      },
+
       colors: {
         gray: {
           100: "#f7fafc",
@@ -71,7 +75,7 @@ module.exports = {
         },
       },
       boxShadow: {
-        "3xl": "4px 4px 0px rgba(243, 124, 8, 1)",
+        btn: "4px 4px 0px #F37C08",
       },
     },
   },

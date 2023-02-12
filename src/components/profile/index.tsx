@@ -73,32 +73,32 @@ const Profile = ({ user, address }: Props) => {
                 Ethereum
               </p>
             </div> */}
-            <div className="mr-5 flex items-center text-gray-1200">
+            <div className="text-gray-1200 mr-5 flex items-center">
               <Image
                 src={CalendarSVG}
                 alt="ethereum logo"
                 height={18}
                 width={18}
               />
-              <p className="p-2 text-xs font-normal leading-[0.875rem] text-gray-1200">
+              <p className="text-gray-1200 p-2 text-xs font-normal leading-[0.875rem]">
                 {moment(user?.createdAt).format("MMMM YYYY")}
               </p>
             </div>
           </div>
           <div className="mb-4 flex items-center">
             <div className="mr-5 flex items-center">
-              <p className="text-xs font-normal leading-[0.875rem] text-gray-1200">
+              <p className="text-gray-1200 text-xs font-normal leading-[0.875rem]">
                 {user.followingIDs.length}
               </p>
-              <p className="p-2 text-xs font-normal leading-[0.875rem] text-gray-1200">
+              <p className="text-gray-1200 p-2 text-xs font-normal leading-[0.875rem]">
                 Following
               </p>
             </div>
             <div className="mr-5 flex items-center">
-              <p className="text-xs font-normal leading-[0.875rem] text-gray-1200">
+              <p className="text-gray-1200 text-xs font-normal leading-[0.875rem]">
                 {user.followedByIDs.length}
               </p>
-              <p className="p-2 text-xs font-normal leading-[0.875rem] text-gray-1200">
+              <p className="text-gray-1200 p-2 text-xs font-normal leading-[0.875rem]">
                 Followers
               </p>
             </div>
